@@ -1,0 +1,815 @@
+{
+  "labels": [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
+    "g",
+    "h",
+    "i",
+    "j",
+    "k",
+    "l",
+    "m"
+  ],
+  "branch_names": {
+    "a": "新建提醒",
+    "b": "修改/取消/完成提醒",
+    "c": "查询提醒",
+    "d": "增删改记忆",
+    "e": "查询记忆",
+    "f": "调整音量",
+    "g": "调整亮度",
+    "h": "查询天气",
+    "i": "查询时间日期",
+    "j": "产品/知识查询",
+    "k": "晚安",
+    "l": "再见",
+    "m": "闲聊/其他"
+  },
+  "classification": {
+    "total": 1300,
+    "correct": 1257,
+    "accuracy": 0.9669230769230769,
+    "accuracy_ci95": [
+      0.9557431998479885,
+      0.9753515983631723
+    ],
+    "macro_f1": 0.9668256613564365,
+    "valid_labels": 1300,
+    "invalid_labels": 0,
+    "per_label": {
+      "a": {
+        "name": "新建提醒",
+        "support": 100,
+        "predicted": 104,
+        "correct": 97,
+        "precision": 0.9326923076923077,
+        "recall": 0.97,
+        "f1": 0.9509803921568627,
+        "recall_ci95": [
+          0.9154806357094724,
+          0.9897454759759611
+        ],
+        "direct": 81,
+        "direct_coverage": 0.81,
+        "direct_correct": 81,
+        "direct_accuracy": 1.0,
+        "dangerous": 0
+      },
+      "b": {
+        "name": "修改/取消/完成提醒",
+        "support": 100,
+        "predicted": 101,
+        "correct": 99,
+        "precision": 0.9801980198019802,
+        "recall": 0.99,
+        "f1": 0.9850746268656716,
+        "recall_ci95": [
+          0.9455138038212946,
+          0.9982325679358593
+        ],
+        "direct": 82,
+        "direct_coverage": 0.82,
+        "direct_correct": 81,
+        "direct_accuracy": 0.9878048780487805,
+        "dangerous": 1
+      },
+      "c": {
+        "name": "查询提醒",
+        "support": 100,
+        "predicted": 97,
+        "correct": 96,
+        "precision": 0.9896907216494846,
+        "recall": 0.96,
+        "f1": 0.9746192893401014,
+        "recall_ci95": [
+          0.9016292856411208,
+          0.9843366960084523
+        ],
+        "direct": 91,
+        "direct_coverage": 0.91,
+        "direct_correct": 91,
+        "direct_accuracy": 1.0,
+        "dangerous": 0
+      },
+      "d": {
+        "name": "增删改记忆",
+        "support": 100,
+        "predicted": 100,
+        "correct": 97,
+        "precision": 0.97,
+        "recall": 0.97,
+        "f1": 0.97,
+        "recall_ci95": [
+          0.9154806357094724,
+          0.9897454759759611
+        ],
+        "direct": 82,
+        "direct_coverage": 0.82,
+        "direct_correct": 82,
+        "direct_accuracy": 1.0,
+        "dangerous": 0
+      },
+      "e": {
+        "name": "查询记忆",
+        "support": 100,
+        "predicted": 99,
+        "correct": 95,
+        "precision": 0.9595959595959596,
+        "recall": 0.95,
+        "f1": 0.9547738693467336,
+        "recall_ci95": [
+          0.8882495307680808,
+          0.9784563208456319
+        ],
+        "direct": 62,
+        "direct_coverage": 0.62,
+        "direct_correct": 60,
+        "direct_accuracy": 0.967741935483871,
+        "dangerous": 2
+      },
+      "f": {
+        "name": "调整音量",
+        "support": 100,
+        "predicted": 105,
+        "correct": 99,
+        "precision": 0.9428571428571428,
+        "recall": 0.99,
+        "f1": 0.9658536585365853,
+        "recall_ci95": [
+          0.9455138038212946,
+          0.9982325679358593
+        ],
+        "direct": 90,
+        "direct_coverage": 0.9,
+        "direct_correct": 90,
+        "direct_accuracy": 1.0,
+        "dangerous": 0
+      },
+      "g": {
+        "name": "调整亮度",
+        "support": 100,
+        "predicted": 100,
+        "correct": 99,
+        "precision": 0.99,
+        "recall": 0.99,
+        "f1": 0.99,
+        "recall_ci95": [
+          0.9455138038212946,
+          0.9982325679358593
+        ],
+        "direct": 99,
+        "direct_coverage": 0.99,
+        "direct_correct": 99,
+        "direct_accuracy": 1.0,
+        "dangerous": 0
+      },
+      "h": {
+        "name": "查询天气",
+        "support": 100,
+        "predicted": 101,
+        "correct": 100,
+        "precision": 0.9900990099009901,
+        "recall": 1.0,
+        "f1": 0.9950248756218906,
+        "recall_ci95": [
+          0.9630065017930143,
+          1.0
+        ],
+        "direct": 98,
+        "direct_coverage": 0.98,
+        "direct_correct": 98,
+        "direct_accuracy": 1.0,
+        "dangerous": 0
+      },
+      "i": {
+        "name": "查询时间日期",
+        "support": 100,
+        "predicted": 101,
+        "correct": 100,
+        "precision": 0.9900990099009901,
+        "recall": 1.0,
+        "f1": 0.9950248756218906,
+        "recall_ci95": [
+          0.9630065017930143,
+          1.0
+        ],
+        "direct": 84,
+        "direct_coverage": 0.84,
+        "direct_correct": 84,
+        "direct_accuracy": 1.0,
+        "dangerous": 0
+      },
+      "j": {
+        "name": "产品/知识查询",
+        "support": 100,
+        "predicted": 89,
+        "correct": 88,
+        "precision": 0.9887640449438202,
+        "recall": 0.88,
+        "f1": 0.9312169312169312,
+        "recall_ci95": [
+          0.8018790057328857,
+          0.9300059356298052
+        ],
+        "direct": 55,
+        "direct_coverage": 0.55,
+        "direct_correct": 52,
+        "direct_accuracy": 0.9454545454545454,
+        "dangerous": 3
+      },
+      "k": {
+        "name": "晚安",
+        "support": 100,
+        "predicted": 102,
+        "correct": 97,
+        "precision": 0.9509803921568627,
+        "recall": 0.97,
+        "f1": 0.9603960396039604,
+        "recall_ci95": [
+          0.9154806357094724,
+          0.9897454759759611
+        ],
+        "direct": 27,
+        "direct_coverage": 0.27,
+        "direct_correct": 27,
+        "direct_accuracy": 1.0,
+        "dangerous": 0
+      },
+      "l": {
+        "name": "再见",
+        "support": 100,
+        "predicted": 96,
+        "correct": 94,
+        "precision": 0.9791666666666666,
+        "recall": 0.94,
+        "f1": 0.9591836734693877,
+        "recall_ci95": [
+          0.8752318455410406,
+          0.9722138760368118
+        ],
+        "direct": 72,
+        "direct_coverage": 0.72,
+        "direct_correct": 72,
+        "direct_accuracy": 1.0,
+        "dangerous": 0
+      },
+      "m": {
+        "name": "闲聊/其他",
+        "support": 100,
+        "predicted": 105,
+        "correct": 96,
+        "precision": 0.9142857142857143,
+        "recall": 0.96,
+        "f1": 0.9365853658536586,
+        "recall_ci95": [
+          0.9016292856411208,
+          0.9843366960084523
+        ],
+        "direct": 90,
+        "direct_coverage": 0.9,
+        "direct_correct": 90,
+        "direct_accuracy": 1.0,
+        "dangerous": 0
+      }
+    }
+  },
+  "gate": {
+    "total": 1300,
+    "call_success": 1300,
+    "call_failures": 0,
+    "call_failure_rate": 0.0,
+    "direct": 1013,
+    "direct_correct": 1007,
+    "coverage": 0.7792307692307693,
+    "direct_accuracy": 0.9940769990128332,
+    "dangerous_misroutes": 6,
+    "dangerous_rate": 0.004615384615384616,
+    "m3_handoff": 287,
+    "m3_handoff_rate": 0.22076923076923077
+  },
+  "threshold_sweep": [
+    {
+      "threshold": 0.98055846,
+      "direct": 1013,
+      "coverage": 0.7792307692307693,
+      "direct_correct": 1007,
+      "dangerous": 6,
+      "direct_accuracy": 0.9940769990128332,
+      "dangerous_rate": 0.004615384615384616
+    },
+    {
+      "threshold": 0.99,
+      "direct": 903,
+      "coverage": 0.6946153846153846,
+      "direct_correct": 900,
+      "dangerous": 3,
+      "direct_accuracy": 0.9966777408637874,
+      "dangerous_rate": 0.002307692307692308
+    },
+    {
+      "threshold": 0.995,
+      "direct": 771,
+      "coverage": 0.5930769230769231,
+      "direct_correct": 768,
+      "dangerous": 3,
+      "direct_accuracy": 0.9961089494163424,
+      "dangerous_rate": 0.002307692307692308
+    },
+    {
+      "threshold": 0.999,
+      "direct": 469,
+      "coverage": 0.3607692307692308,
+      "direct_correct": 468,
+      "dangerous": 1,
+      "direct_accuracy": 0.997867803837953,
+      "dangerous_rate": 0.0007692307692307692
+    },
+    {
+      "threshold": 0.9999,
+      "direct": 177,
+      "coverage": 0.13615384615384615,
+      "direct_correct": 176,
+      "dangerous": 1,
+      "direct_accuracy": 0.9943502824858758,
+      "dangerous_rate": 0.0007692307692307692
+    },
+    {
+      "threshold": 0.99999,
+      "direct": 23,
+      "coverage": 0.01769230769230769,
+      "direct_correct": 22,
+      "dangerous": 1,
+      "direct_accuracy": 0.9565217391304348,
+      "dangerous_rate": 0.0007692307692307692
+    }
+  ],
+  "confusion_matrix": {
+    "a": {
+      "a": 97,
+      "b": 0,
+      "c": 1,
+      "d": 0,
+      "e": 0,
+      "f": 0,
+      "g": 0,
+      "h": 0,
+      "i": 0,
+      "j": 0,
+      "k": 0,
+      "l": 1,
+      "m": 1
+    },
+    "b": {
+      "a": 0,
+      "b": 99,
+      "c": 0,
+      "d": 0,
+      "e": 0,
+      "f": 0,
+      "g": 0,
+      "h": 0,
+      "i": 0,
+      "j": 0,
+      "k": 0,
+      "l": 0,
+      "m": 1
+    },
+    "c": {
+      "a": 2,
+      "b": 0,
+      "c": 96,
+      "d": 0,
+      "e": 1,
+      "f": 0,
+      "g": 0,
+      "h": 0,
+      "i": 0,
+      "j": 1,
+      "k": 0,
+      "l": 0,
+      "m": 0
+    },
+    "d": {
+      "a": 0,
+      "b": 0,
+      "c": 0,
+      "d": 97,
+      "e": 3,
+      "f": 0,
+      "g": 0,
+      "h": 0,
+      "i": 0,
+      "j": 0,
+      "k": 0,
+      "l": 0,
+      "m": 0
+    },
+    "e": {
+      "a": 0,
+      "b": 0,
+      "c": 0,
+      "d": 3,
+      "e": 95,
+      "f": 0,
+      "g": 0,
+      "h": 0,
+      "i": 0,
+      "j": 0,
+      "k": 0,
+      "l": 0,
+      "m": 2
+    },
+    "f": {
+      "a": 0,
+      "b": 0,
+      "c": 0,
+      "d": 0,
+      "e": 0,
+      "f": 99,
+      "g": 0,
+      "h": 0,
+      "i": 0,
+      "j": 0,
+      "k": 0,
+      "l": 0,
+      "m": 1
+    },
+    "g": {
+      "a": 0,
+      "b": 0,
+      "c": 0,
+      "d": 0,
+      "e": 0,
+      "f": 0,
+      "g": 99,
+      "h": 0,
+      "i": 1,
+      "j": 0,
+      "k": 0,
+      "l": 0,
+      "m": 0
+    },
+    "h": {
+      "a": 0,
+      "b": 0,
+      "c": 0,
+      "d": 0,
+      "e": 0,
+      "f": 0,
+      "g": 0,
+      "h": 100,
+      "i": 0,
+      "j": 0,
+      "k": 0,
+      "l": 0,
+      "m": 0
+    },
+    "i": {
+      "a": 0,
+      "b": 0,
+      "c": 0,
+      "d": 0,
+      "e": 0,
+      "f": 0,
+      "g": 0,
+      "h": 0,
+      "i": 100,
+      "j": 0,
+      "k": 0,
+      "l": 0,
+      "m": 0
+    },
+    "j": {
+      "a": 3,
+      "b": 1,
+      "c": 0,
+      "d": 0,
+      "e": 0,
+      "f": 3,
+      "g": 1,
+      "h": 0,
+      "i": 0,
+      "j": 88,
+      "k": 0,
+      "l": 0,
+      "m": 4
+    },
+    "k": {
+      "a": 0,
+      "b": 1,
+      "c": 0,
+      "d": 0,
+      "e": 0,
+      "f": 0,
+      "g": 0,
+      "h": 1,
+      "i": 0,
+      "j": 0,
+      "k": 97,
+      "l": 1,
+      "m": 0
+    },
+    "l": {
+      "a": 1,
+      "b": 0,
+      "c": 0,
+      "d": 0,
+      "e": 0,
+      "f": 0,
+      "g": 0,
+      "h": 0,
+      "i": 0,
+      "j": 0,
+      "k": 5,
+      "l": 94,
+      "m": 0
+    },
+    "m": {
+      "a": 1,
+      "b": 0,
+      "c": 0,
+      "d": 0,
+      "e": 0,
+      "f": 3,
+      "g": 0,
+      "h": 0,
+      "i": 0,
+      "j": 0,
+      "k": 0,
+      "l": 0,
+      "m": 96
+    }
+  },
+  "top_confusions": [
+    {
+      "truth": "l",
+      "prediction": "k",
+      "count": 5
+    },
+    {
+      "truth": "j",
+      "prediction": "m",
+      "count": 4
+    },
+    {
+      "truth": "d",
+      "prediction": "e",
+      "count": 3
+    },
+    {
+      "truth": "e",
+      "prediction": "d",
+      "count": 3
+    },
+    {
+      "truth": "j",
+      "prediction": "a",
+      "count": 3
+    },
+    {
+      "truth": "j",
+      "prediction": "f",
+      "count": 3
+    },
+    {
+      "truth": "m",
+      "prediction": "f",
+      "count": 3
+    },
+    {
+      "truth": "c",
+      "prediction": "a",
+      "count": 2
+    },
+    {
+      "truth": "e",
+      "prediction": "m",
+      "count": 2
+    },
+    {
+      "truth": "a",
+      "prediction": "c",
+      "count": 1
+    },
+    {
+      "truth": "a",
+      "prediction": "l",
+      "count": 1
+    },
+    {
+      "truth": "a",
+      "prediction": "m",
+      "count": 1
+    },
+    {
+      "truth": "b",
+      "prediction": "m",
+      "count": 1
+    },
+    {
+      "truth": "c",
+      "prediction": "e",
+      "count": 1
+    },
+    {
+      "truth": "c",
+      "prediction": "j",
+      "count": 1
+    },
+    {
+      "truth": "f",
+      "prediction": "m",
+      "count": 1
+    },
+    {
+      "truth": "g",
+      "prediction": "i",
+      "count": 1
+    },
+    {
+      "truth": "j",
+      "prediction": "b",
+      "count": 1
+    },
+    {
+      "truth": "j",
+      "prediction": "g",
+      "count": 1
+    },
+    {
+      "truth": "k",
+      "prediction": "b",
+      "count": 1
+    },
+    {
+      "truth": "k",
+      "prediction": "h",
+      "count": 1
+    },
+    {
+      "truth": "k",
+      "prediction": "l",
+      "count": 1
+    },
+    {
+      "truth": "l",
+      "prediction": "a",
+      "count": 1
+    },
+    {
+      "truth": "m",
+      "prediction": "a",
+      "count": 1
+    }
+  ],
+  "strata": {
+    "asr_noise": {
+      "false": {
+        "total": 1088,
+        "correct": 1060,
+        "accuracy": 0.9742647058823529,
+        "direct": 869,
+        "direct_rate": 0.7987132352941176,
+        "dangerous": 6
+      },
+      "true": {
+        "total": 212,
+        "correct": 197,
+        "accuracy": 0.9292452830188679,
+        "direct": 144,
+        "direct_rate": 0.6792452830188679,
+        "dangerous": 0
+      }
+    },
+    "rounds": {
+      "1": {
+        "total": 209,
+        "correct": 203,
+        "accuracy": 0.9712918660287081,
+        "direct": 154,
+        "direct_rate": 0.7368421052631579,
+        "dangerous": 0
+      },
+      "2": {
+        "total": 643,
+        "correct": 615,
+        "accuracy": 0.9564541213063764,
+        "direct": 487,
+        "direct_rate": 0.7573872472783826,
+        "dangerous": 5
+      },
+      "3": {
+        "total": 250,
+        "correct": 243,
+        "accuracy": 0.972,
+        "direct": 210,
+        "direct_rate": 0.84,
+        "dangerous": 1
+      },
+      "4+": {
+        "total": 198,
+        "correct": 196,
+        "accuracy": 0.98989898989899,
+        "direct": 162,
+        "direct_rate": 0.8181818181818182,
+        "dangerous": 0
+      }
+    },
+    "hard_pair_presence": {
+      "false": {
+        "total": 1228,
+        "correct": 1190,
+        "accuracy": 0.9690553745928339,
+        "direct": 955,
+        "direct_rate": 0.7776872964169381,
+        "dangerous": 4
+      },
+      "true": {
+        "total": 72,
+        "correct": 67,
+        "accuracy": 0.9305555555555556,
+        "direct": 58,
+        "direct_rate": 0.8055555555555556,
+        "dangerous": 2
+      }
+    },
+    "hard_pair": {
+      "a/b": {
+        "total": 12,
+        "correct": 12,
+        "accuracy": 1.0,
+        "direct": 11,
+        "direct_rate": 0.9166666666666666,
+        "dangerous": 0
+      },
+      "a/d": {
+        "total": 9,
+        "correct": 9,
+        "accuracy": 1.0,
+        "direct": 9,
+        "direct_rate": 1.0,
+        "dangerous": 0
+      },
+      "b/m": {
+        "total": 12,
+        "correct": 11,
+        "accuracy": 0.9166666666666666,
+        "direct": 11,
+        "direct_rate": 0.9166666666666666,
+        "dangerous": 1
+      },
+      "c/i": {
+        "total": 15,
+        "correct": 15,
+        "accuracy": 1.0,
+        "direct": 12,
+        "direct_rate": 0.8,
+        "dangerous": 0
+      },
+      "e/j": {
+        "total": 11,
+        "correct": 8,
+        "accuracy": 0.7272727272727273,
+        "direct": 4,
+        "direct_rate": 0.36363636363636365,
+        "dangerous": 1
+      },
+      "f/m": {
+        "total": 8,
+        "correct": 8,
+        "accuracy": 1.0,
+        "direct": 8,
+        "direct_rate": 1.0,
+        "dangerous": 0
+      },
+      "j/m": {
+        "total": 5,
+        "correct": 4,
+        "accuracy": 0.8,
+        "direct": 3,
+        "direct_rate": 0.6,
+        "dangerous": 0
+      },
+      "none": {
+        "total": 1228,
+        "correct": 1190,
+        "accuracy": 0.9690553745928339,
+        "direct": 955,
+        "direct_rate": 0.7776872964169381,
+        "dangerous": 4
+      }
+    }
+  },
+  "latency_ms": {
+    "count": 1300,
+    "average": 39.206923076923076,
+    "p50": 39.0,
+    "p95": 52.0,
+    "p99": 54.00999999999999,
+    "max": 77.0
+  }
+}

@@ -1,0 +1,162 @@
+diff --git a/dada/agent/branches/_device_common.py b/dada/agent/branches/_device_common.py
+index 1111111..2222222 100644
+--- a/dada/agent/branches/_device_common.py
++++ b/dada/agent/branches/_device_common.py
+@@ -1,5 +1,7 @@
+ # 4.6/4.7 共用实现（同构分支靠公共函数，不互相 import）
+ import json
++import re
++import time
+ 
+ from dada.agent.flow import TurnResult
+ from dada.infra import speech
+@@ -12,10 +14,101 @@ from dada.infra.prompts import speeches as sp
+ 
+ EXIT_SPEECH = sp.EXIT_MISHEARD
++VERIFY_FAILED_SPEECH = "调节指令已经发出，但设备状态没有变化，请再试一下"
++STATUS_FAILED_SPEECH = "暂时没读取到设备状态，请稍后再试"
++DEFAULT_RELATIVE_STEP = 5
++
++_NUMBER_RE = re.compile(r"(?<!\d)(100|[1-9]?\d)(?!\d)")
++_UP_WORDS = ("调高", "提高", "增大", "增加", "加大", "大一点", "大点",
++             "高一点", "高点", "亮一点", "亮点", "调亮", "更亮", "更大")
++_DOWN_WORDS = ("调低", "降低", "减小", "减少", "小一点", "小点", "低一点",
++               "低点", "暗一点", "暗点", "调暗", "更暗", "更小")
++_ABSOLUTE_MARKERS = ("调到", "设到", "设置到", "设置为", "改到", "改成", "开到")
++
++
++def _current_value(status, status_key):
++    """读取真实设备嵌套协议，同时兼容旧平铺测试协议。"""
++    if not isinstance(status, dict):
++        return None
++    if status_key == "volume":
++        nested = status.get("audio_speaker") or {}
++        value = nested.get("volume") if isinstance(nested, dict) else None
++    elif status_key == "brightness":
++        nested = status.get("screen") or {}
++        value = nested.get("brightness") if isinstance(nested, dict) else None
++    else:
++        value = None
++    if value is None:
++        value = status.get(status_key)
++    if isinstance(value, bool):
++        return None
++    try:
++        value = int(value)
++    except (TypeError, ValueError):
++        return None
++    return value if 0 <= value <= 100 else None
++
++
++def _intent_from_text(text, current):
++    """代码判定可确定意图；返回(action, target)。None 表示需要追问。"""
++    text = text or ""
++    numbers = [int(x) for x in _NUMBER_RE.findall(text)]
++    has_up = any(w in text for w in _UP_WORDS)
++    has_down = any(w in text for w in _DOWN_WORDS)
++    if has_up and has_down:
++        return None
++    if len(set(numbers)) > 1:
++        return None
++
++    number = numbers[0] if numbers else None
++    is_absolute = number is not None and any(w in text for w in _ABSOLUTE_MARKERS)
++    if is_absolute:
++        target = number
++        action = "keep" if target == current else ("increase" if target > current else "decrease")
++        return action, target
++
++    if has_up:
++        delta = number if number is not None else DEFAULT_RELATIVE_STEP
++        target = min(100, current + delta)
++        return ("keep" if target == current else "increase"), target
++    if has_down:
++        delta = number if number is not None else DEFAULT_RELATIVE_STEP
++        target = max(0, current - delta)
++        return ("keep" if target == current else "decrease"), target
++    return None
++
++
++def _verify_applied(conn, status_key, target):
++    """设置后回读；允许设备短暂异步生效。返回(成功, 最后读值)。"""
++    actual = None
++    for delay in (0.10, 0.30, 0.60):
++        time.sleep(delay)
++        actual = _current_value(mcp_device.get_device_status(conn), status_key)
++        if actual == target:
++            return True, actual
++    return False, actual
+ 
+ 
+ def adjust(conn, ctx, *, status_key, setter_name, unit_word, ask_speech, rejudge):
+     status = mcp_device.get_device_status(conn)  # 前置查状态："再大一点"需要基准
++    current = _current_value(status, status_key)
++    if current is None:
++        speech.say(conn, STATUS_FAILED_SPEECH)
++        return TurnResult(spoken_text=STATUS_FAILED_SPEECH)
++
++    deterministic = _intent_from_text(ctx.user_text, current)
++    if deterministic is None:
++        speech.say(conn, ask_speech)
++        return TurnResult(spoken_text=ask_speech)
++    expected_action, expected_target = deterministic
++
+     inject = (f"当前设备状态：{json.dumps(status, ensure_ascii=False)}\n"
+               f"请依当前{unit_word}折算用户的相对表述，输出 0-100 绝对值。")
+@@ -35,7 +128,7 @@ def adjust(conn, ctx, *, status_key, setter_name, unit_word, ask_speech, rejudge):
+         ask_speech=ask_speech,
+     )
+     m2ctx = M2Ctx(sources=sources,
+-                  extra={"current_value": (status or {}).get(status_key)})
++                  extra={"current_value": current})
+     r = m2.m2_extract(conn, messages, params, ctx=m2ctx)
+     if not r.ok:
+         speech.say(conn, r.speech)
+@@ -43,9 +136,13 @@ def adjust(conn, ctx, *, status_key, setter_name, unit_word, ask_speech, rejudge):
+         return TurnResult(spoken_text=r.speech)
+ 
+-    value = max(0, min(100, int(r.data["target_value"])))  # 值域收敛(兜底,校验器已限)
+-    if r.data.get("direction") == "=":
++    # 9B 负责识别方向和给出原文依据；可确定算术由代码执行，避免"一点"步长漂移。
++    model_direction = r.data.get("direction")
++    expected_direction = {"increase": ">", "decrease": "<", "keep": "="}[expected_action]
++    if model_direction != expected_direction:
++        speech.say(conn, ask_speech)
++        return TurnResult(spoken_text=ask_speech)
++    value = expected_target
++    if expected_action == "keep":
+         # 方向勾稽定案:维持现状(含"已最大再调大"落=)不下发设置,播已是话术
+         spoken = sp.TPL_DEVICE_KEPT.format(unit=unit_word, value=value)
+         speech.say(conn, spoken)
+@@ -54,6 +151,15 @@ def adjust(conn, ctx, *, status_key, setter_name, unit_word, ask_speech, rejudge):
+         speech.say(conn, EXIT_SPEECH)
+         return TurnResult(spoken_text=EXIT_SPEECH)
+ 
++    try:
++        applied, actual = _verify_applied(conn, status_key, value)
++    except Exception:
++        applied, actual = False, None
++    if not applied:
++        print(f"DEVICE_SETTING_NOT_APPLIED kind={status_key} before={current} "
++              f"target={value} actual={actual}")
++        speech.say(conn, VERIFY_FAILED_SPEECH)
++        return TurnResult(spoken_text=VERIFY_FAILED_SPEECH)
++
+     spoken = sp.TPL_DEVICE_DONE.format(unit=unit_word, value=value)
+     speech.say(conn, spoken)
+     return TurnResult(spoken_text=spoken, action_tags=[ctx.intent_label])
+diff --git a/dada/mechanisms/m2_validators.py b/dada/mechanisms/m2_validators.py
+index 3333333..4444444 100644
+--- a/dada/mechanisms/m2_validators.py
++++ b/dada/mechanisms/m2_validators.py
+@@ -222,9 +222,8 @@ def v_setting(field, direction_field="direction"):
+             return (f"{direction_field} 必须是 >、<、= 之一"
+                     "(调大填>,调小填<,调到指定值或已到边界填=)")
+         current = ctx.extra.get("current_value")
+         if current is None:
+-            print("M2_SETTING_NO_CURRENT 方向勾稽跳过:未注入现值")
+-            return None
++            return "方向勾稽失败:未读取到设备当前值，禁止在缺少基准时执行相对设置"
+         consistent = {">": val > current, "<": val < current,
+                       "=": val == current}[direction]
+         if not consistent:

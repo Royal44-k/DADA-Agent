@@ -1,0 +1,75 @@
+<!doctype html><html lang='zh-CN'><head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'><title>哒哒Agent 1300条状态化路由复测报告</title>
+<style>
+    :root{--bg:#071018;--panel:#0d1924;--line:#203344;--text:#e8f0f6;
+      --muted:#8ca2b4;--cyan:#42d7e7;--green:#61e294;--amber:#ffbd59;
+      --red:#ff6874;--ink:#061015}*{box-sizing:border-box}body{margin:0;background:var(--bg);
+      color:var(--text);font:15px/1.62 Inter,"Segoe UI","Microsoft YaHei",sans-serif}
+    main{max-width:1180px;margin:auto;padding:44px 28px 72px}a{color:var(--cyan)}
+    .eyebrow{font:700 12px/1.2 Consolas,monospace;letter-spacing:.16em;color:var(--cyan)}
+    h1{font-size:38px;line-height:1.15;margin:12px 0 8px}h2{font-size:22px;margin:38px 0 14px}
+    .lede,.muted{color:var(--muted)}.verdict{margin:26px 0;padding:18px 20px;border-left:4px solid var(--green);
+      background:#0a171d}.verdict.fail{border-color:var(--red)}
+    .kpis{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid var(--line);margin:24px 0}
+    .kpi{padding:18px;border-right:1px solid var(--line)}.kpi:last-child{border:0}
+    .kpi b{display:block;font:700 27px/1.2 Consolas,monospace}.kpi span{color:var(--muted);font-size:12px}
+    .flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:12px;align-items:center;margin:18px 0}
+    .node{background:var(--panel);border:1px solid var(--line);padding:16px}.arrow{color:var(--amber);font-size:24px}
+    .rail{display:grid;grid-template-columns:repeat(13,1fr);gap:4px}.branch{min-width:0;padding:12px 4px;
+      text-align:center;background:var(--panel);border-top:4px solid var(--green)}.branch.warn{border-color:var(--amber)}
+    .branch.bad{border-color:var(--red)}.branch b{display:block;font:700 15px Consolas,monospace}
+    .branch small{font-size:10px;color:var(--muted);white-space:nowrap}.branch em{font:700 11px Consolas,monospace;font-style:normal}
+    table{width:100%;border-collapse:collapse;background:var(--panel)}th,td{padding:10px 12px;
+      border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:12px;color:var(--muted)}
+    td.num{font-family:Consolas,monospace}.pass{color:var(--green)}.failtxt{color:var(--red)}
+    code{font-family:Consolas,monospace;color:#b8e8ef}.evidence{border:1px solid var(--line);padding:16px 18px}
+    .evidence dl{display:grid;grid-template-columns:220px 1fr;gap:6px 16px;margin:0}.evidence dt{color:var(--muted)}
+    .evidence dd{margin:0;font-family:Consolas,monospace;overflow-wrap:anywhere}.foot{margin-top:36px;color:var(--muted);font-size:12px}
+    .failure-row td:nth-child(2){max-width:460px}.tag{display:inline-block;border:1px solid var(--line);padding:1px 6px;margin:1px;font-size:11px}
+    @media(max-width:850px){.kpis{grid-template-columns:1fr 1fr}.kpi{border-bottom:1px solid var(--line)}
+      .flow{grid-template-columns:1fr}.arrow{transform:rotate(90deg);text-align:center}.rail{grid-template-columns:repeat(4,1fr)}
+      .evidence dl{grid-template-columns:1fr}.wide{overflow:auto}h1{font-size:30px}}
+    </style></head><body><main>
+<div class='eyebrow'>DADA AGENT / PRODUCTION ROUTE AUDIT / 2026-08-20</div>
+<h1>修订版 1300 条语料<br>M1 → M3 完整路由实测</h1>
+<p class='lede'>真实调用生产 1.7B 初判与 9B M3 复判；使用数据库中的有效 task / memory 状态，未伪造查询结果，未修改或重启生产服务。</p>
+<div class='verdict'><strong>通过验收：最终准确率 97.38%，达到 ≥97% 目标。</strong><br>
+共 1300 条，正确 1266 条，最终错误 34 条，链路故障 0 条。</div>
+<section class='kpis'><div class='kpi'><b>97.38%</b><span>最终准确率</span></div>
+<div class='kpi'><b>1266/1300</b><span>最终正确</span></div>
+<div class='kpi'><b>265</b><span>进入 M3 · 20.38%</span></div>
+<div class='kpi'><b>30</b><span>M3 纠正</span></div>
+<div class='kpi'><b>29</b><span>M3 恶化</span></div></section>
+
+<h2>完整链路表现</h2><div class='flow'>
+<div class='node'><b>1.7B / M1</b><br><span class='muted'>初判正确 1265/1300 · 97.31%</span></div>
+<div class='arrow'>→</div><div class='node'><b>门控与 9B / M3</b><br><span class='muted'>复判 265 · 纠正 30 · 恶化 29</span></div>
+<div class='arrow'>→</div><div class='node'><b>最终分支</b><br><span class='muted'>正确 1266 · 错误 34 · 故障 0</span></div></div>
+<p>最终错误归因：M1 高置信直进错误 <b>3</b>；M1 未进入 M3 错误 <b>0</b>；
+M3 将原本正确结果改错 <b>29</b>；M3 未纠正初判错误 <b>2</b>；链路故障 <b>0</b>。</p>
+
+<h2>13 分支验收轨</h2><div class='rail'><div class='branch ' title='新建提醒'><b>a</b><small>新建提醒</small><em>97.35%</em></div><div class='branch ' title='修改提醒'><b>b</b><small>修改提醒</small><em>98.21%</em></div><div class='branch ' title='查询提醒'><b>c</b><small>查询提醒</small><em>100.00%</em></div><div class='branch warn' title='写入记忆'><b>d</b><small>写入记忆</small><em>96.08%</em></div><div class='branch warn' title='查询记忆'><b>e</b><small>查询记忆</small><em>93.26%</em></div><div class='branch ' title='调节音量'><b>f</b><small>调节音量</small><em>100.00%</em></div><div class='branch ' title='调节亮度'><b>g</b><small>调节亮度</small><em>100.00%</em></div><div class='branch ' title='查询天气'><b>h</b><small>查询天气</small><em>100.00%</em></div><div class='branch ' title='查询时间'><b>i</b><small>查询时间</small><em>99.01%</em></div><div class='branch warn' title='知识问答'><b>j</b><small>知识问答</small><em>92.86%</em></div><div class='branch warn' title='晚安'><b>k</b><small>晚安</small><em>96.08%</em></div><div class='branch warn' title='再见'><b>l</b><small>再见</small><em>90.91%</em></div><div class='branch ' title='闲聊'><b>m</b><small>闲聊</small><em>100.00%</em></div></div>
+<div class='wide'><table><thead><tr><th>标签</th><th>分支</th><th>样本</th><th>正确</th><th>准确率</th><th>进入M3</th><th>错误</th></tr></thead>
+<tbody><tr><td class='num'>a</td><td>新建提醒</td><td class='num'>113</td><td class='num'>110</td><td class='num pass'>97.35%</td><td class='num'>31</td><td class='num'>3</td></tr><tr><td class='num'>b</td><td>修改提醒</td><td class='num'>112</td><td class='num'>110</td><td class='num pass'>98.21%</td><td class='num'>27</td><td class='num'>2</td></tr><tr><td class='num'>c</td><td>查询提醒</td><td class='num'>97</td><td class='num'>97</td><td class='num pass'>100.00%</td><td class='num'>6</td><td class='num'>0</td></tr><tr><td class='num'>d</td><td>写入记忆</td><td class='num'>102</td><td class='num'>98</td><td class='num failtxt'>96.08%</td><td class='num'>18</td><td class='num'>4</td></tr><tr><td class='num'>e</td><td>查询记忆</td><td class='num'>89</td><td class='num'>83</td><td class='num failtxt'>93.26%</td><td class='num'>27</td><td class='num'>6</td></tr><tr><td class='num'>f</td><td>调节音量</td><td class='num'>110</td><td class='num'>110</td><td class='num pass'>100.00%</td><td class='num'>12</td><td class='num'>0</td></tr><tr><td class='num'>g</td><td>调节亮度</td><td class='num'>101</td><td class='num'>101</td><td class='num pass'>100.00%</td><td class='num'>2</td><td class='num'>0</td></tr><tr><td class='num'>h</td><td>查询天气</td><td class='num'>102</td><td class='num'>102</td><td class='num pass'>100.00%</td><td class='num'>3</td><td class='num'>0</td></tr><tr><td class='num'>i</td><td>查询时间</td><td class='num'>101</td><td class='num'>100</td><td class='num pass'>99.01%</td><td class='num'>13</td><td class='num'>1</td></tr><tr><td class='num'>j</td><td>知识问答</td><td class='num'>84</td><td class='num'>78</td><td class='num failtxt'>92.86%</td><td class='num'>30</td><td class='num'>6</td></tr><tr><td class='num'>k</td><td>晚安</td><td class='num'>102</td><td class='num'>98</td><td class='num failtxt'>96.08%</td><td class='num'>75</td><td class='num'>4</td></tr><tr><td class='num'>l</td><td>再见</td><td class='num'>88</td><td class='num'>80</td><td class='num failtxt'>90.91%</td><td class='num'>12</td><td class='num'>8</td></tr><tr><td class='num'>m</td><td>闲聊</td><td class='num'>99</td><td class='num'>99</td><td class='num pass'>100.00%</td><td class='num'>9</td><td class='num'>0</td></tr></tbody></table></div>
+
+<h2>主要混淆方向</h2><div class='wide'><table><thead><tr><th>正确标签</th><th>最终预测</th><th>次数</th></tr></thead><tbody><tr><td class='num'>e</td><td class='num'>m</td><td class='num'>6</td></tr><tr><td class='num'>j</td><td class='num'>m</td><td class='num'>6</td></tr><tr><td class='num'>l</td><td class='num'>m</td><td class='num'>6</td></tr><tr><td class='num'>d</td><td class='num'>m</td><td class='num'>4</td></tr><tr><td class='num'>k</td><td class='num'>m</td><td class='num'>2</td></tr><tr><td class='num'>l</td><td class='num'>k</td><td class='num'>2</td></tr><tr><td class='num'>a</td><td class='num'>d</td><td class='num'>1</td></tr><tr><td class='num'>a</td><td class='num'>b</td><td class='num'>1</td></tr><tr><td class='num'>b</td><td class='num'>m</td><td class='num'>1</td></tr><tr><td class='num'>i</td><td class='num'>c</td><td class='num'>1</td></tr><tr><td class='num'>a</td><td class='num'>j</td><td class='num'>1</td></tr><tr><td class='num'>b</td><td class='num'>j</td><td class='num'>1</td></tr></tbody></table></div>
+<p><a href='哒哒Agent-修订版1300条失败测试集-2026-08-20.html'>打开全部 34 条失败测试集 →</a></p>
+
+<h2>时延与运行完整性</h2><div class='kpis'>
+<div class='kpi'><b>44.386</b><span>端到端 P50 ms</span></div>
+<div class='kpi'><b>1351.67</b><span>端到端 P95 ms</span></div>
+<div class='kpi'><b>3366.473</b><span>端到端最大 ms</span></div>
+<div class='kpi'><b>0</b><span>模型/路由故障</span></div>
+<div class='kpi'><b>PASS</b><span>结果行数</span></div></div>
+
+<h2>可复核证据</h2><div class='evidence'><dl>
+<dt>报告日期</dt><dd>2026-08-20</dd><dt>专用测试用户</dt><dd>2026082001</dd>
+<dt>有效 task / memory</dt><dd>1 / 1</dd>
+<dt>被状态裁剪的工具</dt><dd>[]</dd>
+<dt>修订语料 SHA-256</dt><dd>af0aa38412630b823810b2b5a7932a87e28e1e9ddf7eb94d4754afa13a9d93f0</dd>
+<dt>m1_gate.py SHA-256</dt><dd>fccb34c386c86a75e56191ceb6139deb37a355f56520bea0e0c292ff2bce8b8c</dd>
+<dt>m3_tool_panel.py SHA-256</dt><dd>c2b0a2b7a4e80407d8c48259b659acd5f9ad7fa76887aeff3dbc472d33f83f68</dd>
+<dt>branch_prompts.py SHA-256</dt><dd>0291c54c9d54f7b343db4116cf3c5ccc9b6d3cc02740c3c8d5891815096c71fe</dd>
+</dl></div>
+<p class='foot'>口径：每条语料只按修订后标签与生产完整路由的最终分支比较；进入 M3 的结果已计入最终准确率。97% 是验收阈值，不参与样本筛选或结果修饰。</p>
+</main></body></html>

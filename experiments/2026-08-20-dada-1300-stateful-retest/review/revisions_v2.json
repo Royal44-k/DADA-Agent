@@ -1,0 +1,306 @@
+[
+  {
+    "sample_id": "a-01497-dd56f4a0a47e",
+    "before_label": "a",
+    "before_text": "提醒我把要做的事情记录在小本本上。",
+    "disposition": "model_error_keep",
+    "rationale": "结合上一轮“一小时后的闹钟”追问，本句是在补充提醒事项；“提醒我”也明确指向新建提醒。",
+    "production_guide": "a：用户想新建一个提醒或闹钟。"
+  },
+  {
+    "sample_id": "a-01135-2013562f05d8",
+    "before_label": "a",
+    "before_text": "埃，帮我调下提醒，明天取干洗的衣服",
+    "disposition": "text_rewrite",
+    "new_text": "哎，帮我设个提醒：明天取干洗的衣服。",
+    "new_asr_noise": false,
+    "rationale": "“埃”是错字，“调下提醒”容易被理解为修改已有提醒；改为自然且明确的新建提醒表达。",
+    "production_guide": "a：新建提醒；b：修改已有提醒。"
+  },
+  {
+    "sample_id": "b-02115-0da3b1f6b6c8",
+    "before_label": "b",
+    "before_text": "我吃过了，药已经吃了。",
+    "disposition": "model_error_keep",
+    "rationale": "助手刚触发吃药提醒，用户报告已完成，属于对已有提醒标记完成；这是应保留的 b/m hard pair。",
+    "production_guide": "b：修改、取消或标记完成已有提醒。"
+  },
+  {
+    "sample_id": "d-00495-19fb7f0c478d",
+    "before_label": "d",
+    "before_text": "明信片收书桌第二层吗？不对，在第三层",
+    "disposition": "text_rewrite",
+    "new_text": "明信片是放在书桌第二层吗？不对，是第三层。",
+    "new_asr_noise": false,
+    "rationale": "原句“明信片收书桌”搭配不当；保留自我纠正记忆内容的原意。",
+    "production_guide": "d：修正你记过的内容。"
+  },
+  {
+    "sample_id": "d-01484-dea4b401dc3e",
+    "before_label": "d",
+    "before_text": "不对不对，户口本我记得是放保险柜里的。",
+    "disposition": "model_error_keep",
+    "rationale": "上一轮助手明确问“要记什么”，用户修正户口本位置，属于记忆写入/修正。",
+    "production_guide": "d：记住、修正或删除记忆内容。"
+  },
+  {
+    "sample_id": "d-01803-eaaa2a50dc43",
+    "before_label": "d",
+    "before_text": "不对，充电器是借给老张没还",
+    "disposition": "text_rewrite",
+    "new_text": "不对，充电器借给老张了，他还没还。",
+    "new_asr_noise": false,
+    "rationale": "原句缺少必要成分且指代生硬；修复为自然的个人事实纠正。",
+    "production_guide": "d：修正或写入个人记忆。"
+  },
+  {
+    "sample_id": "d-00453-62640a78f0b5",
+    "before_label": "d",
+    "before_text": "我车停在B2",
+    "disposition": "text_rewrite",
+    "new_text": "记一下，我的车停在 B2 层。",
+    "new_asr_noise": false,
+    "rationale": "原句虽是个人位置事实，但缺少保存意图，容易与普通陈述混淆；补全自然的记忆请求。",
+    "production_guide": "d：用户让你记住个人信息。"
+  },
+  {
+    "sample_id": "e-02667-a37780cb1a66",
+    "before_label": "e",
+    "before_text": "对，Wi-Fi 密码就是八个8。",
+    "disposition": "text_rewrite",
+    "new_text": "对，Wi-Fi 密码就是八个 8，你记得没错吧？",
+    "new_asr_noise": false,
+    "rationale": "结合上一轮记忆查询，补成自然的确认问句，消除单纯应答可能落入闲聊/写入的歧义。",
+    "production_guide": "e：复述已记内容并向哒哒求确认。"
+  },
+  {
+    "sample_id": "e-01127-8e2e2debfe95",
+    "before_label": "e",
+    "before_text": "就是工行的那张",
+    "disposition": "model_error_keep",
+    "rationale": "助手追问银行卡所属银行，本句补充查询对象，仍属于查询已记银行卡信息。",
+    "production_guide": "e：查询之前记住的事情；多轮补充沿用查询意图。"
+  },
+  {
+    "sample_id": "e-00347-f6ff09be08d5",
+    "before_label": "e",
+    "before_text": "户口本是不是放保险柜了？",
+    "disposition": "model_error_keep",
+    "rationale": "用户复述可能已记住的户口本位置并求确认，是明确的记忆查询。",
+    "production_guide": "e：复述已记内容求确认。"
+  },
+  {
+    "sample_id": "e-01518-1f3e4dfe7517",
+    "before_label": "e",
+    "before_text": "我爷的药是诊所在二楼那个不？",
+    "disposition": "text_rewrite",
+    "new_text": "我爷爷的药是在二楼那家诊所拿的，对不对？",
+    "new_asr_noise": false,
+    "rationale": "原句存在称谓缺字、介词和指代错误；修复后保留对既有个人信息求确认的意图。",
+    "production_guide": "e：查询或确认之前记住的个人信息。"
+  },
+  {
+    "sample_id": "e-03726-cdd6d99c3253",
+    "before_label": "e",
+    "before_text": "鞋柜是那个两层的嘛",
+    "disposition": "text_rewrite",
+    "new_text": "你说的是那个两层的鞋柜吗？",
+    "new_asr_noise": false,
+    "rationale": "调整语序并补全指代，使其自然承接上一轮“备用钥匙在鞋柜顶上”的查询结果。",
+    "production_guide": "e：查询已记信息的多轮补充与确认。"
+  },
+  {
+    "sample_id": "e-00370-e2330349697a",
+    "before_label": "e",
+    "before_text": "查一下我的车停在地下车库几层",
+    "disposition": "model_error_keep",
+    "rationale": "明确查询先前保存的停车位置，属于记忆查询。",
+    "production_guide": "e：询问哒哒之前记住的事情。"
+  },
+  {
+    "sample_id": "i-00059-9885a5750efa",
+    "before_label": "i",
+    "before_text": "那天是几号",
+    "disposition": "label_fix",
+    "new_label": "c",
+    "rationale": "“那天”指牙医复诊安排的日期，不是询问当前日期；同类“几号有安排”属于提醒查询。",
+    "production_guide": "c：查询安排/提醒；i：查询当前时间、日期或节假日。"
+  },
+  {
+    "sample_id": "j-02183-74400192e649",
+    "before_label": "j",
+    "before_text": "那你唱歌咋样？",
+    "disposition": "model_error_keep",
+    "rationale": "结合上一轮播放能力话题，用户在询问设备能否/如何唱歌，属于产品能力边界。",
+    "production_guide": "j：询问设备自身功能、用法和能力边界。"
+  },
+  {
+    "sample_id": "j-03251-c9c9a5ea1cc9",
+    "before_label": "j",
+    "before_text": "支不支持查天气嘞",
+    "disposition": "model_error_keep",
+    "rationale": "问的是是否支持天气功能，而非实际查询天气。",
+    "production_guide": "j：询问功能能力；h：实际查天气。"
+  },
+  {
+    "sample_id": "j-02646-702c3d39553b",
+    "before_label": "a",
+    "before_text": "提醒我明天吃药。",
+    "disposition": "model_error_keep",
+    "rationale": "用户已从“怎么设置”切换为实际执行新建吃药提醒。",
+    "production_guide": "a：实际新建提醒；j：只询问怎么做/会不会。"
+  },
+  {
+    "sample_id": "j-00850-fdaaae0c946f",
+    "before_label": "j",
+    "before_text": "那，你能帮我做些什么？说点实在的",
+    "disposition": "model_error_keep",
+    "rationale": "明确询问设备能提供哪些功能。",
+    "production_guide": "j：设备功能和能力边界。"
+  },
+  {
+    "sample_id": "j-03283-7e53d56fff0d",
+    "before_label": "b",
+    "before_text": "对，就取消早上七点的吃药提醒。",
+    "disposition": "model_error_keep",
+    "rationale": "在取消确认上下文中明确取消已有提醒。",
+    "production_guide": "b：取消或删除已有提醒。"
+  },
+  {
+    "sample_id": "j-03200-26a321253928",
+    "before_label": "j",
+    "before_text": "老人说话时你有时会听错，这种情况该怎么办？",
+    "disposition": "model_error_keep",
+    "rationale": "询问设备对老人语音识别的能力与使用办法，属于产品知识。",
+    "production_guide": "j：设备功能、用法和能力边界。"
+  },
+  {
+    "sample_id": "j-02959-8917396ffbb8",
+    "before_label": "j",
+    "before_text": "你能帮我干啥大事不",
+    "disposition": "model_error_keep",
+    "rationale": "询问设备能做什么，属于能力范围查询。",
+    "production_guide": "j：询问设备自身功能。"
+  },
+  {
+    "sample_id": "j-03047-dcb0cf3dbe45",
+    "before_label": "j",
+    "before_text": "和你有什么区别么？",
+    "disposition": "text_rewrite",
+    "new_text": "你和普通智能音箱有什么区别？",
+    "new_asr_noise": false,
+    "rationale": "原句缺少比较对象，脱离上下文无法判断；补全为自然的产品差异问题。",
+    "production_guide": "j：查询设备自身能力和产品差异。"
+  },
+  {
+    "sample_id": "k-00965-94ec3740832e",
+    "before_label": "k",
+    "before_text": "不用了，那打，啊到时间我也就得困了。",
+    "disposition": "text_rewrite",
+    "new_text": "等倒计时结束，我也该睡了。晚安。",
+    "new_asr_noise": false,
+    "rationale": "原句有明显 ASR 破损且“不用了”会被理解为取消倒计时；修复为与原睡意一致的晚安表达。",
+    "production_guide": "k：用户准备睡觉并说晚安。"
+  },
+  {
+    "sample_id": "k-00292-90aa2fa474a3",
+    "before_label": "k",
+    "before_text": "歪安，明见",
+    "disposition": "text_rewrite",
+    "new_text": "晚安，明天见。",
+    "new_asr_noise": false,
+    "rationale": "修复 ASR 错词“歪安/明见”，保留晚安意图。",
+    "production_guide": "k：晚安、准备睡觉。"
+  },
+  {
+    "sample_id": "k-01367-98181bef62df",
+    "before_label": "k",
+    "before_text": "行，歇了歇了",
+    "disposition": "text_rewrite",
+    "new_text": "行，我先歇了，晚安。",
+    "new_asr_noise": false,
+    "rationale": "原句主语缺失，可能被理解为让助手休息；补全用户准备休息的意图。",
+    "production_guide": "k：用户准备睡觉。"
+  },
+  {
+    "sample_id": "k-00324-25241ee6d94a",
+    "before_label": "k",
+    "before_text": "还要多久才天亮啊…困死了",
+    "disposition": "label_fix",
+    "new_label": "i",
+    "rationale": "核心请求是询问距离天亮还有多久；“困死了”只是状态描述，并未表示现在结束对话去睡觉。",
+    "production_guide": "i：查询时间；k：必须与准备睡觉/晚安有关。"
+  },
+  {
+    "sample_id": "l-01370-03d8c68018a9",
+    "before_label": "l",
+    "before_text": "好吧好吧，我出了，门就你啊别提",
+    "disposition": "text_rewrite",
+    "new_text": "好吧好吧，我出门了，回头再聊。",
+    "new_asr_noise": false,
+    "rationale": "原句后半段破损且语义无法成立；依据“我出门了”修复成自然道别。",
+    "production_guide": "l：用户出门、离开或结束对话。"
+  },
+  {
+    "sample_id": "l-01141-2db492a36082",
+    "before_label": "l",
+    "before_text": "没有了，明天再聊。",
+    "disposition": "model_error_keep",
+    "rationale": "在助手询问是否还有需要后，明确结束并约定明天再聊。",
+    "production_guide": "l：不带睡意的道别或结束对话。"
+  },
+  {
+    "sample_id": "l-01704-a0777d78c2e3",
+    "before_label": "l",
+    "before_text": "歇着吧你",
+    "disposition": "text_rewrite",
+    "new_text": "你歇着吧，我先走了。",
+    "new_asr_noise": false,
+    "rationale": "原句只让助手休息，可能是闲聊；补全用户离开的主语和动作，使道别意图单一。",
+    "production_guide": "l：用户离开并结束对话；k 只用于用户自己要睡觉。"
+  },
+  {
+    "sample_id": "l-01614-e88c2c911884",
+    "before_label": "l",
+    "before_text": "体育的，诶不对，算了，回头再说",
+    "disposition": "model_error_keep",
+    "rationale": "“算了，回头再说”明确取消当前话题并暂时结束对话。",
+    "production_guide": "l：结束当前对话、回头再聊。"
+  },
+  {
+    "sample_id": "l-01356-d74dec5b4df2",
+    "before_label": "l",
+    "before_text": "嗯，行吧，没事了",
+    "disposition": "text_rewrite",
+    "new_text": "嗯，行吧，没事了，先这样吧。",
+    "new_asr_noise": false,
+    "rationale": "原句可能只是对信息的回应；补入自然的结束语，消除闲聊歧义。",
+    "production_guide": "l：“先这样吧”属于结束对话。"
+  },
+  {
+    "sample_id": "l-01230-623efe9e456c",
+    "before_label": "l",
+    "before_text": "我知道了，先把这个应用关掉吧。",
+    "disposition": "model_error_keep",
+    "rationale": "要求关闭当前应用，属于明确结束当前交互。",
+    "production_guide": "l：结束对话离开。"
+  },
+  {
+    "sample_id": "l-01113-3a4e6b0e7548",
+    "before_label": "l",
+    "before_text": "好嘞，不早了，明儿见",
+    "disposition": "text_rewrite",
+    "new_text": "好嘞，我先走了，明儿见。",
+    "new_asr_noise": false,
+    "rationale": "“不早了”可能诱发晚安分支；改为明确离开但不含睡意的道别。",
+    "production_guide": "l：离开/明天见；k 必须明确准备睡觉。"
+  },
+  {
+    "sample_id": "m-01365-0db281149dbf",
+    "before_label": "l",
+    "before_text": "算了我去遛弯了，回头再聊",
+    "disposition": "model_error_keep",
+    "rationale": "“去遛弯、回头再聊”明确表示离开并暂时结束当前对话。",
+    "production_guide": "l：用户出门或回头再聊。"
+  }
+]

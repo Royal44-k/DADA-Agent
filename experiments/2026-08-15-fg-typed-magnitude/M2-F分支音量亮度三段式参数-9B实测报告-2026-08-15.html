@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>M2 / F 分支音量亮度三段式参数 · 9B 实测报告</title>
+  <style>
+    :root {
+      --ink: #14213d;
+      --muted: #667085;
+      --paper: #f4f7fb;
+      --card: #ffffff;
+      --line: #dfe6ef;
+      --blue: #315efb;
+      --blue-soft: #edf2ff;
+      --green: #138a5b;
+      --green-soft: #eaf8f2;
+      --amber: #b76800;
+      --amber-soft: #fff5df;
+      --red: #c3394a;
+      --red-soft: #fff0f2;
+      --navy: #0d1b2a;
+      --shadow: 0 12px 34px rgba(21, 36, 61, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 0%, rgba(49,94,251,.09), transparent 28rem),
+        linear-gradient(180deg, #f8faff 0, var(--paper) 34rem);
+      font: 15px/1.7 "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+    }
+    a { color: var(--blue); }
+    .shell { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
+    .hero { padding: 58px 0 34px; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--blue); font-weight: 700; letter-spacing: .06em;
+      text-transform: uppercase; font-size: 12px;
+    }
+    .eyebrow::before { content: ""; width: 24px; height: 2px; background: var(--blue); }
+    h1 { margin: 12px 0 10px; max-width: 900px; font-size: clamp(30px, 5vw, 52px); line-height: 1.13; letter-spacing: -.035em; }
+    .subtitle { max-width: 860px; margin: 0; color: var(--muted); font-size: 18px; }
+    .meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+    .pill { padding: 7px 12px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.78); color: #40506a; font-size: 13px; }
+    .verdict {
+      display: grid; grid-template-columns: 190px 1fr; gap: 26px; align-items: center;
+      margin: 18px 0 28px; padding: 26px; border: 1px solid #f0d7a6;
+      border-radius: 20px; background: linear-gradient(135deg, #fffaf0, #fff); box-shadow: var(--shadow);
+    }
+    .verdict-mark { text-align: center; padding: 20px 10px; border-radius: 16px; color: var(--amber); background: var(--amber-soft); font-size: 26px; font-weight: 800; }
+    .verdict h2 { margin: 0 0 5px; font-size: 23px; }
+    .verdict p { margin: 0; color: #526178; }
+    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 30px; }
+    .kpi { min-height: 148px; padding: 21px; border: 1px solid var(--line); border-radius: 18px; background: var(--card); box-shadow: var(--shadow); }
+    .kpi .label { color: var(--muted); font-size: 13px; }
+    .kpi .value { margin: 7px 0 3px; font-size: 32px; line-height: 1.1; font-weight: 800; letter-spacing: -.03em; }
+    .kpi .note { color: #718096; font-size: 12px; }
+    .ok .value { color: var(--green); }
+    .warn .value { color: var(--amber); }
+    .bad .value { color: var(--red); }
+    .section { margin: 0 0 24px; padding: 28px; border: 1px solid var(--line); border-radius: 20px; background: var(--card); box-shadow: var(--shadow); }
+    .section h2 { display: flex; align-items: center; gap: 10px; margin: 0 0 16px; font-size: 24px; line-height: 1.3; }
+    .section h2 .n { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 10px; color: white; background: var(--navy); font-size: 14px; }
+    .section h3 { margin: 25px 0 10px; font-size: 17px; }
+    .section p { margin: 8px 0; }
+    .lead { color: #4b5c73; font-size: 16px; }
+    .callout { margin: 16px 0; padding: 15px 17px; border-left: 4px solid var(--blue); border-radius: 8px; background: var(--blue-soft); }
+    .callout.danger { border-color: var(--red); background: var(--red-soft); }
+    .callout.success { border-color: var(--green); background: var(--green-soft); }
+    .callout strong { display: block; margin-bottom: 2px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .mini { padding: 18px; border: 1px solid var(--line); border-radius: 14px; background: #fbfcfe; }
+    .mini h3 { margin-top: 0; }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0 5px; font-size: 14px; }
+    th, td { padding: 11px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: #526178; background: #f7f9fc; font-size: 12px; letter-spacing: .02em; }
+    tr:last-child td { border-bottom: 0; }
+    .num { text-align: right; font-variant-numeric: tabular-nums; }
+    .tag { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+    .tag.pass { color: var(--green); background: var(--green-soft); }
+    .tag.fail { color: var(--red); background: var(--red-soft); }
+    .tag.cond { color: var(--amber); background: var(--amber-soft); }
+    pre { overflow: auto; margin: 13px 0; padding: 18px; border-radius: 13px; color: #d7e3f4; background: #101c2c; font: 13px/1.65 Consolas, "SFMono-Regular", monospace; }
+    code { font-family: Consolas, "SFMono-Regular", monospace; }
+    .bar { width: 100%; height: 8px; overflow: hidden; border-radius: 999px; background: #e9edf4; }
+    .bar > span { display: block; height: 100%; border-radius: inherit; background: var(--green); }
+    .flow { display: grid; grid-template-columns: repeat(6, 1fr); gap: 9px; margin-top: 16px; }
+    .flow div { position: relative; min-height: 84px; padding: 13px; border: 1px solid var(--line); border-radius: 12px; background: #fbfcff; font-size: 13px; }
+    .flow b { display: block; margin-bottom: 4px; color: var(--blue); }
+    ul, ol { padding-left: 22px; }
+    li + li { margin-top: 5px; }
+    .small { color: var(--muted); font-size: 13px; }
+    details { margin: 12px 0; padding: 12px 15px; border: 1px solid var(--line); border-radius: 12px; background: #fbfcfe; }
+    summary { cursor: pointer; font-weight: 700; }
+    footer { padding: 14px 0 48px; color: var(--muted); font-size: 13px; }
+    @media (max-width: 900px) {
+      .kpis { grid-template-columns: 1fr 1fr; }
+      .verdict { grid-template-columns: 1fr; }
+      .grid-2 { grid-template-columns: 1fr; }
+      .flow { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 560px) {
+      .shell { width: min(100% - 24px, 1180px); }
+      .hero { padding-top: 34px; }
+      .kpis { grid-template-columns: 1fr; }
+      .section { padding: 20px; }
+      .flow { grid-template-columns: 1fr; }
+      th, td { padding: 9px 7px; }
+    }
+    @media print {
+      body { background: white; }
+      .shell { width: 100%; }
+      .section, .kpi, .verdict { box-shadow: none; break-inside: avoid; }
+      details { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <div class="eyebrow">M2 · F Branch · V100 9B Evaluation</div>
+      <h1>音量 / 亮度“三段式参数”<br>9B 模型服务器实测报告</h1>
+      <p class="subtitle">验证 9B 模型能否稳定抽取“方向、结构化幅度、逐字依据”，并由代码安全换算最终目标值，解决“当前值 60，用户说再降低点但结果仍为 60”等问题。</p>
+      <div class="meta">
+        <span class="pill">报告日期：2026-08-15（验收批次）</span>
+        <span class="pill">补充实测执行：2026-08-17</span>
+        <span class="pill">Python 3.10.12</span>
+        <span class="pill">V100 · 9B 模型</span>
+        <span class="pill">隔离目录执行</span>
+      </div>
+    </header>
+
+    <section class="verdict">
+      <div class="verdict-mark">有条件通过</div>
+      <div>
+        <h2>明确调节指令可验收；歧义意图不得直接执行</h2>
+        <p>正常指令 456 次调用中 455 次端到端正确，达到 <strong>99.78%</strong>；但查询、描述、双向冲突和含糊指令的安全拒答率仅 <strong>25%</strong>。因此三段式抽取适合放在“意图已确认”之后，前面必须有独立的执行决策闸门。</p>
+      </div>
+    </section>
+
+    <section class="kpis" aria-label="核心指标">
+      <article class="kpi ok"><div class="label">端到端完全正确</div><div class="value">99.78%</div><div class="note">455 / 456 次正常指令调用</div></article>
+      <article class="kpi ok"><div class="label">方向 / 类型 / 依据</div><div class="value">100%</div><div class="note">三个字段均为 456 / 456</div></article>
+      <article class="kpi ok"><div class="label">代码规则测试</div><div class="value">187</div><div class="note">187 passed · 0 failed</div></article>
+      <article class="kpi bad"><div class="label">歧义安全拒答</div><div class="value">25%</div><div class="note">自动与“强制”模式均 4 / 16</div></article>
+    </section>
+
+    <section class="section" id="scope">
+      <h2><span class="n">1</span>测试范围与口径</h2>
+      <p class="lead">正式验收覆盖 168 条不同语义用例，共产生 488 次真实 9B 推理调用；调优过程中的冒烟测试未计入正式成绩。</p>
+      <div class="grid-2">
+        <div class="mini">
+          <h3>正常调节集</h3>
+          <p><strong>152 条 × 3 轮 = 456 次</strong></p>
+          <p class="small">覆盖音量与亮度、调大/调小/不变、模糊大中小、明确变化量、明确目标值、极值、中文数字、上下界和带语境说法。</p>
+        </div>
+        <div class="mini">
+          <h3>安全边界集</h3>
+          <p><strong>16 条 × 2 模式 = 32 次</strong></p>
+          <p class="small">分别用自动工具选择与指定工具选择，覆盖查询、陈述、方向冲突、二选一、模糊动作和多动作指令。</p>
+        </div>
+      </div>
+      <h3>验收判定</h3>
+      <ul>
+        <li><strong>单次完全正确：</strong>Schema/代码校验通过，方向、幅度类型、幅度值、原文依据和最终目标值全部正确。</li>
+        <li><strong>依据正确：</strong>模型给出的依据经 NFKC、空白和标点归一化后，必须是当前用户原话的连续子串；不能引用注入的当前设备状态。</li>
+        <li><strong>稳定性：</strong>同一语义连续三轮的“方向+类型+值”完全一致；依据稳定性另按逐字片段一致计算。</li>
+        <li><strong>边界安全：</strong>歧义、查询、描述或冲突语句不调用执行工具，转为澄清或忽略。</li>
+      </ul>
+    </section>
+
+    <section class="section" id="design">
+      <h2><span class="n">2</span>被测方案：条件化三段式参数</h2>
+      <p>仍保持用户指定的三个顶层字段，但将幅度对象改为按类型判别的条件 Schema，避免 9B 在“模糊幅度”下输出 80、100 等数字。</p>
+      <pre><code>方向 direction
+  ├─ 调大
+  ├─ 调小
+  └─ 不变
+
+幅度 magnitude
+  ├─ 模糊幅度   → value 只能是：大 / 中 / 小
+  ├─ 明确变化量 → value 只能是：0～100 整数
+  ├─ 明确目标值 → value 只能是：0～100 整数
+  └─ 极值       → value 只能是：0 / 100
+
+依据 adjustment_evidence
+  └─ 当前用户原话中的逐字连续片段</code></pre>
+      <div class="callout success">
+        <strong>关键改进</strong>
+        第一版把“汉字枚举或整数”同时开放给所有幅度类型，9B 会生成“模糊幅度 + 100”。改进版把类型和值绑定为四个互斥分支，使非法组合在生成阶段就被约束。
+      </div>
+      <h3>代码目标值换算</h3>
+      <table>
+        <thead><tr><th>幅度类型</th><th>代码规则</th><th>示例（当前 60）</th></tr></thead>
+        <tbody>
+          <tr><td>模糊幅度</td><td>大=15、中=10、小=5；按方向加减并截断到 0～100</td><td>“再降低点” → 调小+小 → 55</td></tr>
+          <tr><td>明确变化量</td><td>优先使用用户给出的整数，不使用默认步长</td><td>“降低 12” → 48</td></tr>
+          <tr><td>明确目标值</td><td>直接采用目标值；方向由目标值与当前值比较</td><td>“设为一半” → 50，方向调小</td></tr>
+          <tr><td>极值</td><td>最大/最亮=100；最小/最暗/静音/归零=0</td><td>“把声音拉满” → 100</td></tr>
+          <tr><td>不变</td><td>仅允许明确保持，统一为明确变化量+0；不能作为理解失败的默认值</td><td>“音量别变” → 60</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" id="results">
+      <h2><span class="n">3</span>正式验收结果</h2>
+      <table>
+        <thead><tr><th>指标</th><th class="num">通过</th><th class="num">总数</th><th class="num">通过率</th><th>判定</th></tr></thead>
+        <tbody>
+          <tr><td>条件 Schema + 代码合法性</td><td class="num">456</td><td class="num">456</td><td class="num">100%</td><td><span class="tag pass">通过</span></td></tr>
+          <tr><td>方向正确</td><td class="num">456</td><td class="num">456</td><td class="num">100%</td><td><span class="tag pass">通过</span></td></tr>
+          <tr><td>幅度类型正确</td><td class="num">456</td><td class="num">456</td><td class="num">100%</td><td><span class="tag pass">通过</span></td></tr>
+          <tr><td>幅度值正确</td><td class="num">455</td><td class="num">456</td><td class="num">99.78%</td><td><span class="tag pass">通过</span></td></tr>
+          <tr><td>原文依据可追溯</td><td class="num">456</td><td class="num">456</td><td class="num">100%</td><td><span class="tag pass">通过</span></td></tr>
+          <tr><td>最终目标值正确</td><td class="num">455</td><td class="num">456</td><td class="num">99.78%</td><td><span class="tag pass">通过</span></td></tr>
+          <tr><td><strong>端到端全部正确</strong></td><td class="num"><strong>455</strong></td><td class="num"><strong>456</strong></td><td class="num"><strong>99.78%</strong></td><td><span class="tag pass">通过</span></td></tr>
+        </tbody>
+      </table>
+      <h3>按场景分组</h3>
+      <table>
+        <thead><tr><th>场景</th><th class="num">通过 / 调用</th><th class="num">通过率</th><th style="width:28%">可视化</th></tr></thead>
+        <tbody>
+          <tr><td>模糊-小</td><td class="num">96 / 96</td><td class="num">100%</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+          <tr><td>模糊-中</td><td class="num">71 / 72</td><td class="num">98.61%</td><td><div class="bar"><span style="width:98.61%"></span></div></td></tr>
+          <tr><td>模糊-大</td><td class="num">72 / 72</td><td class="num">100%</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+          <tr><td>明确变化量</td><td class="num">72 / 72</td><td class="num">100%</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+          <tr><td>明确目标值</td><td class="num">48 / 48</td><td class="num">100%</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+          <tr><td>极值</td><td class="num">36 / 36</td><td class="num">100%</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+          <tr><td>不变</td><td class="num">24 / 24</td><td class="num">100%</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+          <tr><td>带语境</td><td class="num">24 / 24</td><td class="num">100%</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+          <tr><td>数值上下界</td><td class="num">12 / 12</td><td class="num">100%</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+        </tbody>
+      </table>
+      <div class="grid-2">
+        <div class="mini"><h3>三轮语义稳定</h3><p><strong>151 / 152（99.34%）</strong></p><p class="small">仅“把亮度调高”第三轮由中幅漂移为大幅。</p></div>
+        <div class="mini"><h3>时延</h3><p><strong>平均 884.0 ms</strong></p><p class="small">P95 906.7 ms；最大 1394.5 ms。此处为模型抽取调用时延，不含设备执行。</p></div>
+      </div>
+      <div class="callout">
+        <strong>依据稳定率 92.76% 不等于依据错误率</strong>
+        456 次依据都能在用户原文中找到，正确率为 100%；141 / 152 表示三轮选择了完全相同的逐字片段。其余样本只是在“最短片段”和“完整句子”之间变化，不影响可追溯校验。
+      </div>
+    </section>
+
+    <section class="section" id="improvement">
+      <h2><span class="n">4</span>相对第一版的改进幅度</h2>
+      <p>在同一组 152 条用例、同样每条三轮的口径下，条件 Schema 与精确对照提示显著消除了幅度类型和值的交叉污染。</p>
+      <table>
+        <thead><tr><th>指标</th><th class="num">第一版</th><th class="num">改进版</th><th class="num">变化</th></tr></thead>
+        <tbody>
+          <tr><td>端到端完全正确</td><td class="num">82.89%</td><td class="num">99.78%</td><td class="num">+16.89 个百分点</td></tr>
+          <tr><td>幅度值正确</td><td class="num">84.87%</td><td class="num">99.78%</td><td class="num">+14.91 个百分点</td></tr>
+          <tr><td>方向正确</td><td class="num">98.03%</td><td class="num">100%</td><td class="num">+1.97 个百分点</td></tr>
+          <tr><td>条件/代码合法</td><td class="num">91.23%</td><td class="num">100%</td><td class="num">+8.77 个百分点</td></tr>
+          <tr><td>三轮语义稳定</td><td class="num">90.13%</td><td class="num">99.34%</td><td class="num">+9.21 个百分点</td></tr>
+          <tr><td>错误调用数</td><td class="num">78 / 456</td><td class="num">1 / 456</td><td class="num">减少 98.72%</td></tr>
+        </tbody>
+      </table>
+      <p class="small">第一版主要失败模式：模糊大幅被填成 80/100、普通“一些”被填成小、中文目标值换算正确但方向比较错误。改进版前两项由条件 Schema 与幅度对照解决，后一项由“目标值—当前值”显式比较及代码勾稽解决。</p>
+    </section>
+
+    <section class="section" id="failure">
+      <h2><span class="n">5</span>唯一正常指令失败样本</h2>
+      <table>
+        <thead><tr><th>用户原话</th><th>当前值</th><th>期望</th><th>9B 第三轮输出</th><th>影响</th></tr></thead>
+        <tbody><tr><td>把亮度调高</td><td>60</td><td>调大 + 模糊中 → 70</td><td>调大 + 模糊大 → 75</td><td>目标值高 5</td></tr></tbody>
+      </table>
+      <p>方向、类型和逐字依据均正确，仅“无程度词的默认中幅”发生一次随机漂移。这说明默认步长虽已非常稳定，但仍不能只靠单次 LLM 输出实现 100% 确定性。</p>
+      <div class="callout success">
+        <strong>建议的 M2 处理</strong>
+        代码识别到“模糊幅度”后，应结合可维护的程度词映射进行二次勾稽；无任何程度词时固定回落到“中”。若模型输出与代码识别冲突，回喂具体错误码再重试，而不是直接执行 75。
+      </div>
+    </section>
+
+    <section class="section" id="boundary">
+      <h2><span class="n">6</span>安全边界：三段式方案的主要短板</h2>
+      <div class="callout danger">
+        <strong>16 条边界语句仅安全拒答 4 条，拒答率 25%</strong>
+        自动工具选择为 4 / 16，指定工具选择同样为 4 / 16。“指定工具”在当前 9B 调用实现中也不能替代业务上的强制决策；模型有时仍会返回文本而不调用工具。
+      </div>
+      <table>
+        <thead><tr><th>类型</th><th>示例</th><th>实际行为</th><th>风险</th></tr></thead>
+        <tbody>
+          <tr><td>方向缺失</td><td>调一下音量 / 调一下屏幕</td><td>擅自填“调大+中”</td><td><span class="tag fail">会误执行</span></td></tr>
+          <tr><td>查询</td><td>声音小吗</td><td>填“不变+模糊中”</td><td><span class="tag fail">伪造不变指令</span></td></tr>
+          <tr><td>状态陈述</td><td>音量是60</td><td>填“不变+变化量0”</td><td><span class="tag fail">把描述当命令</span></td></tr>
+          <tr><td>方向冲突</td><td>音量先提高再降低</td><td>只抽取“先提高”</td><td><span class="tag fail">丢失第二动作</span></td></tr>
+          <tr><td>二选一咨询</td><td>亮一点还是暗一点好</td><td>填“不变”</td><td><span class="tag fail">错误消歧</span></td></tr>
+          <tr><td>成功拒答</td><td>现在亮度是多少</td><td>不调用工具</td><td><span class="tag pass">安全</span></td></tr>
+        </tbody>
+      </table>
+      <h3>为何“依据存在”仍不够</h3>
+      <p>查询句、陈述句和冲突句的文字当然存在于用户原文，所以“依据是原文子串”只能证明模型没有凭空编造文字，不能证明这段文字表达了可执行意图。原文可追溯是必要条件，不是充分条件。</p>
+    </section>
+
+    <section class="section" id="gate">
+      <h2><span class="n">7</span>建议的生产级代码验证闸门</h2>
+      <p>隔离实现已加入下列确定性校验，187 条 Python 规则测试全部通过。任何一项不满足都不得操作设备。</p>
+      <ol>
+        <li><strong>严格字段与条件类型：</strong>只能有合法方向；模糊幅度只能是大/中/小；明确值只能是 0～100 整数；极值只能是 0 或 100。</li>
+        <li><strong>逐字依据：</strong>归一化后必须是当前用户原话的连续子串，禁止引用系统注入的“当前值”。</li>
+        <li><strong>方向—目标值勾稽：</strong>目标值大于当前值必须调大，小于必须调小，相等必须不变；代码自行计算，不信任模型结论。</li>
+        <li><strong>不变约束：</strong>“不变+模糊幅度”非法；明确变化量为 0 时方向必须不变；非零变化量不能配不变。</li>
+        <li><strong>极值勾稽：</strong>最大/最亮只能到 100，最小/最暗/静音只能到 0，再与当前值比较方向。</li>
+        <li><strong>范围截断：</strong>所有最终目标值统一截断至 0～100；边界处保留用户方向语义，但执行值不越界。</li>
+      </ol>
+      <pre><code>if decision != "执行":
+    return 澄清或忽略
+
+assert evidence_is_exact_substring(user_text, evidence)
+assert magnitude_type_matches_value(type, value)
+assert direction_matches_current_and_target(direction, current, value)
+
+target = calculate_target(current, direction, type, value,
+                          fuzzy_steps={"大": 15, "中": 10, "小": 5})
+target = clamp(target, 0, 100)
+execute(target)</code></pre>
+    </section>
+
+    <section class="section" id="architecture">
+      <h2><span class="n">8</span>推荐上线架构</h2>
+      <p>三段式参数应作为“参数抽取层”，而不是同时承担意图判断、消歧和执行。推荐在它前后各放一道确定性闸门。</p>
+      <div class="flow" aria-label="推荐流程">
+        <div><b>① F 分支路由</b>识别设备域，不代表已授权执行</div>
+        <div><b>② 决策闸门</b>执行 / 澄清 / 忽略；冲突或缺方向一律澄清</div>
+        <div><b>③ 9B 三段式</b>方向 + 条件幅度 + 逐字依据</div>
+        <div><b>④ M2 代码勾稽</b>类型、依据、方向、当前值、目标值全校验</div>
+        <div><b>⑤ 纠错与升级</b>错误码回喂，最多 2 次；仍失败交 API LLM</div>
+        <div><b>⑥ 设备执行</b>只接收代码计算且通过验证的 0～100 目标值</div>
+      </div>
+      <h3>决策闸门的推荐输出</h3>
+      <pre><code>decision: 执行 | 澄清 | 忽略
+reason_evidence: 用户原文逐字片段
+
+只有 decision=执行 时，才进入本报告验证的三段式参数抽取。
+不要用 direction=不变 代替“我没理解”。</code></pre>
+      <h3>M2 回喂错误码建议</h3>
+      <table>
+        <thead><tr><th>错误码</th><th>触发条件</th><th>回喂重点</th></tr></thead>
+        <tbody>
+          <tr><td><code>E_EVIDENCE</code></td><td>依据不是原文子串</td><td>要求逐字重抽，不得改写</td></tr>
+          <tr><td><code>E_TYPE_VALUE</code></td><td>类型和值不匹配</td><td>模糊只能大中小；明确只能整数</td></tr>
+          <tr><td><code>E_DIRECTION_TARGET</code></td><td>方向与当前/目标值冲突</td><td>重新做数值比较</td></tr>
+          <tr><td><code>E_AMBIGUOUS</code></td><td>无方向、二选一、仅查询或描述</td><td>不得执行，向用户澄清</td></tr>
+          <tr><td><code>E_MULTI_ACTION</code></td><td>同时提高再降低等多动作</td><td>拆分或确认顺序，不得只取第一段</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" id="acceptance">
+      <h2><span class="n">9</span>验收结论</h2>
+      <table>
+        <thead><tr><th>验收项</th><th>结果</th><th>结论</th></tr></thead>
+        <tbody>
+          <tr><td>明确调节指令参数抽取</td><td>455 / 456，99.78%</td><td><span class="tag pass">通过</span></td></tr>
+          <tr><td>方向、类型、依据</td><td>均为 100%</td><td><span class="tag pass">通过</span></td></tr>
+          <tr><td>明确变化量/目标值/极值</td><td>156 / 156，100%</td><td><span class="tag pass">通过</span></td></tr>
+          <tr><td>三轮语义稳定</td><td>151 / 152，99.34%</td><td><span class="tag pass">通过</span></td></tr>
+          <tr><td>代码验证器</td><td>187 passed</td><td><span class="tag pass">通过</span></td></tr>
+          <tr><td>歧义/查询/冲突安全拒答</td><td>4 / 16，25%</td><td><span class="tag fail">不通过</span></td></tr>
+          <tr><td>生产文件与服务保护</td><td>4 个哈希一致；PID 123410 保持运行</td><td><span class="tag pass">通过</span></td></tr>
+          <tr><td><strong>整体</strong></td><td>参数层达标，意图安全层未达标</td><td><span class="tag cond">有条件通过</span></td></tr>
+        </tbody>
+      </table>
+      <div class="callout danger">
+        <strong>上线红线</strong>
+        在独立决策闸门落地前，不得让三段式输出直接驱动音量/亮度。若 F 分支已由上游可靠确认“这是明确的单步调节指令”，则本方案可进入灰度；仍须保留 M2 代码校验、两次纠错与 API LLM 升级链路。
+      </div>
+    </section>
+
+    <section class="section" id="integrity">
+      <h2><span class="n">10</span>隔离性与证据</h2>
+      <p>所有新增脚本、日志和测试均位于服务器隔离目录：</p>
+      <pre><code>/home/number/dada-runtime/asr-api-test-env/
+└── xiaozhi-server-fg-typed-magnitude-20260815/</code></pre>
+      <p>未启动隔离 Agent；仅通过既有服务调用 V100 侧 9B。生产 Agent 始终为 <code>PID 123410 · python3 app.py</code>。</p>
+      <table>
+        <thead><tr><th>生产文件</th><th>测试前/后 SHA-256</th><th>状态</th></tr></thead>
+        <tbody>
+          <tr><td>_device_common.py</td><td><code>84d4b758…2db715</code></td><td><span class="tag pass">一致</span></td></tr>
+          <tr><td>branch_prompts.py</td><td><code>b16303d2…c68fbc</code></td><td><span class="tag pass">一致</span></td></tr>
+          <tr><td>app.py</td><td><code>916b61cd…2a87b5</code></td><td><span class="tag pass">一致</span></td></tr>
+          <tr><td>data/.config.yaml</td><td><code>21d75bfe…2252</code></td><td><span class="tag pass">一致</span></td></tr>
+        </tbody>
+      </table>
+      <details>
+        <summary>完整 SHA-256</summary>
+        <pre><code>84d4b7585f7a5ac5067e9365e5ab4259b247e01bf18568b701d0bd2ebf2db715  _device_common.py
+b16303d21e59713411b35b5058c10dd5641148346166090b1c38464286c68fbc  branch_prompts.py
+916b61cde59c64d00f8fb9f84fc6adaab6cdb650aa3d474c4bef8c84d62a87b5  app.py
+21d75bfe378ce848ee9ceec324304995c94e62c7fa56274f580f2c2bb4fc2252  data/.config.yaml</code></pre>
+      </details>
+    </section>
+
+    <footer>
+      本报告结论基于指定服务器、指定 9B 服务和本批测试集。模型或推理参数变更后，应固定随机参数并重跑同一回归集；新增口语表达应持续进入 M2 回归库。
+    </footer>
+  </main>
+</body>
+</html>

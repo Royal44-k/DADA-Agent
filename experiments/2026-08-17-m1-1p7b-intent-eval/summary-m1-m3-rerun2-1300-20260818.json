@@ -1,0 +1,1703 @@
+{
+  "labels": [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
+    "g",
+    "h",
+    "i",
+    "j",
+    "k",
+    "l",
+    "m"
+  ],
+  "branch_names": {
+    "a": "新建提醒",
+    "b": "修改/取消/完成提醒",
+    "c": "查询提醒",
+    "d": "增删改记忆",
+    "e": "查询记忆",
+    "f": "调整音量",
+    "g": "调整亮度",
+    "h": "查询天气",
+    "i": "查询时间日期",
+    "j": "产品/知识查询",
+    "k": "晚安",
+    "l": "再见",
+    "m": "闲聊/其他"
+  },
+  "final": {
+    "total": 1300,
+    "correct": 1191,
+    "accuracy": 0.9161538461538462,
+    "accuracy_ci95": [
+      0.8998339303424329,
+      0.9300215652625722
+    ],
+    "macro_f1": 0.9156666667579975,
+    "valid_labels": 1300,
+    "per_label": {
+      "a": {
+        "name": "新建提醒",
+        "support": 100,
+        "predicted": 114,
+        "correct": 95,
+        "precision": 0.8333333333333334,
+        "recall": 0.95,
+        "f1": 0.8878504672897196,
+        "recall_ci95": [
+          0.8882495307680808,
+          0.9784563208456319
+        ]
+      },
+      "b": {
+        "name": "修改/取消/完成提醒",
+        "support": 100,
+        "predicted": 111,
+        "correct": 98,
+        "precision": 0.8828828828828829,
+        "recall": 0.98,
+        "f1": 0.9289099526066351,
+        "recall_ci95": [
+          0.929988209271456,
+          0.9944980324498376
+        ]
+      },
+      "c": {
+        "name": "查询提醒",
+        "support": 100,
+        "predicted": 97,
+        "correct": 96,
+        "precision": 0.9896907216494846,
+        "recall": 0.96,
+        "f1": 0.9746192893401014,
+        "recall_ci95": [
+          0.9016292856411208,
+          0.9843366960084523
+        ]
+      },
+      "d": {
+        "name": "增删改记忆",
+        "support": 100,
+        "predicted": 102,
+        "correct": 95,
+        "precision": 0.9313725490196079,
+        "recall": 0.95,
+        "f1": 0.9405940594059405,
+        "recall_ci95": [
+          0.8882495307680808,
+          0.9784563208456319
+        ]
+      },
+      "e": {
+        "name": "查询记忆",
+        "support": 100,
+        "predicted": 80,
+        "correct": 79,
+        "precision": 0.9875,
+        "recall": 0.79,
+        "f1": 0.8777777777777778,
+        "recall_ci95": [
+          0.7002003116591013,
+          0.858343459380847
+        ]
+      },
+      "f": {
+        "name": "调整音量",
+        "support": 100,
+        "predicted": 111,
+        "correct": 100,
+        "precision": 0.9009009009009009,
+        "recall": 1.0,
+        "f1": 0.947867298578199,
+        "recall_ci95": [
+          0.9630065017930143,
+          1.0
+        ]
+      },
+      "g": {
+        "name": "调整亮度",
+        "support": 100,
+        "predicted": 101,
+        "correct": 100,
+        "precision": 0.9900990099009901,
+        "recall": 1.0,
+        "f1": 0.9950248756218906,
+        "recall_ci95": [
+          0.9630065017930143,
+          1.0
+        ]
+      },
+      "h": {
+        "name": "查询天气",
+        "support": 100,
+        "predicted": 102,
+        "correct": 100,
+        "precision": 0.9803921568627451,
+        "recall": 1.0,
+        "f1": 0.99009900990099,
+        "recall_ci95": [
+          0.9630065017930143,
+          1.0
+        ]
+      },
+      "i": {
+        "name": "查询时间日期",
+        "support": 100,
+        "predicted": 99,
+        "correct": 98,
+        "precision": 0.98989898989899,
+        "recall": 0.98,
+        "f1": 0.9849246231155778,
+        "recall_ci95": [
+          0.929988209271456,
+          0.9944980324498376
+        ]
+      },
+      "j": {
+        "name": "产品/知识查询",
+        "support": 100,
+        "predicted": 75,
+        "correct": 72,
+        "precision": 0.96,
+        "recall": 0.72,
+        "f1": 0.8228571428571428,
+        "recall_ci95": [
+          0.6251197129007884,
+          0.7986031478881379
+        ]
+      },
+      "k": {
+        "name": "晚安",
+        "support": 100,
+        "predicted": 102,
+        "correct": 92,
+        "precision": 0.9019607843137255,
+        "recall": 0.92,
+        "f1": 0.9108910891089109,
+        "recall_ci95": [
+          0.8500189229905127,
+          0.9589065385156194
+        ]
+      },
+      "l": {
+        "name": "再见",
+        "support": 100,
+        "predicted": 75,
+        "correct": 74,
+        "precision": 0.9866666666666667,
+        "recall": 0.74,
+        "f1": 0.8457142857142858,
+        "recall_ci95": [
+          0.6462901055081282,
+          0.8159530153525186
+        ]
+      },
+      "m": {
+        "name": "闲聊/其他",
+        "support": 100,
+        "predicted": 131,
+        "correct": 92,
+        "precision": 0.7022900763358778,
+        "recall": 0.92,
+        "f1": 0.7965367965367965,
+        "recall_ci95": [
+          0.8500189229905127,
+          0.9589065385156194
+        ]
+      }
+    },
+    "confusion_matrix": {
+      "a": {
+        "a": 95,
+        "b": 3,
+        "c": 1,
+        "d": 1,
+        "e": 0,
+        "f": 0,
+        "g": 0,
+        "h": 0,
+        "i": 0,
+        "j": 0,
+        "k": 0,
+        "l": 0,
+        "m": 0
+      },
+      "b": {
+        "a": 0,
+        "b": 98,
+        "c": 0,
+        "d": 0,
+        "e": 0,
+        "f": 0,
+        "g": 0,
+        "h": 0,
+        "i": 0,
+        "j": 0,
+        "k": 0,
+        "l": 0,
+        "m": 2
+      },
+      "c": {
+        "a": 2,
+        "b": 1,
+        "c": 96,
+        "d": 0,
+        "e": 1,
+        "f": 0,
+        "g": 0,
+        "h": 0,
+        "i": 0,
+        "j": 0,
+        "k": 0,
+        "l": 0,
+        "m": 0
+      },
+      "d": {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 95,
+        "e": 0,
+        "f": 0,
+        "g": 0,
+        "h": 0,
+        "i": 0,
+        "j": 0,
+        "k": 0,
+        "l": 0,
+        "m": 5
+      },
+      "e": {
+        "a": 3,
+        "b": 1,
+        "c": 0,
+        "d": 6,
+        "e": 79,
+        "f": 0,
+        "g": 0,
+        "h": 0,
+        "i": 1,
+        "j": 2,
+        "k": 0,
+        "l": 0,
+        "m": 8
+      },
+      "f": {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 0,
+        "e": 0,
+        "f": 100,
+        "g": 0,
+        "h": 0,
+        "i": 0,
+        "j": 0,
+        "k": 0,
+        "l": 0,
+        "m": 0
+      },
+      "g": {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 0,
+        "e": 0,
+        "f": 0,
+        "g": 100,
+        "h": 0,
+        "i": 0,
+        "j": 0,
+        "k": 0,
+        "l": 0,
+        "m": 0
+      },
+      "h": {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 0,
+        "e": 0,
+        "f": 0,
+        "g": 0,
+        "h": 100,
+        "i": 0,
+        "j": 0,
+        "k": 0,
+        "l": 0,
+        "m": 0
+      },
+      "i": {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 0,
+        "e": 0,
+        "f": 0,
+        "g": 0,
+        "h": 0,
+        "i": 98,
+        "j": 0,
+        "k": 0,
+        "l": 0,
+        "m": 2
+      },
+      "j": {
+        "a": 7,
+        "b": 4,
+        "c": 0,
+        "d": 0,
+        "e": 0,
+        "f": 6,
+        "g": 1,
+        "h": 1,
+        "i": 0,
+        "j": 72,
+        "k": 0,
+        "l": 0,
+        "m": 9
+      },
+      "k": {
+        "a": 1,
+        "b": 2,
+        "c": 0,
+        "d": 0,
+        "e": 0,
+        "f": 0,
+        "g": 0,
+        "h": 1,
+        "i": 0,
+        "j": 0,
+        "k": 92,
+        "l": 0,
+        "m": 4
+      },
+      "l": {
+        "a": 4,
+        "b": 2,
+        "c": 0,
+        "d": 0,
+        "e": 0,
+        "f": 1,
+        "g": 0,
+        "h": 0,
+        "i": 0,
+        "j": 0,
+        "k": 10,
+        "l": 74,
+        "m": 9
+      },
+      "m": {
+        "a": 2,
+        "b": 0,
+        "c": 0,
+        "d": 0,
+        "e": 0,
+        "f": 4,
+        "g": 0,
+        "h": 0,
+        "i": 0,
+        "j": 1,
+        "k": 0,
+        "l": 1,
+        "m": 92
+      }
+    },
+    "top_confusions": [
+      {
+        "truth": "l",
+        "prediction": "k",
+        "count": 10
+      },
+      {
+        "truth": "j",
+        "prediction": "m",
+        "count": 9
+      },
+      {
+        "truth": "l",
+        "prediction": "m",
+        "count": 9
+      },
+      {
+        "truth": "e",
+        "prediction": "m",
+        "count": 8
+      },
+      {
+        "truth": "j",
+        "prediction": "a",
+        "count": 7
+      },
+      {
+        "truth": "e",
+        "prediction": "d",
+        "count": 6
+      },
+      {
+        "truth": "j",
+        "prediction": "f",
+        "count": 6
+      },
+      {
+        "truth": "d",
+        "prediction": "m",
+        "count": 5
+      },
+      {
+        "truth": "j",
+        "prediction": "b",
+        "count": 4
+      },
+      {
+        "truth": "k",
+        "prediction": "m",
+        "count": 4
+      },
+      {
+        "truth": "l",
+        "prediction": "a",
+        "count": 4
+      },
+      {
+        "truth": "m",
+        "prediction": "f",
+        "count": 4
+      },
+      {
+        "truth": "a",
+        "prediction": "b",
+        "count": 3
+      },
+      {
+        "truth": "e",
+        "prediction": "a",
+        "count": 3
+      },
+      {
+        "truth": "b",
+        "prediction": "m",
+        "count": 2
+      },
+      {
+        "truth": "c",
+        "prediction": "a",
+        "count": 2
+      },
+      {
+        "truth": "e",
+        "prediction": "j",
+        "count": 2
+      },
+      {
+        "truth": "i",
+        "prediction": "m",
+        "count": 2
+      },
+      {
+        "truth": "k",
+        "prediction": "b",
+        "count": 2
+      },
+      {
+        "truth": "l",
+        "prediction": "b",
+        "count": 2
+      },
+      {
+        "truth": "m",
+        "prediction": "a",
+        "count": 2
+      },
+      {
+        "truth": "a",
+        "prediction": "c",
+        "count": 1
+      },
+      {
+        "truth": "a",
+        "prediction": "d",
+        "count": 1
+      },
+      {
+        "truth": "c",
+        "prediction": "b",
+        "count": 1
+      },
+      {
+        "truth": "c",
+        "prediction": "e",
+        "count": 1
+      },
+      {
+        "truth": "e",
+        "prediction": "b",
+        "count": 1
+      },
+      {
+        "truth": "e",
+        "prediction": "i",
+        "count": 1
+      },
+      {
+        "truth": "j",
+        "prediction": "g",
+        "count": 1
+      },
+      {
+        "truth": "j",
+        "prediction": "h",
+        "count": 1
+      },
+      {
+        "truth": "k",
+        "prediction": "a",
+        "count": 1
+      },
+      {
+        "truth": "k",
+        "prediction": "h",
+        "count": 1
+      },
+      {
+        "truth": "l",
+        "prediction": "f",
+        "count": 1
+      },
+      {
+        "truth": "m",
+        "prediction": "j",
+        "count": 1
+      },
+      {
+        "truth": "m",
+        "prediction": "l",
+        "count": 1
+      }
+    ]
+  },
+  "m1_initial": {
+    "total": 1300,
+    "correct": 1257,
+    "accuracy": 0.9669230769230769,
+    "accuracy_ci95": [
+      0.9557431998479885,
+      0.9753515983631723
+    ],
+    "macro_f1": 0.9668821897225985,
+    "valid_labels": 1300,
+    "per_label": {
+      "a": {
+        "name": "新建提醒",
+        "support": 100,
+        "predicted": 102,
+        "correct": 97,
+        "precision": 0.9509803921568627,
+        "recall": 0.97,
+        "f1": 0.9603960396039604,
+        "recall_ci95": [
+          0.9154806357094724,
+          0.9897454759759611
+        ]
+      },
+      "b": {
+        "name": "修改/取消/完成提醒",
+        "support": 100,
+        "predicted": 103,
+        "correct": 99,
+        "precision": 0.9611650485436893,
+        "recall": 0.99,
+        "f1": 0.9753694581280788,
+        "recall_ci95": [
+          0.9455138038212946,
+          0.9982325679358593
+        ]
+      },
+      "c": {
+        "name": "查询提醒",
+        "support": 100,
+        "predicted": 96,
+        "correct": 95,
+        "precision": 0.9895833333333334,
+        "recall": 0.95,
+        "f1": 0.9693877551020408,
+        "recall_ci95": [
+          0.8882495307680808,
+          0.9784563208456319
+        ]
+      },
+      "d": {
+        "name": "增删改记忆",
+        "support": 100,
+        "predicted": 100,
+        "correct": 98,
+        "precision": 0.98,
+        "recall": 0.98,
+        "f1": 0.98,
+        "recall_ci95": [
+          0.929988209271456,
+          0.9944980324498376
+        ]
+      },
+      "e": {
+        "name": "查询记忆",
+        "support": 100,
+        "predicted": 98,
+        "correct": 95,
+        "precision": 0.9693877551020408,
+        "recall": 0.95,
+        "f1": 0.9595959595959594,
+        "recall_ci95": [
+          0.8882495307680808,
+          0.9784563208456319
+        ]
+      },
+      "f": {
+        "name": "调整音量",
+        "support": 100,
+        "predicted": 107,
+        "correct": 100,
+        "precision": 0.9345794392523364,
+        "recall": 1.0,
+        "f1": 0.966183574879227,
+        "recall_ci95": [
+          0.9630065017930143,
+          1.0
+        ]
+      },
+      "g": {
+        "name": "调整亮度",
+        "support": 100,
+        "predicted": 101,
+        "correct": 100,
+        "precision": 0.9900990099009901,
+        "recall": 1.0,
+        "f1": 0.9950248756218906,
+        "recall_ci95": [
+          0.9630065017930143,
+          1.0
+        ]
+      },
+      "h": {
+        "name": "查询天气",
+        "support": 100,
+        "predicted": 101,
+        "correct": 100,
+        "precision": 0.9900990099009901,
+        "recall": 1.0,
+        "f1": 0.9950248756218906,
+        "recall_ci95": [
+          0.9630065017930143,
+          1.0
+        ]
+      },
+      "i": {
+        "name": "查询时间日期",
+        "support": 100,
+        "predicted": 100,
+        "correct": 100,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "recall_ci95": [
+          0.9630065017930143,
+          1.0
+        ]
+      },
+      "j": {
+        "name": "产品/知识查询",
+        "support": 100,
+        "predicted": 90,
+        "correct": 89,
+        "precision": 0.9888888888888889,
+        "recall": 0.89,
+        "f1": 0.9368421052631579,
+        "recall_ci95": [
+          0.8136870349691969,
+          0.9374580364293543
+        ]
+      },
+      "k": {
+        "name": "晚安",
+        "support": 100,
+        "predicted": 104,
+        "correct": 97,
+        "precision": 0.9326923076923077,
+        "recall": 0.97,
+        "f1": 0.9509803921568627,
+        "recall_ci95": [
+          0.9154806357094724,
+          0.9897454759759611
+        ]
+      },
+      "l": {
+        "name": "再见",
+        "support": 100,
+        "predicted": 92,
+        "correct": 92,
+        "precision": 1.0,
+        "recall": 0.92,
+        "f1": 0.9583333333333334,
+        "recall_ci95": [
+          0.8500189229905127,
+          0.9589065385156194
+        ]
+      },
+      "m": {
+        "name": "闲聊/其他",
+        "support": 100,
+        "predicted": 106,
+        "correct": 95,
+        "precision": 0.8962264150943396,
+        "recall": 0.95,
+        "f1": 0.9223300970873787,
+        "recall_ci95": [
+          0.8882495307680808,
+          0.9784563208456319
+        ]
+      }
+    },
+    "confusion_matrix": {
+      "a": {
+        "a": 97,
+        "b": 1,
+        "c": 1,
+        "d": 0,
+        "e": 0,
+        "f": 0,
+        "g": 0,
+        "h": 0,
+        "i": 0,
+        "j": 0,
+        "k": 0,
+        "l": 0,
+        "m": 1
+      },
+      "b": {
+        "a": 0,
+        "b": 99,
+        "c": 0,
+        "d": 0,
+        "e": 0,
+        "f": 0,
+        "g": 0,
+        "h": 0,
+        "i": 0,
+        "j": 0,
+        "k": 0,
+        "l": 0,
+        "m": 1
+      },
+      "c": {
+        "a": 2,
+        "b": 1,
+        "c": 95,
+        "d": 0,
+        "e": 1,
+        "f": 0,
+        "g": 0,
+        "h": 0,
+        "i": 0,
+        "j": 0,
+        "k": 0,
+        "l": 0,
+        "m": 1
+      },
+      "d": {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 98,
+        "e": 2,
+        "f": 0,
+        "g": 0,
+        "h": 0,
+        "i": 0,
+        "j": 0,
+        "k": 0,
+        "l": 0,
+        "m": 0
+      },
+      "e": {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 2,
+        "e": 95,
+        "f": 0,
+        "g": 0,
+        "h": 0,
+        "i": 0,
+        "j": 1,
+        "k": 0,
+        "l": 0,
+        "m": 2
+      },
+      "f": {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 0,
+        "e": 0,
+        "f": 100,
+        "g": 0,
+        "h": 0,
+        "i": 0,
+        "j": 0,
+        "k": 0,
+        "l": 0,
+        "m": 0
+      },
+      "g": {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 0,
+        "e": 0,
+        "f": 0,
+        "g": 100,
+        "h": 0,
+        "i": 0,
+        "j": 0,
+        "k": 0,
+        "l": 0,
+        "m": 0
+      },
+      "h": {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 0,
+        "e": 0,
+        "f": 0,
+        "g": 0,
+        "h": 100,
+        "i": 0,
+        "j": 0,
+        "k": 0,
+        "l": 0,
+        "m": 0
+      },
+      "i": {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 0,
+        "e": 0,
+        "f": 0,
+        "g": 0,
+        "h": 0,
+        "i": 100,
+        "j": 0,
+        "k": 0,
+        "l": 0,
+        "m": 0
+      },
+      "j": {
+        "a": 1,
+        "b": 1,
+        "c": 0,
+        "d": 0,
+        "e": 0,
+        "f": 3,
+        "g": 1,
+        "h": 0,
+        "i": 0,
+        "j": 89,
+        "k": 0,
+        "l": 0,
+        "m": 5
+      },
+      "k": {
+        "a": 0,
+        "b": 1,
+        "c": 0,
+        "d": 0,
+        "e": 0,
+        "f": 0,
+        "g": 0,
+        "h": 1,
+        "i": 0,
+        "j": 0,
+        "k": 97,
+        "l": 0,
+        "m": 1
+      },
+      "l": {
+        "a": 1,
+        "b": 0,
+        "c": 0,
+        "d": 0,
+        "e": 0,
+        "f": 0,
+        "g": 0,
+        "h": 0,
+        "i": 0,
+        "j": 0,
+        "k": 7,
+        "l": 92,
+        "m": 0
+      },
+      "m": {
+        "a": 1,
+        "b": 0,
+        "c": 0,
+        "d": 0,
+        "e": 0,
+        "f": 4,
+        "g": 0,
+        "h": 0,
+        "i": 0,
+        "j": 0,
+        "k": 0,
+        "l": 0,
+        "m": 95
+      }
+    },
+    "top_confusions": [
+      {
+        "truth": "l",
+        "prediction": "k",
+        "count": 7
+      },
+      {
+        "truth": "j",
+        "prediction": "m",
+        "count": 5
+      },
+      {
+        "truth": "m",
+        "prediction": "f",
+        "count": 4
+      },
+      {
+        "truth": "j",
+        "prediction": "f",
+        "count": 3
+      },
+      {
+        "truth": "c",
+        "prediction": "a",
+        "count": 2
+      },
+      {
+        "truth": "d",
+        "prediction": "e",
+        "count": 2
+      },
+      {
+        "truth": "e",
+        "prediction": "d",
+        "count": 2
+      },
+      {
+        "truth": "e",
+        "prediction": "m",
+        "count": 2
+      },
+      {
+        "truth": "a",
+        "prediction": "b",
+        "count": 1
+      },
+      {
+        "truth": "a",
+        "prediction": "c",
+        "count": 1
+      },
+      {
+        "truth": "a",
+        "prediction": "m",
+        "count": 1
+      },
+      {
+        "truth": "b",
+        "prediction": "m",
+        "count": 1
+      },
+      {
+        "truth": "c",
+        "prediction": "b",
+        "count": 1
+      },
+      {
+        "truth": "c",
+        "prediction": "e",
+        "count": 1
+      },
+      {
+        "truth": "c",
+        "prediction": "m",
+        "count": 1
+      },
+      {
+        "truth": "e",
+        "prediction": "j",
+        "count": 1
+      },
+      {
+        "truth": "j",
+        "prediction": "a",
+        "count": 1
+      },
+      {
+        "truth": "j",
+        "prediction": "b",
+        "count": 1
+      },
+      {
+        "truth": "j",
+        "prediction": "g",
+        "count": 1
+      },
+      {
+        "truth": "k",
+        "prediction": "b",
+        "count": 1
+      },
+      {
+        "truth": "k",
+        "prediction": "h",
+        "count": 1
+      },
+      {
+        "truth": "k",
+        "prediction": "m",
+        "count": 1
+      },
+      {
+        "truth": "l",
+        "prediction": "a",
+        "count": 1
+      },
+      {
+        "truth": "m",
+        "prediction": "a",
+        "count": 1
+      }
+    ]
+  },
+  "m3": {
+    "used": 285,
+    "handoff_rate": 0.21923076923076923,
+    "initial_correct": 248,
+    "initial_accuracy": 0.8701754385964913,
+    "final_correct": 182,
+    "final_accuracy": 0.6385964912280702,
+    "corrected": 8,
+    "worsened": 74,
+    "net_correct_delta": -66,
+    "changed": 87,
+    "unchanged": 198,
+    "tag_counts": {
+      "m3": 285,
+      "m3_disputed": 87
+    },
+    "transitions": [
+      {
+        "from": "l",
+        "to": "m",
+        "count": 9
+      },
+      {
+        "from": "e",
+        "to": "m",
+        "count": 8
+      },
+      {
+        "from": "j",
+        "to": "m",
+        "count": 7
+      },
+      {
+        "from": "e",
+        "to": "d",
+        "count": 6
+      },
+      {
+        "from": "j",
+        "to": "a",
+        "count": 5
+      },
+      {
+        "from": "d",
+        "to": "m",
+        "count": 4
+      },
+      {
+        "from": "k",
+        "to": "m",
+        "count": 4
+      },
+      {
+        "from": "l",
+        "to": "k",
+        "count": 4
+      },
+      {
+        "from": "e",
+        "to": "a",
+        "count": 3
+      },
+      {
+        "from": "j",
+        "to": "f",
+        "count": 3
+      },
+      {
+        "from": "l",
+        "to": "a",
+        "count": 3
+      },
+      {
+        "from": "a",
+        "to": "b",
+        "count": 2
+      },
+      {
+        "from": "e",
+        "to": "j",
+        "count": 2
+      },
+      {
+        "from": "i",
+        "to": "m",
+        "count": 2
+      },
+      {
+        "from": "j",
+        "to": "b",
+        "count": 2
+      },
+      {
+        "from": "k",
+        "to": "b",
+        "count": 2
+      },
+      {
+        "from": "m",
+        "to": "a",
+        "count": 2
+      },
+      {
+        "from": "m",
+        "to": "j",
+        "count": 2
+      },
+      {
+        "from": "b",
+        "to": "c",
+        "count": 1
+      },
+      {
+        "from": "b",
+        "to": "m",
+        "count": 1
+      },
+      {
+        "from": "c",
+        "to": "b",
+        "count": 1
+      },
+      {
+        "from": "d",
+        "to": "e",
+        "count": 1
+      },
+      {
+        "from": "e",
+        "to": "b",
+        "count": 1
+      },
+      {
+        "from": "e",
+        "to": "i",
+        "count": 1
+      },
+      {
+        "from": "j",
+        "to": "e",
+        "count": 1
+      },
+      {
+        "from": "j",
+        "to": "h",
+        "count": 1
+      },
+      {
+        "from": "k",
+        "to": "a",
+        "count": 1
+      },
+      {
+        "from": "l",
+        "to": "b",
+        "count": 1
+      },
+      {
+        "from": "l",
+        "to": "f",
+        "count": 1
+      },
+      {
+        "from": "m",
+        "to": "b",
+        "count": 1
+      },
+      {
+        "from": "m",
+        "to": "c",
+        "count": 1
+      },
+      {
+        "from": "m",
+        "to": "d",
+        "count": 1
+      },
+      {
+        "from": "m",
+        "to": "e",
+        "count": 1
+      },
+      {
+        "from": "m",
+        "to": "k",
+        "count": 1
+      },
+      {
+        "from": "m",
+        "to": "l",
+        "count": 1
+      }
+    ]
+  },
+  "per_label": {
+    "a": {
+      "name": "新建提醒",
+      "support": 100,
+      "m1_correct": 97,
+      "m1_accuracy": 0.97,
+      "final_correct": 95,
+      "final_accuracy": 0.95,
+      "delta_correct": -2,
+      "delta_accuracy": -0.02,
+      "m3_used": 19,
+      "m3_rate": 0.19,
+      "m3_corrected": 0,
+      "m3_worsened": 2
+    },
+    "b": {
+      "name": "修改/取消/完成提醒",
+      "support": 100,
+      "m1_correct": 99,
+      "m1_accuracy": 0.99,
+      "final_correct": 98,
+      "final_accuracy": 0.98,
+      "delta_correct": -1,
+      "delta_accuracy": -0.01,
+      "m3_used": 18,
+      "m3_rate": 0.18,
+      "m3_corrected": 0,
+      "m3_worsened": 1
+    },
+    "c": {
+      "name": "查询提醒",
+      "support": 100,
+      "m1_correct": 95,
+      "m1_accuracy": 0.95,
+      "final_correct": 96,
+      "final_accuracy": 0.96,
+      "delta_correct": 1,
+      "delta_accuracy": 0.01,
+      "m3_used": 9,
+      "m3_rate": 0.09,
+      "m3_corrected": 2,
+      "m3_worsened": 1
+    },
+    "d": {
+      "name": "增删改记忆",
+      "support": 100,
+      "m1_correct": 98,
+      "m1_accuracy": 0.98,
+      "final_correct": 95,
+      "final_accuracy": 0.95,
+      "delta_correct": -3,
+      "delta_accuracy": -0.03,
+      "m3_used": 18,
+      "m3_rate": 0.18,
+      "m3_corrected": 1,
+      "m3_worsened": 4
+    },
+    "e": {
+      "name": "查询记忆",
+      "support": 100,
+      "m1_correct": 95,
+      "m1_accuracy": 0.95,
+      "final_correct": 79,
+      "final_accuracy": 0.79,
+      "delta_correct": -16,
+      "delta_accuracy": -0.16,
+      "m3_used": 37,
+      "m3_rate": 0.37,
+      "m3_corrected": 3,
+      "m3_worsened": 19
+    },
+    "f": {
+      "name": "调整音量",
+      "support": 100,
+      "m1_correct": 100,
+      "m1_accuracy": 1.0,
+      "final_correct": 100,
+      "final_accuracy": 1.0,
+      "delta_correct": 0,
+      "delta_accuracy": 0.0,
+      "m3_used": 10,
+      "m3_rate": 0.1,
+      "m3_corrected": 0,
+      "m3_worsened": 0
+    },
+    "g": {
+      "name": "调整亮度",
+      "support": 100,
+      "m1_correct": 100,
+      "m1_accuracy": 1.0,
+      "final_correct": 100,
+      "final_accuracy": 1.0,
+      "delta_correct": 0,
+      "delta_accuracy": 0.0,
+      "m3_used": 1,
+      "m3_rate": 0.01,
+      "m3_corrected": 0,
+      "m3_worsened": 0
+    },
+    "h": {
+      "name": "查询天气",
+      "support": 100,
+      "m1_correct": 100,
+      "m1_accuracy": 1.0,
+      "final_correct": 100,
+      "final_accuracy": 1.0,
+      "delta_correct": 0,
+      "delta_accuracy": 0.0,
+      "m3_used": 2,
+      "m3_rate": 0.02,
+      "m3_corrected": 0,
+      "m3_worsened": 0
+    },
+    "i": {
+      "name": "查询时间日期",
+      "support": 100,
+      "m1_correct": 100,
+      "m1_accuracy": 1.0,
+      "final_correct": 98,
+      "final_accuracy": 0.98,
+      "delta_correct": -2,
+      "delta_accuracy": -0.02,
+      "m3_used": 15,
+      "m3_rate": 0.15,
+      "m3_corrected": 0,
+      "m3_worsened": 2
+    },
+    "j": {
+      "name": "产品/知识查询",
+      "support": 100,
+      "m1_correct": 89,
+      "m1_accuracy": 0.89,
+      "final_correct": 72,
+      "final_accuracy": 0.72,
+      "delta_correct": -17,
+      "delta_accuracy": -0.17,
+      "m3_used": 45,
+      "m3_rate": 0.45,
+      "m3_corrected": 1,
+      "m3_worsened": 18
+    },
+    "k": {
+      "name": "晚安",
+      "support": 100,
+      "m1_correct": 97,
+      "m1_accuracy": 0.97,
+      "final_correct": 92,
+      "final_accuracy": 0.92,
+      "delta_correct": -5,
+      "delta_accuracy": -0.05,
+      "m3_used": 73,
+      "m3_rate": 0.73,
+      "m3_corrected": 1,
+      "m3_worsened": 6
+    },
+    "l": {
+      "name": "再见",
+      "support": 100,
+      "m1_correct": 92,
+      "m1_accuracy": 0.92,
+      "final_correct": 74,
+      "final_accuracy": 0.74,
+      "delta_correct": -18,
+      "delta_accuracy": -0.18,
+      "m3_used": 28,
+      "m3_rate": 0.28,
+      "m3_corrected": 0,
+      "m3_worsened": 18
+    },
+    "m": {
+      "name": "闲聊/其他",
+      "support": 100,
+      "m1_correct": 95,
+      "m1_accuracy": 0.95,
+      "final_correct": 92,
+      "final_accuracy": 0.92,
+      "delta_correct": -3,
+      "delta_accuracy": -0.03,
+      "m3_used": 10,
+      "m3_rate": 0.1,
+      "m3_corrected": 0,
+      "m3_worsened": 3
+    }
+  },
+  "strata": {
+    "asr_noise": {
+      "false": {
+        "total": 1088,
+        "m1_correct": 1059,
+        "m1_accuracy": 0.9733455882352942,
+        "final_correct": 1012,
+        "final_accuracy": 0.9301470588235294,
+        "delta_correct": -47,
+        "m3_used": 218,
+        "m3_corrected": 6,
+        "m3_worsened": 53,
+        "route_failures": 0
+      },
+      "true": {
+        "total": 212,
+        "m1_correct": 198,
+        "m1_accuracy": 0.9339622641509434,
+        "final_correct": 179,
+        "final_accuracy": 0.8443396226415094,
+        "delta_correct": -19,
+        "m3_used": 67,
+        "m3_corrected": 2,
+        "m3_worsened": 21,
+        "route_failures": 0
+      }
+    },
+    "rounds": {
+      "1": {
+        "total": 209,
+        "m1_correct": 203,
+        "m1_accuracy": 0.9712918660287081,
+        "final_correct": 192,
+        "final_accuracy": 0.9186602870813397,
+        "delta_correct": -11,
+        "m3_used": 55,
+        "m3_corrected": 3,
+        "m3_worsened": 14,
+        "route_failures": 0
+      },
+      "2": {
+        "total": 643,
+        "m1_correct": 615,
+        "m1_accuracy": 0.9564541213063764,
+        "final_correct": 579,
+        "final_accuracy": 0.9004665629860031,
+        "delta_correct": -36,
+        "m3_used": 155,
+        "m3_corrected": 3,
+        "m3_worsened": 39,
+        "route_failures": 0
+      },
+      "3": {
+        "total": 250,
+        "m1_correct": 243,
+        "m1_accuracy": 0.972,
+        "final_correct": 231,
+        "final_accuracy": 0.924,
+        "delta_correct": -12,
+        "m3_used": 39,
+        "m3_corrected": 1,
+        "m3_worsened": 13,
+        "route_failures": 0
+      },
+      "4+": {
+        "total": 198,
+        "m1_correct": 196,
+        "m1_accuracy": 0.98989898989899,
+        "final_correct": 189,
+        "final_accuracy": 0.9545454545454546,
+        "delta_correct": -7,
+        "m3_used": 36,
+        "m3_corrected": 1,
+        "m3_worsened": 8,
+        "route_failures": 0
+      }
+    },
+    "hard_pair_presence": {
+      "false": {
+        "total": 1228,
+        "m1_correct": 1188,
+        "m1_accuracy": 0.9674267100977199,
+        "final_correct": 1126,
+        "final_accuracy": 0.9169381107491856,
+        "delta_correct": -62,
+        "m3_used": 271,
+        "m3_corrected": 7,
+        "m3_worsened": 69,
+        "route_failures": 0
+      },
+      "true": {
+        "total": 72,
+        "m1_correct": 69,
+        "m1_accuracy": 0.9583333333333334,
+        "final_correct": 65,
+        "final_accuracy": 0.9027777777777778,
+        "delta_correct": -4,
+        "m3_used": 14,
+        "m3_corrected": 1,
+        "m3_worsened": 5,
+        "route_failures": 0
+      }
+    },
+    "hard_pair": {
+      "a/b": {
+        "total": 12,
+        "m1_correct": 12,
+        "m1_accuracy": 1.0,
+        "final_correct": 12,
+        "final_accuracy": 1.0,
+        "delta_correct": 0,
+        "m3_used": 1,
+        "m3_corrected": 0,
+        "m3_worsened": 0,
+        "route_failures": 0
+      },
+      "a/d": {
+        "total": 9,
+        "m1_correct": 9,
+        "m1_accuracy": 1.0,
+        "final_correct": 9,
+        "final_accuracy": 1.0,
+        "delta_correct": 0,
+        "m3_used": 0,
+        "m3_corrected": 0,
+        "m3_worsened": 0,
+        "route_failures": 0
+      },
+      "b/m": {
+        "total": 12,
+        "m1_correct": 11,
+        "m1_accuracy": 0.9166666666666666,
+        "final_correct": 10,
+        "final_accuracy": 0.8333333333333334,
+        "delta_correct": -1,
+        "m3_used": 1,
+        "m3_corrected": 0,
+        "m3_worsened": 1,
+        "route_failures": 0
+      },
+      "c/i": {
+        "total": 15,
+        "m1_correct": 15,
+        "m1_accuracy": 1.0,
+        "final_correct": 15,
+        "final_accuracy": 1.0,
+        "delta_correct": 0,
+        "m3_used": 3,
+        "m3_corrected": 0,
+        "m3_worsened": 0,
+        "route_failures": 0
+      },
+      "e/j": {
+        "total": 11,
+        "m1_correct": 9,
+        "m1_accuracy": 0.8181818181818182,
+        "final_correct": 7,
+        "final_accuracy": 0.6363636363636364,
+        "delta_correct": -2,
+        "m3_used": 7,
+        "m3_corrected": 1,
+        "m3_worsened": 3,
+        "route_failures": 0
+      },
+      "f/m": {
+        "total": 8,
+        "m1_correct": 8,
+        "m1_accuracy": 1.0,
+        "final_correct": 8,
+        "final_accuracy": 1.0,
+        "delta_correct": 0,
+        "m3_used": 0,
+        "m3_corrected": 0,
+        "m3_worsened": 0,
+        "route_failures": 0
+      },
+      "j/m": {
+        "total": 5,
+        "m1_correct": 5,
+        "m1_accuracy": 1.0,
+        "final_correct": 4,
+        "final_accuracy": 0.8,
+        "delta_correct": -1,
+        "m3_used": 2,
+        "m3_corrected": 0,
+        "m3_worsened": 1,
+        "route_failures": 0
+      },
+      "none": {
+        "total": 1228,
+        "m1_correct": 1188,
+        "m1_accuracy": 0.9674267100977199,
+        "final_correct": 1126,
+        "final_accuracy": 0.9169381107491856,
+        "delta_correct": -62,
+        "m3_used": 271,
+        "m3_corrected": 7,
+        "m3_worsened": 69,
+        "route_failures": 0
+      }
+    }
+  },
+  "stability": {
+    "route_success": 1300,
+    "route_failures": 0,
+    "route_failure_rate": 0.0,
+    "invalid_final_labels": 0
+  },
+  "calls": {
+    "total": 1585,
+    "by_tier": {
+      "1.7b": 1300,
+      "9b": 285
+    }
+  },
+  "latency_ms": {
+    "wall": {
+      "count": 1300,
+      "average": 304.1249246153846,
+      "p50": 43.542500000000004,
+      "p95": 1288.0847,
+      "p99": 1327.3907100000001,
+      "max": 1402.244
+    },
+    "m1": {
+      "count": 1300,
+      "average": 41.51538461538462,
+      "p50": 41.0,
+      "p95": 54.0,
+      "p99": 60.0,
+      "max": 85.0
+    },
+    "m3": {
+      "count": 285,
+      "average": 1194.1368421052632,
+      "p50": 1219.0,
+      "p95": 1277.4,
+      "p99": 1302.8000000000002,
+      "max": 1347.0
+    }
+  }
+}
