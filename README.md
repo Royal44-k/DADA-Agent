@@ -4,6 +4,16 @@
 
 收录 **132 份已有资产**，包括 **15 份 HTML、51 份 Python 文件、29 份 JSONL**，另有日志、补丁、汇总指标和审校文档。保留原有文件内容与实验目录结构，并通过 SHA-256 核验。归档操作没有重新调用模型或重跑服务器测试。
 
+## Agent Server Core Design 专题
+
+新增 [Grok / DeepSeek Harness / Pi Agent 架构研究归档](research/agent-server-core-design/README.md)：三套源码快照（11,223 个文件）、3 份 HTML 深度分析报告、12 张预览图、原始调研笔记、许可证及完整性核验。
+
+- [三套架构对照与业务处理摘要](research/agent-server-core-design/docs/COMPARISON.md)
+- [专题资产目录与源码下载](research/agent-server-core-design/CATALOG.md)
+- [报告与预览图合集](research/agent-server-core-design/downloads/reports-and-previews.zip)
+
+本专题独立归档。上方 132 份资产统计及下方历史清单、校验表和完整 ZIP 仍对应原有 DADA 技术验证批次，不包含本专题；专题有独立来源与 SHA-256 清单。既有实验结论保持不变。
+
 ## 下载与导航
 
 - [完整 ZIP 资产包](downloads/DADA-Agent-assets-2026-09-13.zip)

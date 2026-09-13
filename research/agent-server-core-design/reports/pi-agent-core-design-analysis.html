@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Pi Agent Harness Core Design 源码级架构分析报告">
+  <title>Pi Agent · Core Design 分析报告</title>
+  <style>
+    :root {
+      --graphite: #20252c;
+      --ink: #28313b;
+      --blue: #4058b5;
+      --blue-dark: #2e408d;
+      --coral: #e6674e;
+      --mint: #1f8a77;
+      --paper: #fcfbf8;
+      --sand: #f0eee8;
+      --line: #cfcac0;
+      --muted: #6d7075;
+      --danger: #a5403b;
+      --display: "STZhongsong", "Songti SC", "Noto Serif CJK SC", serif;
+      --body: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+      --mono: "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; color: var(--ink); background: var(--paper); font: 16px/1.75 var(--body); text-rendering: optimizeLegibility; }
+    a { color: var(--blue-dark); text-underline-offset: 3px; }
+    a:hover { color: var(--coral); }
+    a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid rgba(230, 103, 78, .46); outline-offset: 3px; }
+    code { padding: .12em .34em; color: #2b3c85; background: #eeeff8; border: 1px solid #d9dced; font: .9em/1.5 var(--mono); overflow-wrap: anywhere; }
+    .skip { position: fixed; z-index: 100; left: 16px; top: -70px; padding: 10px 16px; color: white; background: var(--coral); }
+    .skip:focus { top: 16px; }
+    .progress { position: fixed; z-index: 100; inset: 0 auto auto 0; height: 4px; width: 0; background: var(--coral); }
+
+    .hero { position: relative; min-height: 670px; overflow: hidden; border-bottom: 1px solid var(--graphite); background: var(--paper); }
+    .hero::after { content: ""; position: absolute; left: 0; right: 0; top: 94px; border-top: 1px solid var(--line); }
+    .hero-inner { position: relative; width: min(1440px, 100%); margin: 0 auto; padding: 38px 52px 58px; }
+    .mast { position: relative; z-index: 1; display: flex; justify-content: space-between; gap: 22px; padding-bottom: 28px; font: 800 .72rem/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; }
+    .mast span:first-child { color: var(--coral); }
+    .hero-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(540px, 1.1fr); gap: 54px; align-items: center; padding-top: 72px; }
+    h1 { margin: 0; color: var(--graphite); font: 700 clamp(3.8rem, 8.2vw, 8rem)/.86 var(--display); letter-spacing: -.065em; }
+    h1 small { display: block; margin-top: 26px; color: var(--blue); font: 680 clamp(1.18rem, 2.25vw, 2rem)/1.3 var(--body); letter-spacing: -.025em; }
+    .hero-dek { max-width: 680px; margin: 30px 0 0; color: #555e67; font-size: 1.07rem; }
+    .tree-board { position: relative; min-height: 430px; padding: 26px 16px 24px 46px; border: 1px solid var(--graphite); background: #f4f2ed; box-shadow: 11px 11px 0 var(--graphite); }
+    .tree-board::before { content: "SESSION.JSONL"; position: absolute; left: -1px; top: -1px; bottom: -1px; width: 30px; display: grid; place-items: center; color: white; background: var(--blue); writing-mode: vertical-rl; font: 800 .64rem/1 var(--mono); letter-spacing: .13em; }
+    .tree-root { position: relative; margin-left: 18px; padding-left: 28px; border-left: 3px solid var(--graphite); }
+    .tree-root::before { content: "active branch"; position: absolute; left: -11px; top: 110px; color: #8b8b88; background: #f4f2ed; font: 700 .6rem/1 var(--mono); letter-spacing: .08em; writing-mode: vertical-rl; }
+    .tree-node { position: relative; display: grid; grid-template-columns: 132px 1fr; gap: 14px; align-items: center; min-height: 65px; padding: 7px 0; }
+    .tree-node::before { content: ""; position: absolute; left: -36px; width: 14px; height: 14px; background: var(--paper); border: 3px solid var(--graphite); }
+    .tree-node::after { content: ""; position: absolute; left: -22px; width: 22px; border-top: 2px solid var(--graphite); }
+    .tree-node.current::before { background: var(--coral); border-color: var(--coral); box-shadow: 0 0 0 4px rgba(230, 103, 78, .16); }
+    .tree-node.compact::before { transform: rotate(45deg); background: var(--blue); border-color: var(--blue); }
+    .entry-type { color: var(--blue-dark); font: 800 .69rem/1.3 var(--mono); }
+    .entry-body { padding: 10px 12px; background: white; border: 1px solid #cbc7be; font-size: .76rem; line-height: 1.45; }
+    .branch { position: absolute; left: 204px; top: 154px; width: 230px; padding-top: 32px; border-top: 2px solid var(--coral); transform: rotate(-9deg); transform-origin: left center; }
+    .branch::before { content: ""; position: absolute; left: -7px; top: -7px; width: 12px; height: 12px; background: var(--coral); }
+    .branch span { display: block; padding: 9px 10px; color: white; background: var(--coral); font: 750 .68rem/1.4 var(--mono); transform: rotate(9deg); }
+    .stack-note { position: absolute; right: 18px; bottom: 16px; color: #757774; font: 700 .6rem/1.55 var(--mono); text-align: right; }
+
+    .topnav-wrap { position: sticky; top: 0; z-index: 50; color: white; background: var(--graphite); border-bottom: 4px solid var(--blue); }
+    .topnav { display: flex; width: min(1440px, 100%); margin: 0 auto; padding: 0 42px; overflow-x: auto; scrollbar-width: thin; }
+    .topnav a { flex: 0 0 auto; padding: 16px 11px 14px; color: #bdc2c9; border-bottom: 3px solid transparent; text-decoration: none; font: 700 .69rem/1.2 var(--mono); white-space: nowrap; }
+    .topnav a:hover, .topnav a.active { color: white; border-bottom-color: var(--coral); }
+
+    main { width: min(1260px, calc(100% - 104px)); margin: 0 auto; padding: 74px 0 128px; }
+    section { scroll-margin-top: 76px; margin: 0 0 108px; }
+    .section-title { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 25px; align-items: start; margin-bottom: 31px; }
+    .section-no { padding-top: 8px; color: var(--coral); border-top: 5px solid var(--coral); font: 800 .76rem/1.3 var(--mono); letter-spacing: .11em; }
+    .section-title > div:last-child { padding-top: 5px; border-top: 1px solid var(--graphite); }
+    h2 { margin: 8px 0 0; color: var(--graphite); font: 700 clamp(2rem, 4.1vw, 3.9rem)/1 var(--display); letter-spacing: -.04em; }
+    h3 { margin: 40px 0 13px; color: var(--graphite); font: 750 1.23rem/1.35 var(--body); letter-spacing: -.012em; }
+    p { margin: 0 0 16px; }
+    .lead { max-width: 940px; color: #44505b; font-size: 1.09rem; line-height: 1.87; }
+    .eyebrow { margin: 0; color: var(--blue); font: 800 .68rem/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; }
+    .stats { display: grid; grid-template-columns: repeat(5, 1fr); margin: 30px 0; border-top: 1px solid var(--graphite); border-bottom: 1px solid var(--graphite); }
+    .stat { padding: 22px 15px; border-right: 1px solid var(--line); }
+    .stat:last-child { border-right: 0; }
+    .stat b { display: block; color: var(--blue); font: 850 clamp(1.4rem, 2.8vw, 2.25rem)/1 var(--mono); }
+    .stat span { display: block; margin-top: 9px; color: var(--muted); font-size: .72rem; }
+    .grid-2, .grid-3, .grid-4 { display: grid; gap: 18px; margin: 25px 0; }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .note-card { padding: 23px; background: white; border-top: 4px solid var(--blue); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); border-left: 1px solid var(--line); }
+    .note-card.coral { border-top-color: var(--coral); }
+    .note-card.mint { border-top-color: var(--mint); }
+    .note-card::before { content: attr(data-mark); display: block; margin-bottom: 17px; color: var(--muted); font: 800 .67rem/1 var(--mono); letter-spacing: .1em; }
+    .note-card h3 { margin: 0 0 9px; }
+    .note-card p:last-child, .note-card ul:last-child { margin-bottom: 0; }
+    .marker { display: inline-block; margin: 0 6px 7px 0; padding: 3px 8px; color: var(--blue-dark); background: #f0f1fa; border: 1px solid #b9c0e5; font: 700 .68rem/1.4 var(--mono); }
+    .marker.future { color: #8c3c2e; background: #fff1ed; border-color: #dfa295; }
+    .marker.risk { color: var(--danger); background: #fff1f0; border-color: #dca6a2; }
+    .callout { margin: 27px 0; padding: 20px 25px; color: #f7f6f2; background: var(--graphite); border-left: 6px solid var(--coral); }
+    .callout strong { color: #ff927c; }
+
+    .layer-stack { margin: 29px 0; border: 1px solid var(--graphite); background: white; }
+    .layer { display: grid; grid-template-columns: 210px 1fr; min-height: 76px; border-bottom: 1px solid var(--line); }
+    .layer:last-child { border-bottom: 0; }
+    .layer-name { display: grid; place-items: center; padding: 15px; color: white; background: var(--graphite); border-right: 6px solid var(--blue); font: 800 .7rem/1.4 var(--mono); text-align: center; }
+    .layer:nth-child(2) .layer-name { border-right-color: var(--coral); }
+    .layer:nth-child(3) .layer-name { border-right-color: var(--mint); }
+    .layer:nth-child(4) .layer-name { border-right-color: #937846; }
+    .layer-body { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 16px 20px; }
+    .layer-body span { padding: 6px 9px; color: #3d4650; background: #f3f1ec; border: 1px solid #d5d0c7; font: 650 .74rem/1.35 var(--mono); }
+
+    .pipeline { display: grid; grid-template-columns: repeat(7, minmax(130px, 1fr)); margin: 28px 0; overflow-x: auto; border: 1px solid var(--graphite); background: white; }
+    .pipe-step { position: relative; min-width: 140px; padding: 22px 16px 20px; border-right: 1px solid var(--line); }
+    .pipe-step:last-child { border-right: 0; }
+    .pipe-step::after { content: "/"; position: absolute; right: -9px; top: 22px; z-index: 2; width: 18px; color: white; background: var(--blue); text-align: center; font: 800 .75rem/22px var(--mono); }
+    .pipe-step:last-child::after { display: none; }
+    .pipe-step b { display: block; color: var(--coral); font: 800 .68rem/1.3 var(--mono); }
+    .pipe-step strong { display: block; margin: 10px 0 7px; color: var(--graphite); font-size: .87rem; }
+    .pipe-step p { margin: 0; color: var(--muted); font-size: .71rem; line-height: 1.55; }
+
+    .timeline { position: relative; margin: 30px 0 30px 19px; padding-left: 39px; border-left: 2px dashed var(--blue); }
+    .time-item { position: relative; padding: 0 0 27px; }
+    .time-item:last-child { padding-bottom: 0; }
+    .time-item::before { content: ""; position: absolute; left: -48px; top: 7px; width: 15px; height: 15px; background: var(--paper); border: 3px solid var(--blue); border-radius: 50%; }
+    .time-item:nth-child(3n)::before { border-radius: 0; border-color: var(--coral); transform: rotate(45deg); }
+    .time-item strong { color: var(--blue-dark); }
+    .time-item p { margin: 5px 0 0; color: #535e67; }
+    .formula { margin: 24px 0; padding: 18px 21px; color: white; background: var(--blue-dark); font: 650 .82rem/1.8 var(--mono); overflow-x: auto; white-space: nowrap; }
+
+    .session-map { position: relative; margin: 30px 0; padding: 28px; background: #f2f0eb; border: 1px solid var(--graphite); overflow-x: auto; }
+    .map-line { display: flex; align-items: center; min-width: 850px; margin: 16px 0; }
+    .map-node { position: relative; flex: 0 0 118px; padding: 10px 8px; color: white; background: var(--graphite); border: 2px solid var(--graphite); text-align: center; font: 700 .68rem/1.35 var(--mono); }
+    .map-node.compact { background: var(--blue); border-color: var(--blue); }
+    .map-node.branch-summary { background: var(--coral); border-color: var(--coral); }
+    .map-node.current { color: var(--graphite); background: white; border-color: var(--coral); }
+    .map-edge { flex: 0 0 34px; border-top: 2px solid var(--graphite); }
+    .map-branch { margin-left: 304px; padding-left: 35px; border-left: 2px solid var(--coral); }
+    .map-caption { margin-top: 22px; color: var(--muted); font-size: .74rem; }
+
+    .funnel { margin: 30px 0; counter-reset: f; }
+    .funnel-row { counter-increment: f; display: grid; grid-template-columns: 56px 210px 1fr; gap: 18px; align-items: center; min-height: 74px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+    .funnel-row::before { content: "L" counter(f); display: grid; place-items: center; width: 42px; height: 42px; color: white; background: var(--blue); font: 800 .69rem/1 var(--mono); }
+    .funnel-row:nth-child(2n)::before { background: var(--coral); }
+    .funnel-row strong { color: var(--graphite); }
+    .funnel-row p { margin: 0; color: #56616a; font-size: .87rem; }
+
+    .matrix-wrap { margin: 25px 0; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; background: white; font-size: .82rem; }
+    th, td { padding: 12px 13px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: white; background: var(--graphite); font: 750 .71rem/1.4 var(--mono); letter-spacing: .03em; }
+    tbody tr:nth-child(even) { background: #f3f1ec; }
+    ul, ol { padding-left: 1.35rem; }
+    li { margin-bottom: 8px; }
+    details { margin: 13px 0; border: 1px solid var(--line); background: white; }
+    summary { cursor: pointer; padding: 14px 17px; color: var(--blue-dark); font-weight: 750; }
+    details[open] summary { background: #f0f1f8; border-bottom: 1px solid var(--line); }
+    .details-body { padding: 17px 20px; }
+    .risk-list { counter-reset: r; margin: 28px 0; padding: 0; list-style: none; }
+    .risk-list li { counter-increment: r; display: grid; grid-template-columns: 48px 1fr; gap: 17px; margin: 0; padding: 18px 0; border-bottom: 1px solid var(--line); }
+    .risk-list li::before { content: "R" counter(r); color: var(--danger); font: 800 .75rem/1.8 var(--mono); }
+    .fine { color: var(--muted); font-size: .75rem; line-height: 1.65; }
+    .back { position: fixed; z-index: 45; right: 20px; bottom: 20px; display: none; width: 44px; height: 44px; color: white; background: var(--coral); border: 0; cursor: pointer; font: 800 .8rem/1 var(--mono); }
+    .back.show { display: block; }
+    footer { color: #c9cbd0; background: var(--graphite); border-top: 5px solid var(--coral); }
+    .footer-inner { display: flex; justify-content: space-between; gap: 25px; width: min(1336px, calc(100% - 104px)); margin: 0 auto; padding: 40px 0; font-size: .74rem; }
+
+    @media (max-width: 1050px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .tree-board { max-width: 760px; }
+      main { width: min(100% - 52px, 1000px); }
+      .stats { grid-template-columns: repeat(3, 1fr); }
+      .stat:nth-child(3) { border-right: 0; }
+      .stat:nth-child(n+4) { border-top: 1px solid var(--line); }
+      .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 760px) {
+      .hero-inner { padding-left: 22px; padding-right: 22px; }
+      .hero-grid { padding-top: 45px; gap: 42px; }
+      h1 { font-size: clamp(3.5rem, 19vw, 6rem); }
+      .tree-board { min-height: 375px; padding-left: 41px; box-shadow: 7px 7px 0 var(--graphite); }
+      .tree-node { grid-template-columns: 102px 1fr; }
+      .branch { display: none; }
+      .topnav { padding: 0 12px; }
+      main, .footer-inner { width: calc(100% - 40px); }
+      .section-title { grid-template-columns: 52px 1fr; gap: 16px; }
+      .stats, .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .stat { border-right: 0; border-top: 1px solid var(--line); }
+      .stat:first-child { border-top: 0; }
+      .layer { grid-template-columns: 1fr; }
+      .layer-name { place-items: start; justify-content: start; border-right: 0; border-bottom: 4px solid var(--blue); }
+      .funnel-row { grid-template-columns: 48px 1fr; gap: 12px; }
+      .funnel-row p { grid-column: 2; }
+      .footer-inner { flex-direction: column; }
+    }
+    @media print {
+      .progress, .topnav-wrap, .back, .skip { display: none !important; }
+      .hero { min-height: 0; }
+      .tree-board, .note-card, .layer-stack, .pipeline, .session-map, table, details { break-inside: avoid; box-shadow: none; }
+      main { width: auto; padding: 35px 0; }
+      section { margin-bottom: 48px; break-before: page; }
+      section:first-child { break-before: auto; }
+      .callout, .formula { color: var(--ink); background: white; border: 1px solid var(--ink); }
+      footer { color: var(--ink); background: white; }
+      @page { size: A4; margin: 16mm; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <div class="progress" aria-hidden="true"></div>
+
+  <header class="hero" id="top">
+    <div class="hero-inner">
+      <div class="mast"><span>Agent Server Core Design / Report 03</span><span>Source snapshot · 2026-07-20</span></div>
+      <div class="hero-grid">
+        <div>
+          <h1>Pi<br>Agent<small>薄内核、请求边界自愈与可分支会话树</small></h1>
+          <p class="hero-dek">Pi 把核心做得很薄：模型调用、工具循环与事件流留在可嵌入库中；Coding Agent 再补上会话、扩展、终端、重试和压缩。它不试图内建所有工作流，而是让本地开发者用 TypeScript 扩展把产品改造成自己的样子。</p>
+        </div>
+        <div class="tree-board" role="img" aria-label="Pi 追加式 JSONL 会话树：消息、工具结果、压缩点和备用分支">
+          <div class="tree-root">
+            <div class="tree-node"><span class="entry-type">message/user</span><span class="entry-body">“分析并修改这个项目”</span></div>
+            <div class="tree-node"><span class="entry-type">message/assistant</span><span class="entry-body">流式文本 + 多个 toolCall</span></div>
+            <div class="tree-node"><span class="entry-type">toolResult × N</span><span class="entry-body">并发执行，按源顺序进入历史</span></div>
+            <div class="tree-node compact"><span class="entry-type">compaction</span><span class="entry-body">结构化 checkpoint + firstKeptEntryId</span></div>
+            <div class="tree-node current"><span class="entry-type">current leaf</span><span class="entry-body">下一次提示从当前 active branch 继续</span></div>
+          </div>
+          <div class="branch"><span>branch_summary<br>保留被放弃路径的关键上下文</span></div>
+          <div class="stack-note">ai → agent-core → coding-agent → tui / rpc / sdk<br>next: AgentHarness save-point snapshots</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="topnav-wrap" aria-label="报告目录"><div class="topnav">
+    <a href="#summary">01 摘要</a><a href="#scope">02 范围</a><a href="#architecture">03 架构</a><a href="#loop">04 循环</a><a href="#tools">05 工具容错</a><a href="#session">06 会话树</a><a href="#compaction">07 压缩恢复</a><a href="#extensions">08 扩展</a><a href="#providers">09 模型层</a><a href="#modes">10 产品流程</a><a href="#security">11 安全</a><a href="#harness">12 新 Harness</a><a href="#review">13 评价</a><a href="#evidence">14 证据</a>
+  </div></nav>
+
+  <main id="main">
+    <section id="summary">
+      <div class="section-title"><span class="section-no">SECTION 01</span><div><p class="eyebrow">Executive Summary</p><h2>执行摘要</h2></div></div>
+      <p class="lead">Pi Agent 的设计关键词不是“全栈治理”，而是<strong>薄内核、清晰边界、容错漏斗和可塑产品层</strong>。低层 Agent 只负责消息—模型—工具循环；当前 Coding Agent 用 <code>AgentSession</code> 组织持久化、扩展、自动重试与压缩；下一代 <code>AgentHarness</code> 则正把这些经验收敛成回合快照、保存点和待写队列。</p>
+      <div class="stats" aria-label="源码快照统计">
+        <div class="stat"><b>1,074</b><span>仓库文件总数</span></div>
+        <div class="stat"><b>873</b><span>源 TS / TSX 文件</span></div>
+        <div class="stat"><b>348</b><span>测试 TS / TSX 文件</span></div>
+        <div class="stat"><b>12</b><span>package.json</span></div>
+        <div class="stat"><b>5</b><span>主要运行层包</span></div>
+      </div>
+      <div class="grid-3">
+        <article class="note-card" data-mark="THESIS / 01"><h3>请求边界修复历史</h3><p>Pi 不要求每个打断点都把历史维护到完美；在发给 provider 前统一丢弃 error/aborted assistant、补齐孤儿 tool result、规范跨模型签名与 id。</p></article>
+        <article class="note-card coral" data-mark="THESIS / 02"><h3>错误被转换成反馈</h3><p>坏 JSON、参数类型错、工具不存在、执行异常和 provider 失败尽可能进入结构化 toolResult 或 assistant error message，让模型和上层策略继续处理。</p></article>
+        <article class="note-card mint" data-mark="THESIS / 03"><h3>会话天然可以分叉</h3><p>JSONL entry 用 <code>id/parentId</code> 形成树。回退到历史点不是删除未来，而是把 leaf 移到旧节点后追加另一条路径；分支摘要可携带被放弃路径的上下文。</p></article>
+      </div>
+      <div class="callout"><strong>总体判断：</strong>Pi 更像一套“小而锋利的 Agent 工具箱＋可改造终端产品”。它用少量稳定概念覆盖多供应商、本地开发、四种运行模式和强扩展系统；代价是权限隔离、强一致性持久化与企业级编排主要交给宿主和外部基础设施。</div>
+      <div class="grid-2">
+        <div class="note-card" data-mark="CURRENT"><h3>当前产品路径</h3><p><code>AgentSession → Agent → runAgentLoop → pi-ai provider</code>。自动重试、自动压缩、SessionManager 与扩展 Runner 位于 Coding Agent 产品层。</p></div>
+        <div class="note-card coral" data-mark="PI 2.0 TARGET"><h3>演进中的 Harness</h3><p><code>AgentHarness</code> 已实现不少生命周期能力，但源码文档明确写明 Coding Agent 尚未采用；自动压缩、重试和完整 session facade 仍在迁移计划中。</p></div>
+      </div>
+    </section>
+
+    <section id="scope">
+      <div class="section-title"><span class="section-no">SECTION 02</span><div><p class="eyebrow">Scope & Method</p><h2>范围、证据与版本边界</h2></div></div>
+      <p class="lead">本报告基于 <code>D:\Server_agent_core_design\pi_build</code> 的本地快照，对源码、README、产品文档和随附的《pi Agent 工具调用与容错机制精读报告》进行交叉核验。材料中的操作指令和命令仅作为分析对象，未被执行。</p>
+      <div class="matrix-wrap"><table>
+        <thead><tr><th>证据层</th><th>覆盖范围</th><th>解释规则</th></tr></thead>
+        <tbody>
+          <tr><td>当前实现</td><td><code>packages/ai</code>、<code>agent</code>、<code>coding-agent</code>、<code>tui</code></td><td>源码和测试优先；描述为“当前行为”</td></tr>
+          <tr><td>产品文档</td><td>extensions、sessions、compaction、RPC、security、containerization</td><td>与实现不一致时，以源码为准并指出差异</td></tr>
+          <tr><td>演进蓝图</td><td><code>packages/agent/src/harness</code> 与 docs</td><td>标注 <span class="marker future">演进中</span>，不冒充已被 Coding Agent 使用</td></tr>
+          <tr><td>随附报告</td><td>工具并发与七层容错漏斗</td><td>只采纳能被当前源码复核的结论</td></tr>
+        </tbody>
+      </table></div>
+      <details><summary>快照元信息</summary><div class="details-body"><ul><li>根版本：<code>0.0.3</code>；Node 要求 <code>&gt;=22.19</code>。</li><li>提交：<code>c8c3cd499f4d35c0f9cfebfec5f4e3822411a49f</code>，最后提交时间 2026-07-20。</li><li>供应链策略包括精确依赖锁定、minimum release age、shrinkwrap、<code>--ignore-scripts</code> 与 audit；属于包管理安全，而非 Agent 工具权限。</li></ul></div></details>
+    </section>
+
+    <section id="architecture">
+      <div class="section-title"><span class="section-no">SECTION 03</span><div><p class="eyebrow">Layered Architecture</p><h2>总体架构：库内核与产品壳</h2></div></div>
+      <p class="lead">Pi 的包分层非常直白：每层只多承担一组责任。越向上越接近本地 Coding Agent 产品，越向下越适合被其他应用复用。</p>
+      <div class="layer-stack" role="img" aria-label="Pi 从 AI provider 到终端产品的分层架构">
+        <div class="layer"><div class="layer-name">PRODUCT / INTEGRATION</div><div class="layer-body"><span>Interactive TUI</span><span>Print</span><span>JSON stream</span><span>RPC</span><span>SDK</span><span>Experimental Orchestrator</span></div></div>
+        <div class="layer"><div class="layer-name">pi-coding-agent</div><div class="layer-body"><span>AgentSession</span><span>SessionManager</span><span>Extensions</span><span>Resources / Skills</span><span>Built-in Tools</span><span>Retry / Compaction</span><span>Trust</span></div></div>
+        <div class="layer"><div class="layer-name">pi-agent-core</div><div class="layer-body"><span>Agent state</span><span>runAgentLoop</span><span>EventStream</span><span>Tool execution</span><span>Steer / Follow-up</span><span>Hooks</span></div></div>
+        <div class="layer"><div class="layer-name">pi-ai + pi-tui</div><div class="layer-body"><span>Providers / Models</span><span>Auth / OAuth</span><span>Streaming</span><span>Cross-provider transform</span><span>Token / Cost</span><span>Differential terminal render</span></div></div>
+      </div>
+      <div class="grid-4">
+        <div class="note-card" data-mark="AI"><h3>供应商中立</h3><p>Provider 拥有模型目录、认证和流式行为；API implementation 共享 wire protocol 适配。</p></div>
+        <div class="note-card coral" data-mark="AGENT"><h3>状态循环</h3><p>AgentMessage 可扩展，真正到模型边界才 transform 与 convert。</p></div>
+        <div class="note-card mint" data-mark="CODING"><h3>本地产品</h3><p>补会话树、工具、扩展、资源发现、自动恢复和交互模式。</p></div>
+        <div class="note-card" data-mark="TUI"><h3>差分终端</h3><p>三策略 differential rendering 与 CSI 2026 同步输出，减少流式闪烁。</p></div>
+      </div>
+      <h3>有意不内建的能力</h3>
+      <p>产品 README 明确说明 Pi 默认不提供 subagent、plan mode 或内置 permission system。它倾向让用户用扩展或第三方 package 组合这些能力，而不是让核心变成单一工作流框架。</p>
+    </section>
+
+    <section id="loop">
+      <div class="section-title"><span class="section-no">SECTION 04</span><div><p class="eyebrow">Runtime Loop</p><h2>Agent 循环：小状态机与清晰事件屏障</h2></div></div>
+      <p class="lead"><code>runAgentLoop</code> 的主要任务是维护 Context、流式 assistant、工具结果和两类消息队列。低层没有持久化、自动重试或压缩策略，这些由上层根据 <code>agent_end</code> 后的结果继续编排。</p>
+      <div class="pipeline" aria-label="Pi Agent 当前主循环">
+        <div class="pipe-step"><b>01 / Start</b><strong>追加 pending message</strong><p>发 agent_start、turn_start、message_start/end。</p></div>
+        <div class="pipe-step"><b>02 / Context</b><strong>边界转换</strong><p>transformContext 后 convertToLlm，模型只看可理解消息。</p></div>
+        <div class="pipe-step"><b>03 / Stream</b><strong>部分消息入状态</strong><p>start 插入 partial assistant，delta 原位替换，结束后定稿。</p></div>
+        <div class="pipe-step"><b>04 / Tools</b><strong>preflight + execute</strong><p>校验、hook、并发执行；结果消息按源顺序产生。</p></div>
+        <div class="pipe-step"><b>05 / Turn</b><strong>turn_end</strong><p>prepareNextTurn 可刷新 context/model/thinking。</p></div>
+        <div class="pipe-step"><b>06 / Queue</b><strong>steer 优先</strong><p>有 steering 就继续内层；否则完成当前工作。</p></div>
+        <div class="pipe-step"><b>07 / Follow-up</b><strong>延后新任务</strong><p>主循环本可停止时再取 follow-up；最终 agent_end。</p></div>
+      </div>
+      <h3>两个关键屏障</h3>
+      <div class="grid-2">
+        <div class="note-card" data-mark="MESSAGE BARRIER"><h3>Assistant 定稿先于工具预检</h3><p><code>Agent</code> 会等待 assistant <code>message_end</code> 订阅者完成，再开始工具 preflight。扩展因此能修改或持久化最终 assistant，权限 hook 也能看到已含工具调用的完整 Agent state。</p></div>
+        <div class="note-card coral" data-mark="SETTLEMENT BARRIER"><h3>监听器属于运行结算</h3><p><code>Agent.subscribe()</code> 监听器按注册顺序 await；即使 <code>agent_end</code> 已发，<code>prompt()</code> 和 <code>waitForIdle()</code> 也要等 agent_end 监听器完成才结算。</p></div>
+      </div>
+      <h3>Steer、Follow-up 与 Next-turn</h3>
+      <ul><li><strong>Steer：</strong>当前 assistant 的工具调用执行完后投递，可一条一条或全部交付。</li><li><strong>Follow-up：</strong>当前工作和所有 steer 都结束后才作为新用户消息触发。</li><li><strong>Next-turn：</strong>Coding Agent 的额外产品队列；在下一次用户主动 prompt 时作为上下文一起注入。</li></ul>
+      <p><code>shouldStopAfterTurn</code> 是优雅停止点：在完整 turn 和工具收束后、拉取新队列前停止，不篡改 stopReason，也不取消已经运行的工具。</p>
+    </section>
+
+    <section id="tools">
+      <div class="section-title"><span class="section-no">SECTION 05</span><div><p class="eyebrow">Tool Reliability Funnel</p><h2>工具调用：七层容错漏斗</h2></div></div>
+      <p class="lead">Pi 的工具健壮性不是由一个“重试”开关提供，而是从 JSON 流、参数校验、执行、历史修复到 provider 错误逐层消化。越早修复，越少浪费模型往返；无法修复时则把问题转成对模型可见的错误结果。</p>
+      <div class="funnel">
+        <div class="funnel-row"><strong>流式 JSON 抢救</strong><p>标准 parse → 修复控制字符/非法转义 → partial-json → 修复后 partial-json → 空对象；流式 UI 始终拿到对象。</p></div>
+        <div class="funnel-row"><strong>Length 安全阀</strong><p>assistant 因 token 上限截断时，整批 toolCall 拒绝执行，即使残缺参数已被“成功”解析；要求模型重新发完整调用。</p></div>
+        <div class="funnel-row"><strong>串行 Preflight</strong><p>查工具、<code>prepareArguments</code>、TypeBox/JSON Schema 类型转换与校验、beforeToolCall 按模型顺序执行。</p></div>
+        <div class="funnel-row"><strong>并发执行</strong><p>默认并行；任何调用指向 sequential 工具时整批串行。执行结束事件按完成顺序，toolResult transcript 按源顺序。</p></div>
+        <div class="funnel-row"><strong>工具内防御</strong><p>同一真实文件的 write/edit 进入 mutation promise queue；输出按 50KB/2000 行截断，完整内容可落临时文件。</p></div>
+        <div class="funnel-row"><strong>请求边界自愈</strong><p>丢弃 error/aborted assistant；为孤儿 toolCall 补 <code>No result provided</code>；处理跨模型 signature、tool id 与图片能力。</p></div>
+        <div class="funnel-row"><strong>API 失败分流</strong><p>配额/账单不重试；429/5xx/网络断流指数退避；上下文溢出进入 compaction，不做无意义原样重试。</p></div>
+      </div>
+      <h3>并行工具的三阶段设计</h3>
+      <div class="formula">serial preflight → concurrent tool bodies → source-order transcript commit</div>
+      <p>这使 UI 能及时显示先完成的工具，同时让下一轮模型历史不依赖磁盘、网络和进程的随机完成顺序。<code>file-mutation-queue</code> 进一步按 realpath 串行化同文件写操作，不同文件仍然并行。</p>
+      <h3>参数宽容与安全边界</h3>
+      <p>校验前执行 TypeBox <code>Value.Convert</code> 和额外 JSON Schema coercion，可把 <code>"5"</code> 转数字、<code>0/1</code> 转布尔，并递归处理对象、数组与 union。工具还可在 <code>prepareArguments</code> 中兼容特定模型怪癖。</p>
+      <div class="callout"><strong>需要留意：</strong>当前 Coding Agent 扩展的 <code>tool_call</code> hook 可以原位修改已经校验过的 <code>event.input</code>，后续不会重新校验。它给扩展很大自由，也意味着扩展处于可信边界内，参数修改错误可能绕过 schema 保证。</div>
+      <h3>错误信息就是下一轮提示词</h3>
+      <p>工具不存在、校验失败、execute 抛错或 hook 阻断都转换为 <code>isError:true</code> 的 toolResult。校验错误包含字段路径、预期和值的完整副本；edit 工具还针对找不到、多处匹配、空替换、BOM、CRLF 和尾部空白提供行动指导。</p>
+    </section>
+
+    <section id="session">
+      <div class="section-title"><span class="section-no">SECTION 06</span><div><p class="eyebrow">Append-only Session Tree</p><h2>会话树：不删除过去，移动当前路径</h2></div></div>
+      <p class="lead">当前 Coding Agent 的 SessionManager 使用 JSONL v3。Header 之后每条 entry 都有短 id、parentId 和 timestamp，天然形成树。当前上下文只取 root 到 leaf 的 active path，再应用 compaction 规则。</p>
+      <div class="session-map" role="img" aria-label="Pi 会话树与分支摘要示意">
+        <div class="map-line"><span class="map-node">user</span><span class="map-edge"></span><span class="map-node">assistant</span><span class="map-edge"></span><span class="map-node">toolResult</span><span class="map-edge"></span><span class="map-node compact">compaction</span><span class="map-edge"></span><span class="map-node current">current leaf</span></div>
+        <div class="map-branch"><div class="map-line"><span class="map-node branch-summary">branch_summary</span><span class="map-edge"></span><span class="map-node">alternate user</span><span class="map-edge"></span><span class="map-node">assistant</span></div></div>
+        <p class="map-caption">同一 JSONL 文件内保留多个未来；tree navigation 只决定下一条 entry 的 parent，不重写已经存在的节点。</p>
+      </div>
+      <div class="grid-3">
+        <div class="note-card" data-mark="MESSAGE"><h3>对话事实</h3><p>user、assistant、toolResult 作为 message entry；assistant 自带 provider、model、usage 与 stopReason。</p></div>
+        <div class="note-card coral" data-mark="CONTROL"><h3>运行状态</h3><p>model_change、thinking_level_change 等 entry 沿当前路径折叠出会话状态；当前 Coding Agent 的 active tools 由产品运行配置管理。</p></div>
+        <div class="note-card mint" data-mark="EXTENSION"><h3>扩展数据</h3><p><code>custom</code>只保存扩展状态，不进模型；<code>custom_message</code>则明确投影到上下文，可选择是否显示。</p></div>
+      </div>
+      <h3>树导航的业务语义</h3>
+      <p>选择历史 user message 时，leaf 移到它的 parent，并把原用户文本送回编辑器，允许修改后形成新分支；选择非用户节点时直接以该节点为 leaf。可选 branch summary 会总结旧 leaf 到共同祖先之间的被放弃路径，并附在新目标位置，使新分支知道先前探索过什么。</p>
+      <h3>当前实现与下一代持久 leaf 的区别</h3>
+      <p><span class="marker">当前</span>SessionManager 的 <code>branch()</code> 只移动内存 leaf；随后追加 entry 才把新 parent 关系写入 JSONL。<span class="marker future">AgentHarness Session</span> 的设计则要求把 leaf 改变本身写成耐久 <code>leaf</code> entry，以便只导航、不追加消息时也能在重启后恢复游标。</p>
+    </section>
+
+    <section id="compaction">
+      <div class="section-title"><span class="section-no">SECTION 07</span><div><p class="eyebrow">Compaction & Recovery</p><h2>压缩、重试与上下文恢复</h2></div></div>
+      <h3>何时压缩</h3>
+      <p>默认开启，保留 16,384 token 输出预算和约 20,000 token 最近消息。当估算上下文大于 <code>contextWindow - reserveTokens</code> 时阈值压缩；若 provider 明确或隐式表现为 overflow，则走恢复压缩。</p>
+      <div class="timeline">
+        <div class="time-item"><strong>估算上下文</strong><p>优先使用最后一条有效 assistant usage；之后新增消息按字符/图片估算。error、aborted 和全零 usage 不覆盖最后可靠基准。</p></div>
+        <div class="time-item"><strong>选择 cut point</strong><p>从最新消息向前累积，保留近期预算；可以在 user 或 assistant 处切，但绝不从 toolResult 开始，以维护 tool call/result 结构。</p></div>
+        <div class="time-item"><strong>处理超大单 Turn</strong><p>如果 cut 落在 turn 内，历史摘要与 turn-prefix 摘要分开生成，再合并为一个 checkpoint，保留最近后缀。</p></div>
+        <div class="time-item"><strong>增量更新摘要</strong><p>有前一次 compaction 时，将旧 summary 与新增历史一起交给更新提示，保留 Goal、Constraints、Progress、Decisions、Next Steps。</p></div>
+        <div class="time-item"><strong>附加文件操作</strong><p>从工具调用中提取已读和已修改文件，并将列表写入摘要 details，降低压缩后丢失工作区认知的概率。</p></div>
+        <div class="time-item"><strong>重建 Agent 上下文</strong><p>追加 compaction entry，SessionManager 从 summary + firstKeptEntryId + 后续 entry 重建 active messages。</p></div>
+      </div>
+      <h3>Overflow 与普通阈值不是同一业务</h3>
+      <div class="grid-2">
+        <div class="note-card coral" data-mark="OVERFLOW"><h3>失败恢复</h3><p>错误 assistant 保留在 session 作为历史，但从 Agent 工作状态移除；压缩后自动 <code>continue()</code>。一次恢复仍 overflow 就停止，并建议缩减上下文或换大窗口模型。</p></div>
+        <div class="note-card" data-mark="THRESHOLD"><h3>预防性维护</h3><p>接近上限但响应成功时只压缩，不重发已完成请求；如果压缩期间有 steer/follow-up 等待，则继续一次以交付队列。</p></div>
+      </div>
+      <h3>Provider 错误重试</h3>
+      <p>Pi-ai 只提供分类器，上层 AgentSession 执行 <code>baseDelayMs × 2^(attempt-1)</code> 的可中断退避。黑名单先排除 quota、billing、subscription limit；白名单才接受 429、5xx、网络断流、WebSocket 关闭和 provider 明示 retry。上下文 overflow 在分类前被单独拦截。</p>
+      <p>错误 assistant 从当前 Agent state 移除但仍留在 Session 历史；下一次 provider 请求的 <code>transformMessages</code> 又会跳过 error/aborted assistant，因此“审计保留”与“合法重试上下文”不冲突。</p>
+    </section>
+
+    <section id="extensions">
+      <div class="section-title"><span class="section-no">SECTION 08</span><div><p class="eyebrow">Extension Runtime</p><h2>扩展系统：产品可塑性的主要来源</h2></div></div>
+      <p class="lead">扩展是直接运行的 TypeScript 模块，可注册工具、命令、快捷键、Provider、UI、渲染器和生命周期 hook。Pi 把权限确认、路径保护、Git checkpoint、远程工具路由等都视为扩展用例，而不是固定产品功能。</p>
+      <div class="pipeline" aria-label="Pi 扩展介入用户请求的生命周期">
+        <div class="pipe-step"><b>Input</b><strong>输入拦截</strong><p>命令优先；input 可 handled 或 transform。</p></div>
+        <div class="pipe-step"><b>Expand</b><strong>资源展开</strong><p>skill、prompt template、context files。</p></div>
+        <div class="pipe-step"><b>Start</b><strong>before_agent</strong><p>注入 message，链式修改 system prompt。</p></div>
+        <div class="pipe-step"><b>Provider</b><strong>请求观察</strong><p>context、headers、payload、response headers。</p></div>
+        <div class="pipe-step"><b>Tools</b><strong>调用门控</strong><p>tool_call 可改参数/阻断；tool_result 可改结果。</p></div>
+        <div class="pipe-step"><b>Session</b><strong>结构操作</strong><p>compact、tree、switch、fork 前后 hook。</p></div>
+        <div class="pipe-step"><b>Settle</b><strong>agent_settled</strong><p>确认重试、压缩和队列都不再自动继续。</p></div>
+      </div>
+      <h3>错误隔离策略</h3>
+      <ul><li>一般扩展事件异常被记录，Agent 继续；一个 extension 不应让其他观察者消失。</li><li><code>tool_call</code> handler 异常由 AgentSession 转为阻断，采用 fail-safe。</li><li>工具 <code>execute</code> 应通过 throw 表达错误，循环将其转换为模型可见结果。</li><li>Session before hook 可以 cancel；多个 handler 依次执行，取消立即短路。</li></ul>
+      <h3>工具覆写与远程执行</h3>
+      <p>扩展可以同名覆写 read/write/edit/bash/grep/find/ls；执行与 renderer 按槽位独立继承，但 prompt metadata 不自动继承。内置工具还把文件、shell 等操作抽成 Operations 接口，使 SSH、容器或 Gondolin 后端无需重写模型 schema 和 UI。</p>
+      <div class="callout"><strong>信任模型：</strong>扩展不是受限插件。它可以 import Node 内建模块、执行任意代码并拥有 Pi 进程的系统权限；只应从可信来源加载。项目 trust 解决“仓库是否可自动注入扩展和配置”，不解决扩展自身的隔离。</div>
+    </section>
+
+    <section id="providers">
+      <div class="section-title"><span class="section-no">SECTION 09</span><div><p class="eyebrow">Provider Portability</p><h2>模型层：统一上下文，适配供应商差异</h2></div></div>
+      <p class="lead"><code>pi-ai</code> 只收录支持 tool calling 的模型。Provider 是运行单元，拥有模型目录、认证/OAuth 与 stream；不同 Provider 可以共享 Anthropic Messages、OpenAI Responses、OpenAI Completions 等 wire implementation。</p>
+      <div class="grid-3">
+        <div class="note-card" data-mark="ROUTING"><h3>Models 集合</h3><p>按 model.provider 找到 owner，解析动态凭据与 baseUrl，显式 request 选项按字段覆盖认证默认，再交给 provider stream。</p></div>
+        <div class="note-card coral" data-mark="STREAM"><h3>错误即消息</h3><p>流式 API 通过 start/text/thinking/toolcall/done/error 事件表现；最终失败物化为带 stopReason 的 AssistantMessage，便于 UI、Session 与恢复层统一消费。</p></div>
+        <div class="note-card mint" data-mark="HANDOFF"><h3>跨模型切换</h3><p>上下文可序列化并交给另一模型；请求边界会降级不支持图片、剥离其他模型的加密 reasoning/signature，并规范 tool call id。</p></div>
+      </div>
+      <h3>跨供应商上下文自愈</h3>
+      <p><code>transformMessages</code> 做两趟转换：先处理图片能力、thinking block 与工具 id；再扫描历史，跳过 error/aborted assistant，为没有结果的 toolCall 插入合成 error result。修复后的数组只用于请求，原 Session 不被改写。</p>
+      <div class="formula">durable session history ≠ provider request view<br>request view = transformMessages(active context, target model)</div>
+      <h3>Overflow 检测的生产经验</h3>
+      <p>除了匹配各 Provider 的错误文本，还覆盖“成功但 usage 超窗口”和“输入几乎填满窗口、output=0、stopReason=length”的静默截断模式；rate limit 等含有“too many tokens”的非 overflow 错误先排除，减少误分流。</p>
+    </section>
+
+    <section id="modes">
+      <div class="section-title"><span class="section-no">SECTION 10</span><div><p class="eyebrow">Business Processing</p><h2>产品处理流程与四种运行模式</h2></div></div>
+      <p class="lead">Pi Coding Agent 在不同宿主中复用同一 AgentSession。差别主要在输入输出 carrier 与 UI 能力，而非模型或工具循环。</p>
+      <div class="matrix-wrap"><table>
+        <thead><tr><th>模式</th><th>输入/输出</th><th>扩展 UI</th><th>典型业务</th></tr></thead>
+        <tbody>
+          <tr><td>Interactive TUI</td><td>终端编辑器、流式差分渲染</td><td>完整：对话框、overlay、widget、自定义 editor</td><td>人工监督的本地开发</td></tr>
+          <tr><td>Print</td><td>单次/脚本输出</td><td>无交互 UI</td><td>管道、快速问答、自动脚本</td></tr>
+          <tr><td>JSON</td><td>Agent 事件 JSON stream</td><td>UI 方法 no-op</td><td>日志消费、外部前端、自定义进程集成</td></tr>
+          <tr><td>RPC</td><td>stdin/stdout JSONL request/event</td><td>select/confirm/input/editor 等走协议</td><td>IDE、桌面应用、上层编排器</td></tr>
+          <tr><td>SDK</td><td>进程内 TypeScript API</td><td>由宿主实现</td><td>嵌入自有 Agent 产品</td></tr>
+        </tbody>
+      </table></div>
+      <h3>“修改代码并验证”的完整业务链</h3>
+      <div class="timeline">
+        <div class="time-item"><strong>启动与资源发现</strong><p>解析全局/项目设置、信任决策、AGENTS/CLAUDE context、skills、prompts、themes、extensions 和 provider credentials。</p></div>
+        <div class="time-item"><strong>输入预处理</strong><p>扩展命令优先；input hook 可接管或转换；skill/template 展开；before_agent_start 可注入持久消息和修改本轮 system prompt。</p></div>
+        <div class="time-item"><strong>模型与工具循环</strong><p>Provider 流式返回文本和 toolCall；read/edit/write/bash 等经容错漏斗执行，进度即时显示，结果按调用顺序进入 context。</p></div>
+        <div class="time-item"><strong>中途用户控制</strong><p>Enter 投递 steer，Alt+Enter 投递 follow-up，Escape abort 并把队列恢复到编辑器；模式可配置 one-at-a-time 或 all。</p></div>
+        <div class="time-item"><strong>运行后恢复策略</strong><p>AgentSession 检查 retryable error、overflow 和 threshold compaction；必要时自动 continue，最后才发 agent_settled。</p></div>
+        <div class="time-item"><strong>持久化与复用</strong><p>message_end 追加 Session entry；用户可 tree 回溯、fork/clone、export HTML/JSONL、resume 或通过 RPC 查询 session tree。</p></div>
+      </div>
+      <h3>终端体验也是核心业务能力</h3>
+      <p>Pi-TUI 通过差分渲染与 CSI 2026 synchronized output 降低流式闪烁；组件 render 返回严格宽度内的行。Overlay 有显式 focus/fallback 语义，编辑器通过硬件光标 marker 支持中日韩 IME 候选框定位。这些不是 Agent 推理机制，却直接决定长时编码会话是否可用。</p>
+      <h3>实验性 Orchestrator</h3>
+      <p><code>pi-orchestrator</code> 提供 supervisor、RPC process、IPC server 与 storage，但 README 明确标注 Experimental、API 可能变化或删除。它说明 Pi 正探索多进程编排，却不应被视为当前稳定核心能力。</p>
+    </section>
+
+    <section id="security">
+      <div class="section-title"><span class="section-no">SECTION 11</span><div><p class="eyebrow">Security Boundary</p><h2>安全模型：信任加载，不假装隔离</h2></div></div>
+      <p class="lead">Pi 明确声明自己以启动用户的权限运行。内置工具、扩展、包安装、shell 和语言服务器都是普通本地进程。项目 Trust 是资源加载守门，不是工具行为沙箱。</p>
+      <div class="grid-2">
+        <div class="note-card coral" data-mark="PROJECT TRUST"><h3>防止仓库静默注入</h3><p>检测项目 <code>.pi</code> 设置、扩展、skills、prompts、themes 与 system files；默认 ask。非交互模式不会弹窗，可由保存决策或 CLI override 控制。</p></div>
+        <div class="note-card" data-mark="NOT A SANDBOX"><h3>不限制运行权限</h3><p>信任项目后，模型仍可要求工具执行用户本可执行的操作。AGENTS.md/CLAUDE.md 还可独立加载；Prompt injection 属于本地 Agent 预期风险。</p></div>
+      </div>
+      <h3>隔离策略必须来自 OS 或虚拟化边界</h3>
+      <div class="matrix-wrap"><table>
+        <thead><tr><th>方案</th><th>隔离对象</th><th>注意事项</th></tr></thead>
+        <tbody>
+          <tr><td>Gondolin extension</td><td>内置工具与 <code>!</code> 命令进入本地 micro-VM</td><td>其他自定义扩展工具仍可能在宿主执行；workspace mount 可回写宿主</td></tr>
+          <tr><td>Plain Docker</td><td>整个 Pi 进程</td><td>Provider key 进入容器；读写 bind mount 仍修改主机</td></tr>
+          <tr><td>OpenShell</td><td>策略控制的本地/远程 sandbox</td><td>可控制文件、进程、网络、凭据与 inference；远程模式需传输项目文件</td></tr>
+        </tbody>
+      </table></div>
+      <h3>安全上的坦诚取舍</h3>
+      <p>项目文档认为“半套 in-process sandbox”容易制造错误安全感，因为工具最终仍依赖 host shell、filesystem、package manager、credential 和 extension code。因此核心选择不提供一个名义权限系统，而是要求高风险或无人监督任务在真正的系统边界中运行。</p>
+      <div class="callout"><strong>业务建议：</strong>如果把 Pi 用作服务器 Agent 或自动化 worker，必须在产品壳补上明确的工作区挂载、网络策略、短期凭据、扩展 allowlist 和结果审阅；不能直接把本地交互默认值搬到多租户环境。</div>
+    </section>
+
+    <section id="harness">
+      <div class="section-title"><span class="section-no">SECTION 12</span><div><p class="eyebrow">Pi 2.0 Direction</p><h2>AgentHarness：从产品经验提炼生命周期</h2></div></div>
+      <p class="lead"><span class="marker future">演进中</span><code>AgentHarness</code> 位于 agent-core 之上，目标是拥有 session persistence、runtime config、resource resolution、operation locking 与扩展 mutation 语义。文档明确说明 Coding Agent 仍由 AgentSession 驱动，迁移属于 Pi 2.0。</p>
+      <h3>核心新概念：Turn Snapshot</h3>
+      <p>Harness config 是应用最新设置；每次 <code>createTurnState()</code> 再把 session messages、resources、system prompt、model、thinking、tools、stream options 和 session id 固化为本轮快照。Setter 可以在运行中更新未来配置，但不会突变当前 provider request。</p>
+      <div class="formula">live harness config --createTurnState()→ immutable-ish turn snapshot --provider request→ save point</div>
+      <h3>Save Point 与 Pending Writes</h3>
+      <div class="timeline">
+        <div class="time-item"><strong>消息先提交</strong><p>Agent 发出的 assistant 与 tool result 在 <code>message_end</code> 按 transcript 顺序持久化。</p></div>
+        <div class="time-item"><strong>运行中外部写排队</strong><p>扩展或应用在 operation 活动期间请求的 session entry 进入 pending writes，不插到当前工具结果中间。</p></div>
+        <div class="time-item"><strong>回合保存点排空</strong><p>assistant turn 和工具结果完成后，先 flush pending writes，再为可能继续的下一 LLM turn 重建 snapshot。</p></div>
+        <div class="time-item"><strong>失败也不丢写</strong><p>pending writes 在 save point、agent_end 或 failure cleanup 排空；abort 清 steer/follow-up，但保留 nextTurn 与 pending writes。</p></div>
+      </div>
+      <h3>显式阶段与结构操作</h3>
+      <p>Phase 为 <code>idle | turn | compaction | branch_summary | retry</code>。prompt、skill、template、compact、navigateTree 是结构操作，只能从 idle 启动并在首个 await 前占有 phase；steer、followUp、nextTurn、abort 与 runtime setter 则在文档允许的运行边界使用。</p>
+      <h3>尚未完成或仍需审计</h3>
+      <ul><li>Auto-compaction 与 retry decision points 尚未进入 AgentHarness。</li><li>完整 HarnessSession facade 尚未实现；原始 harness 在部分 hook 中调用 settlement API 仍可能形成重入死锁。</li><li>phase/settled、abort barrier 与广泛 listener/hook reentrancy 需要进一步生命周期验证。</li><li>Coding Agent 的资源、扩展、UI/session 行为和 auth/retry/header 流程尚待迁移。</li></ul>
+      <div class="callout"><strong>架构判断：</strong>AgentHarness 正把 AgentSession 中分散的“下一 turn 刷新、持久化顺序、失败清理”升级成统一保存点协议。方向合理，但报告必须把它视为迁移目标，而不是当前产品已经完成的替代层。</div>
+    </section>
+
+    <section id="review">
+      <div class="section-title"><span class="section-no">SECTION 13</span><div><p class="eyebrow">Review & Reuse</p><h2>突出设计、风险与可复用原则</h2></div></div>
+      <h3>最突出的设计点</h3>
+      <div class="grid-3">
+        <div class="note-card" data-mark="01"><h3>修复在边界集中发生</h3><p>持久历史保持真实，provider request view 负责合法化，避免到处维护“永远完美”的中间状态。</p></div>
+        <div class="note-card coral" data-mark="02"><h3>并行与顺序分层</h3><p>preflight 有序、body 并发、事件实时、transcript 稳定；同文件写再加细粒度 mutex。</p></div>
+        <div class="note-card mint" data-mark="03"><h3>会话树是产品能力</h3><p>分叉、回退、摘要、导出都建立在 parentId 上，不需要复制或破坏原对话。</p></div>
+        <div class="note-card" data-mark="04"><h3>扩展面覆盖整条业务链</h3><p>输入、上下文、provider、工具、Session、UI 都可扩展，使最小默认值仍能适配个人工作流。</p></div>
+        <div class="note-card coral" data-mark="05"><h3>错误尽量数据化</h3><p>工具异常、provider 失败、overflow 都进入消息或事件，让 UI、历史和恢复策略共享一种观察面。</p></div>
+        <div class="note-card mint" data-mark="06"><h3>安全边界诚实</h3><p>明确说无内置 sandbox，并给出 VM/container/policy sandbox 路径，避免把 project trust 误解为权限隔离。</p></div>
+      </div>
+      <h3>局限与风险</h3>
+      <ol class="risk-list">
+        <li><div><strong>默认权限过强，不适合直接服务器化</strong><p>本地产品假设用户监督和同一 OS 权限边界；多租户、无人值守或不可信仓库必须补外部隔离与授权。</p></div></li>
+        <li><div><strong>当前 SessionManager 的耐久性弱于事件日志系统</strong><p>同步 appendFile、无 per-entry checksum/事务；无 assistant 的会话可能不创建文件；仅移动 leaf 不立刻持久化。</p></div></li>
+        <li><div><strong>扩展是强信任代码</strong><p>可改已校验工具参数且不重新校验，可注册 Provider/工具并执行 Node 代码；扩展供应链等价于本地代码供应链。</p></div></li>
+        <li><div><strong>AgentSession 与 AgentHarness 双轨期</strong><p>当前产品逻辑与新 Harness 重叠，迁移期间容易把文档中的目标行为和实际产品行为混淆。</p></div></li>
+        <li><div><strong>错误分类依赖 Provider 文本经验</strong><p>retry/overflow 正则覆盖广但不是结构化协议；新供应商、代理网关和本地模型可能返回未识别或误导性文案。</p></div></li>
+        <li><div><strong>并行工具的中断历史由请求边界兜底</strong><p>串行模式 abort 后未启动调用不会立刻拥有结果；上下文自愈虽可补齐 provider 结构，但 Session 原始路径仍需 UI 正确解释。</p></div></li>
+      </ol>
+      <h3>可复用原则</h3>
+      <div class="matrix-wrap"><table>
+        <thead><tr><th>原则</th><th>解决的问题</th><th>推荐实现</th></tr></thead>
+        <tbody>
+          <tr><td>请求边界自愈</td><td>打断、崩溃、跨模型导致历史非法</td><td>保留原历史；发请求前统一过滤、降级和补配对</td></tr>
+          <tr><td>抢救解析必须配安全阀</td><td>残缺 JSON 被修成“合法但危险”参数</td><td>stopReason=length 时拒绝全部副作用调用</td></tr>
+          <tr><td>错误文案就是模型反馈</td><td>工具失败消耗多轮猜测</td><td>字段路径 + 预期 + 实际值 + 下一步行动</td></tr>
+          <tr><td>同资源串行、异资源并行</td><td>工具并发写冲突</td><td>以 canonical resource key 建 promise queue/mutex</td></tr>
+          <tr><td>错误历史与工作状态分离</td><td>既要审计又要合法重试</td><td>错误保留 session，从 active context 移除</td></tr>
+          <tr><td>回合边界快照</td><td>运行中配置变化污染当前请求</td><td>live config → turn snapshot → save point refresh</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="evidence">
+      <div class="section-title"><span class="section-no">SECTION 14</span><div><p class="eyebrow">Evidence Index</p><h2>源码证据索引</h2></div></div>
+      <p class="lead">以下路径相对于 <code>D:\Server_agent_core_design\pi_build</code>，用于快速复核本报告主要结论。</p>
+      <div class="matrix-wrap"><table>
+        <thead><tr><th>主题</th><th>源码 / 文档</th><th>核验内容</th></tr></thead>
+        <tbody>
+          <tr><td>低层循环</td><td><code>packages/agent/src/agent-loop.ts</code><br><code>packages/agent/src/agent.ts</code></td><td>事件流、工具 preflight/并发、queue、length guard、barrier</td></tr>
+          <tr><td>Agent 产品编排</td><td><code>packages/coding-agent/src/core/agent-session.ts</code></td><td>Session 持久化、扩展桥、自动重试、自动压缩、settled</td></tr>
+          <tr><td>会话树</td><td><code>packages/coding-agent/src/core/session-manager.ts</code><br><code>docs/session-format.md</code></td><td>JSONL v3、entry、parentId、branch、context build</td></tr>
+          <tr><td>压缩</td><td><code>packages/coding-agent/src/core/compaction/compaction.ts</code><br><code>docs/compaction.md</code></td><td>阈值、cut point、split-turn、增量 summary、文件列表</td></tr>
+          <tr><td>工具容错</td><td><code>packages/ai/src/utils/json-parse.ts</code><br><code>packages/ai/src/utils/validation.ts</code><br><code>packages/coding-agent/src/core/tools/</code></td><td>JSON 修复、coercion、同文件队列、截断、edit 容错</td></tr>
+          <tr><td>请求自愈</td><td><code>packages/ai/src/api/transform-messages.ts</code></td><td>error/aborted 过滤、孤儿结果、跨模型 handoff、图片降级</td></tr>
+          <tr><td>错误分类</td><td><code>packages/ai/src/utils/retry.ts</code><br><code>packages/ai/src/utils/overflow.ts</code></td><td>黑白名单、Provider 文本、静默 overflow 检测</td></tr>
+          <tr><td>扩展系统</td><td><code>packages/coding-agent/src/core/extensions/</code><br><code>docs/extensions.md</code></td><td>hook 顺序、参数 mutation、错误隔离、工具/Provider/UI 注册</td></tr>
+          <tr><td>安全边界</td><td><code>packages/coding-agent/docs/security.md</code><br><code>docs/containerization.md</code></td><td>Project Trust、无内置沙箱、Gondolin/Docker/OpenShell</td></tr>
+          <tr><td>下一代 Harness</td><td><code>packages/agent/src/harness/agent-harness.ts</code><br><code>packages/agent/docs/agent-harness.md</code></td><td>phase、turn snapshot、pending writes、save point、未完成项</td></tr>
+          <tr><td>运行模式</td><td><code>packages/coding-agent/docs/rpc.md</code><br><code>packages/coding-agent/src/modes/</code><br><code>packages/tui/</code></td><td>RPC/JSON/print/TUI、UI protocol、差分渲染</td></tr>
+        </tbody>
+      </table></div>
+      <p class="fine">分析说明：本文没有执行材料中出现的安装、启动、容器、网络或发布命令。当前实现与 AgentHarness 演进蓝图已分开标注；架构评价属于基于源码事实的分析，不代表维护者官方路线承诺。</p>
+    </section>
+  </main>
+
+  <button class="back" type="button" aria-label="返回顶部">↑</button>
+  <footer><div class="footer-inner"><span>Pi Agent · Core Design Analysis</span><span>Local source review · 2026-08-19 · Asia/Shanghai</span></div></footer>
+  <script>
+    (() => {
+      const progress = document.querySelector('.progress');
+      const back = document.querySelector('.back');
+      const links = [...document.querySelectorAll('.topnav a')];
+      const sections = links.map(link => document.querySelector(link.getAttribute('href'))).filter(Boolean);
+      const update = () => {
+        const max = document.documentElement.scrollHeight - innerHeight;
+        progress.style.width = `${max > 0 ? (scrollY / max) * 100 : 0}%`;
+        back.classList.toggle('show', scrollY > 750);
+        let current = sections[0]?.id;
+        for (const section of sections) if (section.getBoundingClientRect().top <= 115) current = section.id;
+        links.forEach(link => link.classList.toggle('active', link.getAttribute('href') === `#${current}`));
+      };
+      addEventListener('scroll', update, { passive: true });
+      addEventListener('resize', update);
+      back.addEventListener('click', () => scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }));
+      update();
+    })();
+  </script>
+</body>
+</html>
