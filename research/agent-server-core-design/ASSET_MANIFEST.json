@@ -1,0 +1,252 @@
+{
+  "schema_version": 1,
+  "archive_date": "2026-09-13",
+  "analysis_date": "2026-08-19",
+  "scope": "Three supplied agent core design snapshots and related analysis assets",
+  "files": [
+    {
+      "path": "CATALOG.md",
+      "bytes": 1514,
+      "sha256": "166353d8f5700ef7c8594df5eaf283b021a9171b5bbfdb056451c9bf55817168",
+      "origin": "archive-generated documentation, manifest, bundle or verification tool"
+    },
+    {
+      "path": "docs/COMPARISON.md",
+      "bytes": 4945,
+      "sha256": "f7a4bcc07b32fa855ba9ddf8c75468fa0b2131c4c1be6629536f3a9362e60959",
+      "origin": "archive-generated documentation, manifest, bundle or verification tool"
+    },
+    {
+      "path": "docs/PROVENANCE.md",
+      "bytes": 2621,
+      "sha256": "090fb45cb79e3d6cb38084bae0fabe95913ab8f35e1f4001bd61cfc1c4d191ea",
+      "origin": "archive-generated documentation, manifest, bundle or verification tool"
+    },
+    {
+      "path": "docs/SECURITY_AND_REPRODUCIBILITY.md",
+      "bytes": 3500,
+      "sha256": "744a10695446b8d70146658ca78f15bcba19db15d7c6c964c264f022c19e4112",
+      "origin": "archive-generated documentation, manifest, bundle or verification tool"
+    },
+    {
+      "path": "downloads/reports-and-previews.zip",
+      "bytes": 1224958,
+      "sha256": "7b47202aba3b0775a178020eef07147980899b9f069fc915538ca4cfc58e81b3",
+      "origin": "archive-generated documentation, manifest, bundle or verification tool"
+    },
+    {
+      "path": "licenses/deepseek_harness/LICENSE",
+      "bytes": 1065,
+      "sha256": "ebb4f09972aee8608be255debaf78451a68e95c290f55c240dec2ecfa16ea6be",
+      "origin": "supplied upstream license/notice: deepseek_harness/LICENSE"
+    },
+    {
+      "path": "licenses/deepseek_harness/THIRD_PARTY_NOTICES.md",
+      "bytes": 15850,
+      "sha256": "61f68731049dbea19ba91ad8cf363dd2778c5f7b1f9a63496a6a62c1129eefee",
+      "origin": "supplied upstream license/notice: deepseek_harness/THIRD_PARTY_NOTICES.md"
+    },
+    {
+      "path": "licenses/grok_build/LICENSE",
+      "bytes": 11592,
+      "sha256": "f481edaaea56bb9fadac0191287f3b243a4bf63114a707a2b2a267fbfea598d5",
+      "origin": "supplied upstream license/notice: grok_build/LICENSE"
+    },
+    {
+      "path": "licenses/grok_build/THIRD-PARTY-NOTICES",
+      "bytes": 781418,
+      "sha256": "c0fe9bbc9b35e1c7f5062f61235c0c6cac17fa307556a5e928d0029320894849",
+      "origin": "supplied upstream license/notice: grok_build/THIRD-PARTY-NOTICES"
+    },
+    {
+      "path": "licenses/pi_build/LICENSE",
+      "bytes": 1069,
+      "sha256": "0457f5bcec3b3b211605dfb5d1a49042fd638f3686a410fe099c24a25af13c48",
+      "origin": "supplied upstream license/notice: pi_build/LICENSE"
+    },
+    {
+      "path": "manifests/deepseek_harness.json",
+      "bytes": 1598967,
+      "sha256": "710bfd12324fafcdce2b1dbb72a742fcea750d5f4f51b451aa932c6890b836d6",
+      "origin": "archive-generated documentation, manifest, bundle or verification tool"
+    },
+    {
+      "path": "manifests/EXCLUSIONS.json",
+      "bytes": 563677,
+      "sha256": "3d05285d28b0aa842de5b7fd0a32274eb19b91455c5e1ea2926ccf3cea308343",
+      "origin": "archive-generated documentation, manifest, bundle or verification tool"
+    },
+    {
+      "path": "manifests/grok_build.json",
+      "bytes": 593758,
+      "sha256": "94e24a52ef3aef87cabce688675a282d7821b455e370a5be66f457db84fe276b",
+      "origin": "archive-generated documentation, manifest, bundle or verification tool"
+    },
+    {
+      "path": "manifests/pi_build.json",
+      "bytes": 221945,
+      "sha256": "1afffba8f446bd600c2e811722f8ff8c2f78dcec673de3619f48e372ce182575",
+      "origin": "archive-generated documentation, manifest, bundle or verification tool"
+    },
+    {
+      "path": "manifests/SAFETY_REVIEW.json",
+      "bytes": 4199,
+      "sha256": "cd2e54fec8a7ade132310cfcdfd51f5479e196f10a1cd9147a3b178a8a0c416c",
+      "origin": "archive-generated documentation, manifest, bundle or verification tool"
+    },
+    {
+      "path": "previews/deepseek/deepseek-report-desktop-hero.png",
+      "bytes": 148751,
+      "sha256": "0bcbd3a5c7b8c0f2950619133a2e22501ae44438a90b91f44b60638a3c1e5ae6",
+      "origin": "conversation-generated preview: deepseek-report-desktop-hero.png"
+    },
+    {
+      "path": "previews/deepseek/deepseek-report-desktop-probe.png",
+      "bytes": 156614,
+      "sha256": "57912ce62335565f0389824bf3f90945b8027f5f13ec0b2f5bf6f2320ead1107",
+      "origin": "conversation-generated preview: deepseek-report-desktop-probe.png"
+    },
+    {
+      "path": "previews/deepseek/deepseek-report-mobile-hero.png",
+      "bytes": 56297,
+      "sha256": "8b5736b63e3c5b7ad9a28b60d6c9f1b5bcbe74e4b74d8f54ff98903c473278a9",
+      "origin": "conversation-generated preview: deepseek-report-mobile-hero.png"
+    },
+    {
+      "path": "previews/deepseek/deepseek-report-mobile-probe.png",
+      "bytes": 54049,
+      "sha256": "0d0ced895f88a746303a243ae507af1b91a0ac491f0d56da9e46d497a1d93afc",
+      "origin": "conversation-generated preview: deepseek-report-mobile-probe.png"
+    },
+    {
+      "path": "previews/grok/grok-core-design-analysis-architecture.png",
+      "bytes": 178741,
+      "sha256": "337c64520e0a19ac66ec9793aa36aaa6a2627c3557e57465b6c026cf93de5cde",
+      "origin": "conversation-generated preview: grok-core-design-analysis-architecture.png"
+    },
+    {
+      "path": "previews/grok/grok-core-design-analysis-desktop.png",
+      "bytes": 152291,
+      "sha256": "2ed06f6def154f2f336f30c7e062e674a09ef326bcd78341a387ca4678da0c87",
+      "origin": "conversation-generated preview: grok-core-design-analysis-desktop.png"
+    },
+    {
+      "path": "previews/grok/grok-core-design-analysis-mobile.png",
+      "bytes": 49475,
+      "sha256": "ac15118f20b1f954fdc8bdfd6c9ac5a10cd705794183d3abae2e057ff7f4ade7",
+      "origin": "conversation-generated preview: grok-core-design-analysis-mobile.png"
+    },
+    {
+      "path": "previews/grok/grok-core-design-analysis-takeaways.png",
+      "bytes": 111156,
+      "sha256": "2569bf073b23e986f69488ed1c5cbf6b208fc391ebde5c9a246961a7d9c57ead",
+      "origin": "conversation-generated preview: grok-core-design-analysis-takeaways.png"
+    },
+    {
+      "path": "previews/pi/pi-report-desktop-hero.png",
+      "bytes": 120837,
+      "sha256": "c864de1fd88bdb5f9645213bf3f18fba8908eed4fa1762e287764ff6a2aaf17b",
+      "origin": "conversation-generated preview: pi-report-desktop-hero.png"
+    },
+    {
+      "path": "previews/pi/pi-report-desktop-probe.png",
+      "bytes": 101249,
+      "sha256": "397917642c6c530ad620df0f55e61d89016c7f3e66d3a7767536e634a3f4fffd",
+      "origin": "conversation-generated preview: pi-report-desktop-probe.png"
+    },
+    {
+      "path": "previews/pi/pi-report-mobile-hero.png",
+      "bytes": 49287,
+      "sha256": "b2432dd29c1d590b8dc85ad6366bbd33453706d3b5a591b70cd53b8c1863efe7",
+      "origin": "conversation-generated preview: pi-report-mobile-hero.png"
+    },
+    {
+      "path": "previews/pi/pi-report-mobile-probe.png",
+      "bytes": 43924,
+      "sha256": "1d846cc08744355ca1507d75b6ec1014c763f08fea303339e866e2ef45e27d0f",
+      "origin": "conversation-generated preview: pi-report-mobile-probe.png"
+    },
+    {
+      "path": "previews/README.md",
+      "bytes": 1111,
+      "sha256": "2bc72cbb318a8341403c18a08b956c22bd9fe22dcf425dbdd845d18b9dc3d7f9",
+      "origin": "archive-generated documentation, manifest, bundle or verification tool"
+    },
+    {
+      "path": "README.md",
+      "bytes": 3767,
+      "sha256": "efb090dc40bf2733cac9b8ad57ca8c2e461a9702ba38407484cb97ee37722d3c",
+      "origin": "archive-generated documentation, manifest, bundle or verification tool"
+    },
+    {
+      "path": "reports/deepseek-harness-core-design-analysis.html",
+      "bytes": 59669,
+      "sha256": "635bd0f835f03c232fd3e296ac4ca16c1c770f9a7bb0c718ba39f802d73cb2a2",
+      "origin": "conversation-generated report: deepseek-harness-core-design-analysis.html"
+    },
+    {
+      "path": "reports/grok-core-design-analysis.html",
+      "bytes": 75298,
+      "sha256": "068c2a9bf13bb791487a382eb074651a6e7994a9f2d6079cc03880ef588cc9d3",
+      "origin": "conversation-generated report: grok-core-design-analysis.html"
+    },
+    {
+      "path": "reports/pi-agent-core-design-analysis.html",
+      "bytes": 62014,
+      "sha256": "5afe45547f091235faade3a45dba6292167b77e139693addae9a67d650d17be2",
+      "origin": "conversation-generated report: pi-agent-core-design-analysis.html"
+    },
+    {
+      "path": "source-notes/grok_build/调研报告-grok工具调用容错机制.md",
+      "bytes": 31461,
+      "sha256": "91d41d916323d465c0a35941541618ddabac4b52f66b56b61aa4f342936f069a",
+      "origin": "supplied source directory: grok_build/调研报告-grok工具调用容错机制.md (untracked research note)"
+    },
+    {
+      "path": "source-notes/pi_build/2026-07-21-pi工具调用容错机制报告.md",
+      "bytes": 21512,
+      "sha256": "9ae76b78c09b9676967a2b779c62bb353575f743873b66307fafd31b89749ac6",
+      "origin": "supplied source directory: pi_build/2026-07-21-pi工具调用容错机制报告.md (untracked research note)"
+    },
+    {
+      "path": "source-notes/README.md",
+      "bytes": 645,
+      "sha256": "1826b813cd54d72b42f4e74e914e2b56e85b70d23379928ca2748fa32430eeef",
+      "origin": "archive-generated documentation, manifest, bundle or verification tool"
+    },
+    {
+      "path": "sources/deepseek_harness.zip",
+      "bytes": 17907186,
+      "sha256": "aecf17ae52c11c3547ac6ff4424f6d54d303b8425457caf3bc39053f2a18aea6",
+      "origin": "archive-generated documentation, manifest, bundle or verification tool"
+    },
+    {
+      "path": "sources/grok_build.zip",
+      "bytes": 13710801,
+      "sha256": "434bbc20a31aac35aad4b62022266d3dc77b87dfea950552e4e76be93833739b",
+      "origin": "archive-generated documentation, manifest, bundle or verification tool"
+    },
+    {
+      "path": "sources/pi_build.zip",
+      "bytes": 6154421,
+      "sha256": "d3924bb554c67206642f55e1227c5140cfd149ab61dd9777114cda14ad11448a",
+      "origin": "archive-generated documentation, manifest, bundle or verification tool"
+    },
+    {
+      "path": "tools/verify_archive.py",
+      "bytes": 5575,
+      "sha256": "47c3efdd2eb0be9c9d0de593663644ab312913fe7b426ffa093121c439635a99",
+      "origin": "archive-generated documentation, manifest, bundle or verification tool"
+    },
+    {
+      "path": "verification/verify-html-reports.original.mjs",
+      "bytes": 5377,
+      "sha256": "0834bd86ac33b64e3cfce97168620b4a7cc7c2b632c0fb9154b463e9fcc40393",
+      "origin": "original DeepSeek/Pi browser verification script; historical absolute environment paths preserved"
+    }
+  ],
+  "manifest_exclusions": [
+    "ASSET_MANIFEST.json (self)",
+    "SHA256SUMS.txt (contains manifest digest)"
+  ]
+}

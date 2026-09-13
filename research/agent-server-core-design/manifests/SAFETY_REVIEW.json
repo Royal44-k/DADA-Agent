@@ -1,0 +1,126 @@
+{
+  "method": "limited candidate-pattern scan and redacted-context manual review; not a complete security audit",
+  "candidate_values_stored": false,
+  "projects": [
+    {
+      "project": "grok_build",
+      "findings": [
+        {
+          "path": "crates/codegen/xai-grok-secrets/src/sanitizer.rs",
+          "labels": [
+            "private-key",
+            "credential-url"
+          ],
+          "review": "retained: synthetic test/fixture/canary or documentation example"
+        },
+        {
+          "path": "crates/codegen/xai-grok-shell/src/upload/trace.rs",
+          "labels": [
+            "credential-url"
+          ],
+          "review": "retained: synthetic test/fixture/canary or documentation example"
+        },
+        {
+          "path": "crates/codegen/xai-grok-telemetry/src/redact_common.rs",
+          "labels": [
+            "api-key-shape"
+          ],
+          "review": "retained: synthetic test/fixture/canary or documentation example"
+        },
+        {
+          "path": "crates/codegen/xai-grok-telemetry/src/external/tests.rs",
+          "labels": [
+            "api-key-shape"
+          ],
+          "review": "retained: synthetic test/fixture/canary or documentation example"
+        },
+        {
+          "path": "crates/codegen/xai-grok-telemetry/src/otel_layer/redact.rs",
+          "labels": [
+            "api-key-shape"
+          ],
+          "review": "retained: synthetic test/fixture/canary or documentation example"
+        },
+        {
+          "path": "crates/codegen/xai-grok-telemetry/tests/external_otlp.rs",
+          "labels": [
+            "api-key-shape"
+          ],
+          "review": "retained: synthetic test/fixture/canary or documentation example"
+        },
+        {
+          "path": "crates/codegen/xai-grok-telemetry/tests/external_otlp_gates_on.rs",
+          "labels": [
+            "api-key-shape"
+          ],
+          "review": "retained: synthetic test/fixture/canary or documentation example"
+        },
+        {
+          "path": "crates/codegen/xai-grok-telemetry/tests/external_otlp_grpc.rs",
+          "labels": [
+            "api-key-shape"
+          ],
+          "review": "retained: synthetic test/fixture/canary or documentation example"
+        },
+        {
+          "path": "crates/codegen/xai-grok-tools/src/implementations/grok_build/web_fetch/client.rs",
+          "labels": [
+            "credential-url"
+          ],
+          "review": "retained: synthetic test/fixture/canary or documentation example"
+        },
+        {
+          "path": "crates/codegen/xai-grok-workspace/src/session/git.rs",
+          "labels": [
+            "credential-url"
+          ],
+          "review": "retained: synthetic test/fixture/canary or documentation example"
+        },
+        {
+          "path": "crates/codegen/xai-grok-workspace/src/upload/environment.rs",
+          "labels": [
+            "credential-url"
+          ],
+          "review": "retained: synthetic test/fixture/canary or documentation example"
+        }
+      ]
+    },
+    {
+      "project": "deepseek_harness",
+      "findings": [
+        {
+          "path": "examples/headless-agent/tests/fixtures/session-telemetry-otel-driver.ts",
+          "labels": [
+            "api-key-shape"
+          ],
+          "review": "retained: synthetic test/fixture/canary or documentation example"
+        },
+        {
+          "path": "packages/credentials/credentials-local/tests/local.spec.ts",
+          "labels": [
+            "api-key-shape"
+          ],
+          "review": "retained: synthetic test/fixture/canary or documentation example"
+        },
+        {
+          "path": "packages/session/session-telemetry-otel/tests/loader-composition.e2e.ts",
+          "labels": [
+            "api-key-shape"
+          ],
+          "review": "retained: synthetic test/fixture/canary or documentation example"
+        },
+        {
+          "path": "packages/web/web-fetch-http/tests/fetch-http.spec.ts",
+          "labels": [
+            "credential-url"
+          ],
+          "review": "retained: synthetic test/fixture/canary or documentation example"
+        }
+      ]
+    },
+    {
+      "project": "pi_build",
+      "findings": []
+    }
+  ]
+}

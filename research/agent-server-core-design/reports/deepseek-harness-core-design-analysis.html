@@ -1,0 +1,836 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="DeepSeek Harness Agent Server Core Design 源码级架构分析报告">
+  <title>DeepSeek Harness · Agent Server Core Design 分析报告</title>
+  <style>
+    :root {
+      --night: #0b1821;
+      --ink: #132630;
+      --teal: #138b87;
+      --teal-dark: #0c6665;
+      --indigo: #5362a6;
+      --signal: #d47a35;
+      --paper: #f8faf9;
+      --fog: #eaf0ef;
+      --line: #c7d5d2;
+      --muted: #607078;
+      --danger: #a74343;
+      --ok: #20755f;
+      --display: "STZhongsong", "Songti SC", "Noto Serif CJK SC", serif;
+      --body: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+      --mono: "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font: 16px/1.75 var(--body);
+      text-rendering: optimizeLegibility;
+    }
+    a { color: var(--teal-dark); text-underline-offset: 3px; }
+    a:hover { color: var(--signal); }
+    button, summary { font: inherit; }
+    a:focus-visible, button:focus-visible, summary:focus-visible {
+      outline: 3px solid rgba(212, 122, 53, .48);
+      outline-offset: 3px;
+    }
+    code {
+      padding: .12em .34em;
+      color: #164753;
+      background: #e7efee;
+      border: 1px solid #d2e0de;
+      font: .9em/1.5 var(--mono);
+      overflow-wrap: anywhere;
+    }
+    .skip {
+      position: fixed;
+      left: 18px;
+      top: -70px;
+      z-index: 100;
+      padding: 10px 15px;
+      color: white;
+      background: var(--signal);
+    }
+    .skip:focus { top: 16px; }
+    .read-progress {
+      position: fixed;
+      inset: 0 auto auto 0;
+      z-index: 99;
+      width: 0;
+      height: 4px;
+      background: var(--signal);
+    }
+
+    .hero {
+      position: relative;
+      min-height: 680px;
+      color: #eef7f5;
+      background-color: var(--night);
+      overflow: hidden;
+      border-bottom: 6px solid var(--teal);
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: .24;
+      background-image:
+        linear-gradient(rgba(115, 197, 189, .25) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(115, 197, 189, .25) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(90deg, transparent 4%, black 35%, black 86%, transparent 100%);
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      width: min(1440px, 100%);
+      margin: 0 auto;
+      padding: 38px 52px 58px;
+    }
+    .mast {
+      display: flex;
+      justify-content: space-between;
+      gap: 22px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid rgba(214, 239, 235, .28);
+      font: 700 .72rem/1.2 var(--mono);
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .mast span:first-child { color: #69d2c6; }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.22fr) minmax(410px, .78fr);
+      gap: 64px;
+      align-items: center;
+      padding-top: 68px;
+    }
+    h1 {
+      margin: 0;
+      max-width: 880px;
+      font: 700 clamp(3.3rem, 7.3vw, 7rem)/.92 var(--display);
+      letter-spacing: -.055em;
+    }
+    h1 small {
+      display: block;
+      margin-top: 22px;
+      color: #77d8ce;
+      font: 650 clamp(1.2rem, 2.25vw, 2rem)/1.3 var(--body);
+      letter-spacing: -.02em;
+    }
+    .hero-dek {
+      max-width: 770px;
+      margin: 31px 0 0;
+      color: #b9cecb;
+      font-size: 1.08rem;
+    }
+    .circuit {
+      position: relative;
+      min-height: 390px;
+      padding: 28px 18px;
+      border: 1px solid rgba(119, 216, 206, .55);
+      background: rgba(7, 22, 30, .84);
+    }
+    .circuit::before {
+      content: "EVENT LOG";
+      position: absolute;
+      left: 50%;
+      top: 28px;
+      bottom: 28px;
+      width: 86px;
+      transform: translateX(-50%);
+      display: grid;
+      place-items: center;
+      color: var(--night);
+      background: #79d7ce;
+      font: 800 .7rem/1 var(--mono);
+      letter-spacing: .14em;
+      writing-mode: vertical-rl;
+    }
+    .circuit-row {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 86px 1fr;
+      gap: 18px;
+      align-items: center;
+      min-height: 62px;
+      margin: 5px 0;
+    }
+    .circuit-row::before, .circuit-row::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: calc(50% - 43px);
+      border-top: 1px solid rgba(119, 216, 206, .55);
+    }
+    .circuit-row::before { left: 0; }
+    .circuit-row::after { right: 0; }
+    .chip {
+      position: relative;
+      z-index: 1;
+      padding: 9px 11px;
+      color: #e9f4f2;
+      background: #102c37;
+      border-left: 3px solid var(--teal);
+      font: 650 .78rem/1.35 var(--mono);
+    }
+    .chip.right { border-left: 0; border-right: 3px solid var(--indigo); text-align: right; }
+    .chip em { display: block; margin-top: 3px; color: #8aa5a8; font-style: normal; font-size: .64rem; }
+    .node-dot {
+      position: relative;
+      z-index: 2;
+      width: 10px;
+      height: 10px;
+      margin: auto;
+      background: var(--signal);
+      border: 2px solid var(--night);
+      box-shadow: 0 0 0 2px var(--signal);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1040px);
+      gap: 76px;
+      width: min(1440px, 100%);
+      margin: 0 auto;
+      padding: 64px 52px 128px;
+    }
+    .nav {
+      position: sticky;
+      top: 24px;
+      align-self: start;
+      max-height: calc(100vh - 48px);
+      overflow: auto;
+      padding-right: 22px;
+      border-right: 1px solid var(--line);
+    }
+    .nav-title {
+      margin: 0 0 15px;
+      color: var(--muted);
+      font: 800 .68rem/1.2 var(--mono);
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+    .nav ol { margin: 0; padding: 0; list-style: none; counter-reset: n; }
+    .nav li { counter-increment: n; }
+    .nav a {
+      display: grid;
+      grid-template-columns: 27px 1fr;
+      gap: 7px;
+      padding: 7px 7px 7px 10px;
+      color: var(--muted);
+      border-left: 2px solid transparent;
+      text-decoration: none;
+      font-size: .8rem;
+      line-height: 1.45;
+    }
+    .nav a::before { content: counter(n, decimal-leading-zero); color: #92a2a5; font: .7rem/1.7 var(--mono); }
+    .nav a.active { color: var(--teal-dark); border-left-color: var(--teal); background: #edf4f2; }
+    .nav-meta {
+      margin-top: 28px;
+      padding: 16px 0 0 11px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: .7rem;
+      line-height: 1.65;
+    }
+    main { min-width: 0; }
+    section { scroll-margin-top: 32px; margin-bottom: 104px; }
+    .section-head {
+      display: grid;
+      grid-template-columns: 70px minmax(0, 1fr);
+      gap: 20px;
+      align-items: end;
+      padding-bottom: 16px;
+      margin-bottom: 30px;
+      border-bottom: 2px solid var(--ink);
+    }
+    .section-no { color: var(--teal); font: 800 1rem/1 var(--mono); letter-spacing: .1em; }
+    h2 { margin: 0; font: 700 clamp(2rem, 4vw, 3.7rem)/1.02 var(--display); letter-spacing: -.035em; }
+    h3 { margin: 40px 0 12px; font: 700 1.24rem/1.35 var(--body); letter-spacing: -.01em; }
+    h4 { margin: 24px 0 8px; font-size: 1rem; }
+    p { margin: 0 0 16px; }
+    .lead { max-width: 870px; color: #3b525c; font-size: 1.08rem; line-height: 1.85; }
+    .kicker { margin: 0 0 10px; color: var(--teal-dark); font: 800 .7rem/1.2 var(--mono); letter-spacing: .13em; text-transform: uppercase; }
+    .callout {
+      margin: 26px 0;
+      padding: 21px 25px;
+      border-left: 5px solid var(--signal);
+      background: #fff4eb;
+    }
+    .callout strong { color: #934c18; }
+    .facts {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border: 1px solid var(--line);
+      margin: 28px 0;
+    }
+    .fact { padding: 20px; border-right: 1px solid var(--line); background: white; }
+    .fact:last-child { border-right: 0; }
+    .fact b { display: block; color: var(--teal-dark); font: 800 clamp(1.45rem, 3vw, 2.2rem)/1 var(--mono); }
+    .fact span { display: block; margin-top: 8px; color: var(--muted); font-size: .76rem; }
+    .grid-2, .grid-3 { display: grid; gap: 18px; margin: 24px 0; }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .card {
+      position: relative;
+      padding: 23px;
+      background: white;
+      border: 1px solid var(--line);
+      box-shadow: 7px 7px 0 #e3ecea;
+    }
+    .card::before {
+      content: attr(data-index);
+      display: block;
+      margin-bottom: 17px;
+      color: var(--indigo);
+      font: 800 .72rem/1 var(--mono);
+      letter-spacing: .1em;
+    }
+    .card h3 { margin: 0 0 10px; }
+    .card p:last-child { margin-bottom: 0; }
+    .tag {
+      display: inline-block;
+      margin: 0 6px 7px 0;
+      padding: 3px 8px;
+      color: var(--teal-dark);
+      border: 1px solid #9fc3be;
+      background: #eff7f5;
+      font: 700 .7rem/1.4 var(--mono);
+    }
+    .tag.infer { color: #75500f; border-color: #d7b26b; background: #fff7e7; }
+    .tag.risk { color: var(--danger); border-color: #d9a6a6; background: #fff1f1; }
+
+    .architecture {
+      position: relative;
+      margin: 30px 0;
+      padding: 28px;
+      color: #dcebe9;
+      background: var(--night);
+      border-left: 7px solid var(--teal);
+    }
+    .arch-row {
+      display: grid;
+      grid-template-columns: 128px 1fr;
+      gap: 18px;
+      align-items: stretch;
+      padding: 11px 0;
+      border-bottom: 1px solid rgba(160, 202, 197, .22);
+    }
+    .arch-row:last-child { border-bottom: 0; }
+    .arch-label { display: grid; place-items: center; color: #7ed7cd; border-right: 1px solid rgba(160, 202, 197, .32); font: 800 .7rem/1.35 var(--mono); text-align: center; }
+    .arch-modules { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .arch-modules span { padding: 6px 9px; background: #12303c; border: 1px solid #285465; font: 650 .75rem/1.3 var(--mono); }
+    .arch-row.core .arch-modules span { color: #092129; background: #73d0c6; border-color: #73d0c6; }
+    .arch-note { margin-top: 15px; color: #88a7a8; font-size: .78rem; }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(120px, 1fr));
+      overflow-x: auto;
+      margin: 28px 0;
+      border: 1px solid var(--line);
+      background: white;
+    }
+    .flow-step { position: relative; min-width: 132px; padding: 22px 17px 20px; border-right: 1px solid var(--line); }
+    .flow-step:last-child { border-right: 0; }
+    .flow-step::after {
+      content: "→";
+      position: absolute;
+      right: -11px;
+      top: 22px;
+      z-index: 2;
+      width: 22px;
+      color: white;
+      background: var(--teal);
+      text-align: center;
+      font: 800 .78rem/22px var(--mono);
+    }
+    .flow-step:last-child::after { display: none; }
+    .flow-step b { display: block; color: var(--teal-dark); font: 800 .72rem/1.3 var(--mono); text-transform: uppercase; }
+    .flow-step strong { display: block; margin: 10px 0 7px; font-size: .9rem; }
+    .flow-step p { margin: 0; color: var(--muted); font-size: .72rem; line-height: 1.55; }
+
+    .spine {
+      position: relative;
+      margin: 30px 0 30px 22px;
+      padding-left: 36px;
+      border-left: 3px solid var(--teal);
+    }
+    .spine-item { position: relative; padding: 0 0 26px; }
+    .spine-item:last-child { padding-bottom: 0; }
+    .spine-item::before {
+      content: "";
+      position: absolute;
+      left: -44px;
+      top: 7px;
+      width: 13px;
+      height: 13px;
+      background: var(--paper);
+      border: 3px solid var(--teal);
+    }
+    .spine-item strong { color: var(--teal-dark); }
+    .spine-item p { margin: 5px 0 0; color: #50636b; }
+    .equation {
+      margin: 24px 0;
+      padding: 18px 20px;
+      color: #e6f4f2;
+      background: var(--night);
+      border-left: 5px solid var(--indigo);
+      font: 650 .82rem/1.8 var(--mono);
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .matrix-wrap { overflow-x: auto; margin: 24px 0; }
+    table { width: 100%; border-collapse: collapse; background: white; font-size: .82rem; }
+    th, td { padding: 12px 13px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: #e9f5f3; background: var(--night); font: 750 .72rem/1.4 var(--mono); letter-spacing: .03em; }
+    tbody tr:nth-child(even) { background: #f1f6f5; }
+    ul, ol { padding-left: 1.35rem; }
+    li { margin-bottom: 8px; }
+    .split-note {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      margin: 26px 0;
+      border: 1px solid var(--line);
+    }
+    .split-note > div { padding: 23px; }
+    .split-note > div:first-child { background: #eaf5f3; border-right: 1px solid var(--line); }
+    .split-note h3 { margin-top: 0; }
+    details { margin: 13px 0; border: 1px solid var(--line); background: white; }
+    summary { cursor: pointer; padding: 14px 17px; color: var(--teal-dark); font-weight: 750; }
+    details[open] summary { border-bottom: 1px solid var(--line); background: #eef5f3; }
+    .detail-body { padding: 17px 20px; }
+    .risk-list { counter-reset: risk; margin: 28px 0; padding: 0; list-style: none; }
+    .risk-list li {
+      counter-increment: risk;
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 16px;
+      margin: 0;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .risk-list li::before { content: "R" counter(risk); color: var(--danger); font: 800 .75rem/1.8 var(--mono); }
+    .footnote { color: var(--muted); font-size: .75rem; line-height: 1.65; }
+    .backtop {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 40;
+      display: none;
+      width: 44px;
+      height: 44px;
+      color: white;
+      background: var(--night);
+      border: 0;
+      cursor: pointer;
+      font: 800 .8rem/1 var(--mono);
+    }
+    .backtop.show { display: block; }
+    footer { padding: 42px 52px; color: #a9bfbd; background: var(--night); border-top: 5px solid var(--teal); }
+    .footer-inner { width: min(1336px, 100%); margin: 0 auto; display: flex; justify-content: space-between; gap: 25px; font-size: .74rem; }
+
+    @media (max-width: 1080px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .circuit { max-width: 720px; }
+      .layout { grid-template-columns: 1fr; padding-top: 34px; }
+      .nav { position: static; max-height: none; padding: 0 0 22px; border-right: 0; border-bottom: 1px solid var(--line); }
+      .nav ol { display: grid; grid-template-columns: repeat(3, 1fr); }
+      .nav-meta { display: none; }
+    }
+    @media (max-width: 760px) {
+      .hero-inner, .layout { padding-left: 22px; padding-right: 22px; }
+      .hero-grid { padding-top: 44px; gap: 42px; }
+      h1 { font-size: clamp(3rem, 16vw, 5rem); }
+      .circuit { min-height: 0; padding: 16px 12px; }
+      .circuit::before { left: 15px; width: 42px; writing-mode: horizontal-tb; color: transparent; }
+      .circuit-row { grid-template-columns: 1fr; gap: 7px; padding-left: 53px; }
+      .circuit-row::before, .circuit-row::after, .node-dot { display: none; }
+      .chip.right { text-align: left; border-right: 0; border-left: 3px solid var(--indigo); }
+      .nav ol { grid-template-columns: repeat(2, 1fr); }
+      .section-head { grid-template-columns: 44px 1fr; }
+      .facts, .grid-2, .grid-3, .split-note { grid-template-columns: 1fr; }
+      .fact { border-right: 0; border-bottom: 1px solid var(--line); }
+      .split-note > div:first-child { border-right: 0; border-bottom: 1px solid var(--line); }
+      .arch-row { grid-template-columns: 1fr; }
+      .arch-label { place-items: start; justify-content: start; padding-bottom: 8px; border-right: 0; border-bottom: 1px solid rgba(160, 202, 197, .22); }
+      .footer-inner { flex-direction: column; }
+    }
+    @media print {
+      .read-progress, .nav, .backtop, .skip { display: none !important; }
+      .hero { min-height: 0; color: var(--ink); background: white; border-bottom-color: var(--ink); }
+      .hero::before { display: none; }
+      .mast span:first-child, h1 small { color: var(--teal-dark); }
+      .hero-dek { color: var(--ink); }
+      .circuit { color: var(--ink); background: white; border-color: var(--ink); break-inside: avoid; }
+      .chip, .chip.right { color: var(--ink); background: white; }
+      .layout { display: block; max-width: none; padding: 32px 0; }
+      section { margin-bottom: 48px; break-before: page; }
+      section:first-child { break-before: auto; }
+      .card, .architecture, table, .flow, details { break-inside: avoid; box-shadow: none; }
+      .architecture, .equation { color: var(--ink); background: white; border: 1px solid var(--ink); }
+      .arch-row.core .arch-modules span, .arch-modules span { color: var(--ink); background: white; border-color: var(--ink); }
+      th { color: white; }
+      footer { color: var(--ink); background: white; padding: 20px 0; }
+      @page { size: A4; margin: 16mm; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <div class="read-progress" aria-hidden="true"></div>
+
+  <header class="hero" id="top">
+    <div class="hero-inner">
+      <div class="mast"><span>Agent Server Core Design / Report 02</span><span>Source snapshot · 2026-08-13</span></div>
+      <div class="hero-grid">
+        <div>
+          <h1>DeepSeek<br>Harness<small>可重建事件日志驱动的可逆插件平台</small></h1>
+          <p class="hero-dek">这不是“一个 Agent 循环加若干工具”，而是一套以 Cordis 作用域、可逆 effect 和追加式事件日志为底座的 Agent 运行平台。它把循环、模型、工具、压缩、子代理、权限、宿主与客户端都处理成可替换能力，同时用可重建性守住历史、审计与恢复的一致性。</p>
+        </div>
+        <div class="circuit" role="img" aria-label="DeepSeek Harness 核心设计：事件日志主干连接组合、循环、工具、模型、恢复和客户端模块">
+          <div class="circuit-row"><div class="chip">CORDIS / PROFILE<em>装配、inject、effect</em></div><span class="node-dot"></span><div class="chip right">HOST / CLIENT<em>CLI · Web · ACP</em></div></div>
+          <div class="circuit-row"><div class="chip">AGENT / LOOP<em>turn · step · inbox</em></div><span class="node-dot"></span><div class="chip right">LLM RUNTIME<em>route · stream · retry</em></div></div>
+          <div class="circuit-row"><div class="chip">TOOL REGISTRY<em>scope · guard · scheduler</em></div><span class="node-dot"></span><div class="chip right">POLICY<em>approval · sandbox</em></div></div>
+          <div class="circuit-row"><div class="chip">COMPACTION<em>surface replace</em></div><span class="node-dot"></span><div class="chip right">SUBAGENT<em>provider seam · lineage</em></div></div>
+          <div class="circuit-row"><div class="chip">PERSISTENCE<em>JSONL/Zstd · SQLite</em></div><span class="node-dot"></span><div class="chip right">RECOVERY<em>inspect · repair · resume</em></div></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="nav" aria-label="报告目录">
+      <p class="nav-title">Contents</p>
+      <ol>
+        <li><a href="#summary">执行摘要</a></li>
+        <li><a href="#scope">范围与方法</a></li>
+        <li><a href="#architecture">总体架构</a></li>
+        <li><a href="#cordis">Cordis 组合机制</a></li>
+        <li><a href="#agent">Agent 运行循环</a></li>
+        <li><a href="#session">事件日志与会话</a></li>
+        <li><a href="#llm-tools">模型与工具链路</a></li>
+        <li><a href="#persistence">持久化与恢复</a></li>
+        <li><a href="#extensions">压缩、子代理与目标</a></li>
+        <li><a href="#security">权限与安全边界</a></li>
+        <li><a href="#business">业务处理流程</a></li>
+        <li><a href="#review">亮点、风险与借鉴</a></li>
+        <li><a href="#evidence">源码证据索引</a></li>
+      </ol>
+      <div class="nav-meta">版本：0.1.0-rc.5<br>提交：47f943859bef<br>性质：Developer Preview<br>生成日期：2026-08-19</div>
+    </aside>
+
+    <main id="main">
+      <section id="summary">
+        <div class="section-head"><span class="section-no">01</span><h2>执行摘要</h2></div>
+        <p class="lead">DeepSeek Harness 的中心思想可以压缩成一句话：<strong>用可重建事件日志固定事实，用 Cordis 可逆插件树组织能力，再用作用域与单调策略限制每一次执行。</strong> 因而它的“核心”不是某个不可替换的 Agent 类，而是一组稳定契约：事件、服务 seam、作用域、生命周期和日志投影。</p>
+        <div class="facts" aria-label="源码快照统计">
+          <div class="fact"><b>7,412</b><span>仓库文件总数</span></div>
+          <div class="fact"><b>2,578</b><span>源 TS / TSX 文件</span></div>
+          <div class="fact"><b>1,047</b><span>测试 TS / TSX 文件</span></div>
+          <div class="fact"><b>248</b><span>package.json（含应用与 vendor）</span></div>
+        </div>
+        <div class="grid-3">
+          <article class="card" data-index="THESIS 01"><h3>事实先于对象</h3><p>Session 的追加式事件日志是状态真源。模型历史、UI 回放、工具配对、压缩边界与请求上下文都从日志派生，而不是各自维护一份可漂移状态。</p></article>
+          <article class="card" data-index="THESIS 02"><h3>组合先于继承</h3><p>所有组件以 Cordis plugin 贡献服务、事件和 effect。依赖通过 <code>inject</code> 声明，注册行为随 fiber 生命周期可逆卸载，HMR 与配置叠加因此成为结构能力。</p></article>
+          <article class="card" data-index="THESIS 03"><h3>策略只能收紧</h3><p>工具限制求交、guard 只能拒绝、调用方 AbortSignal 不可被 wrapper 绕过、受限沙箱不可静默降级，共同形成“后置扩展不能重新打开权限”的单调性。</p></article>
+        </div>
+        <div class="callout"><strong>总体判断：</strong>DeepSeek Harness 更像“Agent 操作系统内核＋插件化发行版”，而不是单体 Coding Agent。其最大价值不只是功能丰富，而是把功能替换、热更新、审计、恢复和多宿主接入放在同一套生命周期语义中。</div>
+        <div class="split-note">
+          <div><h3>最突出的工程能力</h3><p>请求可从日志精确重建；插件卸载可以逆序撤销；工具并发保持模型顺序；中断与崩溃保留成对历史；子代理能力声明和权限过滤在启动前完成。</p></div>
+          <div><h3>最需要注意的代价</h3><p>抽象层与包数量很高，正确性依赖跨包契约；当前仍为开发者预览，格式迁移尚未稳定；Web 非 loopback 暴露、Web Fetch 私网访问和部分沙箱后端都需要部署者主动评估。</p></div>
+        </div>
+      </section>
+
+      <section id="scope">
+        <div class="section-head"><span class="section-no">02</span><h2>范围与分析方法</h2></div>
+        <p class="lead">本报告基于本地源码快照 <code>D:\Server_agent_core_design\deepseek_harness</code>，以源码实现为首要证据，并用 subsystem 文档、架构笔记和 post-mortem 交叉核验行为。文档中的提示、命令和操作说明只作为被分析材料，不构成执行指令。</p>
+        <div class="matrix-wrap"><table>
+          <thead><tr><th>维度</th><th>本次覆盖</th><th>证据优先级</th></tr></thead>
+          <tbody>
+            <tr><td>核心运行时</td><td>Agent registry、Agent loop、scope、system prompt、tools、session</td><td>源码 ＞ 单元测试 ＞ subsystem 文档</td></tr>
+            <tr><td>状态与恢复</td><td>事件日志、surface、JSONL/SQLite、flush、repair、inspect、resume/fork</td><td>源码与持久化格式文档并读</td></tr>
+            <tr><td>扩展能力</td><td>Compaction、Subagent、Goal、Web、Code Runtime</td><td>能力 seam 与消费者同时核验</td></tr>
+            <tr><td>安全与宿主</td><td>Approval、Sandbox、Permission Preset、Web Server、Client Modules、ACP</td><td>契约、失败策略和 post-mortem</td></tr>
+          </tbody>
+        </table></div>
+        <p><span class="tag">源码事实</span>表示可在当前实现中直接定位；<span class="tag infer">分析推断</span>表示由多个事实归纳出的架构判断。报告不把设计笔记中的未来方向误写为已经完成的功能。</p>
+        <details><summary>快照信息与成熟度边界</summary><div class="detail-body"><ul><li>根包版本：<code>0.1.0-rc.5</code>；Node 要求 <code>^22.19 || &gt;=24</code>。</li><li>提交：<code>47f943859bef60e4160492346772ded9b24f765a</code>，最后提交时间 2026-08-13。</li><li>README 明确标注 Developer Preview，并提醒兼容性破坏；因此本文评价的是当前设计质量，不等价于稳定 API 承诺。</li></ul></div></details>
+      </section>
+
+      <section id="architecture">
+        <div class="section-head"><span class="section-no">03</span><h2>总体架构：稳定脊柱与可替换能力</h2></div>
+        <p class="lead">架构可分为五层。真正稳定的是中间的事件与服务契约，而不是最上方的产品形态或最下方的具体供应商。</p>
+        <div class="architecture" role="img" aria-label="DeepSeek Harness 五层架构">
+          <div class="arch-row"><div class="arch-label">HOST / CLIENT</div><div class="arch-modules"><span>CLI / TUI</span><span>Web GUI</span><span>Electron IPC</span><span>ACP Editor Bridge</span><span>Headless</span></div></div>
+          <div class="arch-row"><div class="arch-label">PRODUCT BUNDLE</div><div class="arch-modules"><span>base</span><span>web-app</span><span>headless</span><span>profile patch</span><span>home patch</span><span>CLI overlay</span></div></div>
+          <div class="arch-row core"><div class="arch-label">CORE SPINE</div><div class="arch-modules"><span>session event log</span><span>agent registry</span><span>agent loop</span><span>tool registry</span><span>system prompt</span><span>scope</span></div></div>
+          <div class="arch-row"><div class="arch-label">CAPABILITY SEAMS</div><div class="arch-modules"><span>LLM</span><span>Persistence</span><span>Compaction</span><span>Subagent</span><span>Approval</span><span>Sandbox</span><span>Web</span><span>Code Runtime</span></div></div>
+          <div class="arch-row"><div class="arch-label">IMPLEMENTATIONS</div><div class="arch-modules"><span>DeepSeek / OpenAI / ...</span><span>JSONL+Zstd</span><span>SQLite</span><span>bwrap / Landlock</span><span>Seatbelt</span><span>Windows ACL</span><span>Exa / Perplexity</span></div></div>
+          <p class="arch-note">依赖方向：产品和消费者依赖 seam；实现注册到 seam；扩展依赖公开 Agent 接口，而不是具体 agent-loop。</p>
+        </div>
+        <h3>三条结构原则</h3>
+        <div class="grid-3">
+          <div class="card" data-index="A"><h3>Loop 可替换</h3><p><code>core/agent</code>定义公开 Agent 接口与 registry；默认 <code>core/agent-loop</code>只是一个实现。扩展不应反向依赖具体循环。</p></div>
+          <div class="card" data-index="B"><h3>Capability 有中层</h3><p>模型面对稳定工具名；工具消费者面对稳定 seam；供应商只负责实现。Web search/fetch、sandbox、subagent 都遵循这一分层。</p></div>
+          <div class="card" data-index="C"><h3>Profile 是发行版</h3><p>配置按 base、产品 bundle、用户 profile、home patch、CLI overlay 分层合成；同一核心可装配为 Web、headless 或定制宿主。</p></div>
+        </div>
+        <div class="callout"><strong>分析推断：</strong>其竞争优势来自“架构选择成本低”。换模型、换持久化、换搜索提供方、换沙箱或换 Agent Loop 时，业务层仍使用原有的能力词汇和日志语义。</div>
+      </section>
+
+      <section id="cordis">
+        <div class="section-head"><span class="section-no">04</span><h2>Cordis：时空可组合的插件树</h2></div>
+        <p class="lead">Cordis 不只是依赖注入容器。它同时承担服务仓库、插件生命周期树、事件总线和可逆副作用管理，因此一个插件“何时存在、在哪个 scope 有效、卸载时撤销什么”由同一套模型回答。</p>
+        <div class="spine">
+          <div class="spine-item"><strong>声明依赖</strong><p>插件用 <code>inject</code> 指明所需服务。框架等待服务可用，减少手工装载顺序；依赖缺失与上下文不活跃能被明确暴露。</p></div>
+          <div class="spine-item"><strong>贡献能力</strong><p>插件向 <code>ctx</code> 注册服务、事件或 registry 项。注册返回 disposer，并被当前 fiber 的 effect 生命周期接管。</p></div>
+          <div class="spine-item"><strong>作用域生效</strong><p>全局层与精确 scope overlay 叠加。Agent 作为不透明 ScopeKey；子 Agent 获得平坦的新 scope，而不是把父级权限隐式继承进去。</p></div>
+          <div class="spine-item"><strong>事件编排</strong><p><code>emit</code>同步观察、<code>waterfall</code>中间件短路、<code>parallel</code>并行等待、<code>serial</code>有序等待。不同一致性需求不用硬塞进一种发布订阅。</p></div>
+          <div class="spine-item"><strong>逆序卸载</strong><p>插件停止、HMR 或 scope dispose 时，effects 按所有权撤销到静止状态，防止工具、路由、监听器和临时服务泄漏到下一个实例。</p></div>
+        </div>
+        <h3>配置层的“整行替换”</h3>
+        <p>Profile patch 不是随意深合并插件内部字段，而是替换或插入一整条配置行。这样能避免“半个旧插件配置＋半个新配置”的组合，同时让 bundle 的装配意图可审计。</p>
+        <div class="equation">effective profile = base → product bundle → named profile patch → home patch → CLI overlay</div>
+        <h3>真实失败揭示的边界</h3>
+        <p>ACP post-mortem 表明，namespace plugin 一旦同时提供默认导出，Loader 会解包到裸 <code>apply</code> 函数并丢失同级 <code>inject</code>；另一个问题则来自 traceable shadow 的祖先式服务查找。修复不仅改代码，还增加真实 Loader/stdio 入口测试，并形成“可选服务使用 <code>ctx.get()</code>”的规则。</p>
+        <div class="callout"><strong>关键教训：</strong>插件框架的正确性不能只靠手工 mount 单测；至少要有一条测试穿过真实 Loader、export 归一化、fiber 拓扑与运输协议。</div>
+      </section>
+
+      <section id="agent">
+        <div class="section-head"><span class="section-no">05</span><h2>Agent 运行循环：Turn、Step 与双收件箱</h2></div>
+        <p class="lead">默认 <code>ReactLoopAgent</code> 将一次运行拆成 Turn 与 Step：Turn 表示一次用户驱动的完整工作，Step 表示一次模型请求及其工具结果推进。外部消息根据语义进入“下一回合”或“下一步”收件箱。</p>
+        <div class="flow" aria-label="Agent 运行主流程">
+          <div class="flow-step"><b>01 / Wake</b><strong>领取 next-turn</strong><p>打开 turn 后再认领输入；即使输入随后被 hook 清空，也保留耐久空 turn。</p></div>
+          <div class="flow-step"><b>02 / Pre-step</b><strong>组装请求上下文</strong><p>收取 next-step、投影历史、应用 context 和 pre-step waterfall。</p></div>
+          <div class="flow-step"><b>03 / Stream</b><strong>LLM 流式响应</strong><p>逐块写 assistant/chunk，结束后组装权威 assistant/message。</p></div>
+          <div class="flow-step"><b>04 / Tools</b><strong>有序并发执行</strong><p>记录 call，执行、提交 result；工具可能要求继续下一 step。</p></div>
+          <div class="flow-step"><b>05 / Decide</b><strong>继续或结束</strong><p>无工具则完成；max-tokens 在 turn 内具有粘性；stopping hook 最后裁决。</p></div>
+          <div class="flow-step"><b>06 / Close</b><strong>写入 turn/end</strong><p>无论完成、阻塞、中断或内部错误，驱动都尽量闭合 turn。</p></div>
+        </div>
+        <div class="grid-2">
+          <article class="card" data-index="INBOX"><h3>三种投递语义</h3><ul><li><code>followup</code>：放入 next-turn，并唤醒一个独立回合。</li><li><code>steer</code>：投递到最近的 next-step，及时改变当前工作方向。</li><li><code>inject</code>：也面向 next-step，但本身不唤醒 Agent。</li></ul></article>
+          <article class="card" data-index="CANCEL"><h3>有因取消</h3><p>取消原因是 <code>user | parent | hook | disposed</code>，而非无语义布尔值。活动操作采用 first-cause-wins；中断后到达的唤醒消息不会被当前 turn 错领，而是路由到下一 turn。</p></article>
+        </div>
+        <h3>发布前事务化创建</h3>
+        <p><code>ctx.agents.create/resume</code> 返回带 <code>dispose</code> 的能力句柄。Agent 在 id 对外发布前先完成 scoped setup；setup 拒绝、commit 失败或 owner 提前销毁都会回滚，不会留下“registry 可见但依赖尚未装好”的半成品。</p>
+        <h3>维护阶段的并发语义</h3>
+        <p><code>whenIdle</code> 跟随替代工作直到真正静止；<code>runMaintenance</code> 明确拥有 idle maintenance 阶段，后到唤醒会排在维护之后。它解决了常见竞态：界面看到 idle 后开始压缩，但新消息已在同一间隙启动。</p>
+      </section>
+
+      <section id="session">
+        <div class="section-head"><span class="section-no">06</span><h2>事件日志：事实层、表面层与请求重建</h2></div>
+        <p class="lead">Session 是单调递增 <code>seq</code> 的追加式类型事件流。模型可见历史不是第二份数据库，而是由各事件声明的 <code>surfaceOp</code> 投影得到：普通消息 append，压缩则 replace 一个表面区间。</p>
+        <div class="grid-3">
+          <div class="card" data-index="RAW"><h3>原始事实层</h3><p><code>turn/start</code>、<code>step/start</code>、每个 assistant chunk、tool/call、tool/result、策略变化和扩展事件都按 seq 保留，用于精确 UI 回放与审计。</p></div>
+          <div class="card" data-index="SURFACE"><h3>模型表面层</h3><p>模型只看 <code>user/message</code>、组装后的 <code>assistant/message</code> 与 <code>tool/result</code>。Surface node 记录它来自哪些源事件及 append/replace 操作。</p></div>
+          <div class="card" data-index="REQUEST"><h3>请求证据层</h3><p><code>request/header</code> 固化 adapter 默认值、最终 system prompt 与工具 schema；<code>request/context</code>记录 provider、model、context window 等路由事实。</p></div>
+        </div>
+        <div class="equation">model request = logged request/header + surface-derived history + logged route context</div>
+        <h3>为什么同时记录 chunk 与 assembled message</h3>
+        <p>Chunk 是 UI 按原样复现流式体验的事实；assembled assistant message 是模型历史的权威语义。二者角色分开，可以既保留传输细节，又不让半截流事件污染下一次模型请求。</p>
+        <h3>日志写入前的 Lossless JSON 门槛</h3>
+        <p>append 在提交前深拷贝并校验一次：拒绝 BigInt、函数、<code>undefined</code>、NaN、负零、循环引用、稀疏数组和奇异对象。提交后对象被冻结；观察者异常被隔离，不能回滚已经写入的事实。</p>
+        <div class="matrix-wrap"><table>
+          <thead><tr><th>问题</th><th>设计处理</th><th>得到的保证</th></tr></thead>
+          <tbody>
+            <tr><td>压缩会改变模型历史</td><td>在 surface 写 replace，不删除原始事件</td><td>模型视图更新，审计事实仍在</td></tr>
+            <tr><td>插件新增未知事件</td><td>未知 required 事件拒绝格式；仅 <code>ignorable:true</code> 可跳过</td><td>不会静默丢掉影响语义的事实</td></tr>
+            <tr><td>Fork 截断不平衡历史</td><td>只允许在明确、平衡且 turn 关闭的边界 fork</td><td>新会话不会从半个工具链开始</td></tr>
+            <tr><td>崩溃留下开放 turn</td><td>恢复时追加合成 <code>turn/end: interrupted</code></td><td>不截断巨型日志，也能闭合生命周期</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section id="llm-tools">
+        <div class="section-head"><span class="section-no">07</span><h2>模型与工具：绑定路由、单调门控、有序并发</h2></div>
+        <h3>LLM 请求的 TOCTOU 防护</h3>
+        <p><code>PreparedLlmCall</code> 把准确模型解析、adapter 默认值、上下文元数据、重试策略与一次性 stream dispatch 绑定到同一 serving registration。这样从“读取模型配置”到“真正发请求”之间即使发生 HMR 或路由替换，也不会把一半旧配置和一半新 adapter 拼成一次请求。</p>
+        <div class="grid-2">
+          <div class="card" data-index="STREAM"><h3>流式协议约束</h3><p>统一 block-start/delta/end、usage、finish；usage 必须先于 finish，finish 后不得再有数据。中央 BlockAssembler 容忍跨 provider 差异，并在 max-token 截断时丢弃不安全工具调用。</p></div>
+          <div class="card" data-index="RETRY"><h3>耐久重试</h3><p>一次 adapter 调用只代表一次 provider 尝试，SDK 内部重试关闭。Agent 级重试会开启一个新的可记录尝试；失败尝试不提交 assistant/tool 副作用。</p></div>
+        </div>
+        <h3>工具执行管线</h3>
+        <div class="flow" aria-label="工具执行管线">
+          <div class="flow-step"><b>Schema</b><strong>显式模型白名单</strong><p><code>schemas()</code>只暴露 ToolSchema，不让 timeout、presenter 等宿主元数据泄漏给模型。</p></div>
+          <div class="flow-step"><b>Freeze</b><strong>参数定稿</strong><p>JSON 解码、lossless 校验、深冻结；日志、UI 和执行共享同一参数事实。</p></div>
+          <div class="flow-step"><b>Pre</b><strong>策略瀑布</strong><p><code>allow/deny/ask</code>决策；作用域 restriction 对继承工具求交。</p></div>
+          <div class="flow-step"><b>Guard</b><strong>单调拒绝</strong><p>guard 只能 deny，不能在后置阶段重新 allow；调用方 signal 被强制融合。</p></div>
+          <div class="flow-step"><b>Execute</b><strong>包装器与实现</strong><p>执行 wrappers、工具 body、post-execute；throw 被标准化为结构化错误。</p></div>
+          <div class="flow-step"><b>Commit</b><strong>模型顺序提交</strong><p>finalizeContent 后生成不可变结果；execution-local value 不必进入耐久日志。</p></div>
+        </div>
+        <h3>调度器：并发完成，顺序提交</h3>
+        <ul>
+          <li>默认滚动并发池上限 10；<code>exclusive</code> 工具形成屏障，前后都不能越过。</li>
+          <li><code>tools/pre-execute</code> 按模型顺序执行；只让真正的 tool body 重叠。</li>
+          <li>完成可以乱序，但 <code>tool/result</code> 与上下文接受严格按模型调用顺序提交，保证重放确定。</li>
+          <li>中断后不再补充新任务，等待已启动任务收束，并为未派发调用写成对的合成 call/result，避免孤儿。</li>
+          <li>每个 result 引用其 call event seq；内部调度失败会显式暴露不配对条件，而不是伪造成功。</li>
+        </ul>
+        <div class="callout"><strong>设计亮点：</strong>把“执行顺序”和“提交顺序”解耦，使 I/O 并行获得吞吐，同时不把操作系统完成时序写进模型历史。</div>
+      </section>
+
+      <section id="persistence">
+        <div class="section-head"><span class="section-no">08</span><h2>持久化与恢复：异步批写但不模糊顺序</h2></div>
+        <p class="lead">内存日志 append 是同步事实；持久化插件通过 <code>session/event</code> 复制事件并按固定批窗口落盘。追加路径不被磁盘 I/O 阻塞，但 <code>session/flush</code> 是进入下一普通 turn 前的显式顺序与错误检查点。</p>
+        <div class="spine">
+          <div class="spine-item"><strong>Append</strong><p>事件先成为内存事实并广播；后台控制器接收副本。批处理截止时间不因新事件重置，避免持续流量无限拖延。</p></div>
+          <div class="spine-item"><strong>Batch write</strong><p>写入期间到达的事件进入下一批。后台写失败时保留待写事件并暂停自动重试；下一事件或显式 flush 触发重试。</p></div>
+          <div class="spine-item"><strong>Flush to quiescence</strong><p>取消等待并持续排空直到静止；用于 turn 边界、dispose 和调用方显式持久性要求。</p></div>
+          <div class="spine-item"><strong>Inspect / Load</strong><p><code>inspect</code>构建不可变逻辑视图，不发布 Agent、不写修复；冷加载可修复开放 turn，live load 则等待平衡或拒绝。</p></div>
+          <div class="spine-item"><strong>Resume / Fork</strong><p>恢复读取 header 与事件；fork 深拷贝合法 seed。<code>session/end-seed</code>标出外来历史结束，帮助扩展识别 seed 之前的陈旧括号。</p></div>
+        </div>
+        <div class="grid-2">
+          <div class="card" data-index="JSONL"><h3>JSONL 后端</h3><p>逻辑上仍是 append log；默认用带校验的拼接 Zstd frame 和原子写策略，实现较紧凑的会话文件与崩溃容忍。</p></div>
+          <div class="card" data-index="SQLITE"><h3>SQLite 后端</h3><p>每个 SessionEvent 一行，不创建另一套业务 schema。更换存储不改变日志的类型、序号或重放语义。</p></div>
+        </div>
+        <h3>格式拒绝优于猜测迁移</h3>
+        <p>当前开发预览尚未提供通用迁移器；实现会明确区分更新/过旧格式、损坏数据和未知 required 事件。短期体验较严格，但避免把不理解的状态“尽量加载”后继续执行真实工具。</p>
+      </section>
+
+      <section id="extensions">
+        <div class="section-head"><span class="section-no">09</span><h2>压缩、子代理与目标：围绕 Seam 生长</h2></div>
+        <h3>Compaction：修改表面，不抹除事实</h3>
+        <p>压缩是可选 capability，不嵌进循环核心。操作写入 <code>compaction/start</code>、<code>summary</code>、<code>end</code>，summary 本身是独立 user/message，并通过 surface replace 覆盖旧区间。<code>end</code>最后写，崩溃留下的 orphan start 因而可检测。</p>
+        <ul>
+          <li>自动压缩挂在 serial <code>agent/pre-step</code>，压力与 overflow 使用同一 seam。</li>
+          <li>可先运行 tool-result pruner；若已降低压力，则不必调用摘要模型。</li>
+          <li>区域边界维护 tool call/result 配对，但不强制保留整个 turn。</li>
+          <li>request-error 只有在 surface replacement generation 确实推进后才允许 retry。</li>
+        </ul>
+        <h3>Subagent：能力协商先于启动</h3>
+        <div class="grid-2">
+          <div class="card" data-index="ONE-SHOT"><h3>一次性任务</h3><p>Provider 可能是进程内 spawn/fork、ACP、Codex、Claude Code 或 DSH SDK。Start 前检查输出 schema、深度、persona、tool filter 等能力；不支持就响亮失败。</p></div>
+          <div class="card" data-index="CONTINUE"><h3>可继续子代理</h3><p>Continuation manager 拥有子 Agent 身份、句柄、prompt 投递、冷恢复与 dispose。descriptor 固化 provider/model/persona/filter，避免恢复时改变原任务语义。</p></div>
+        </div>
+        <p>父级只提供 cwd、lineage 与 delegationDepth；子级获得新平坦 scope，不继承父级 registry overlay。Tool filter 在 scope registry 层生效，所以被禁工具既不会出现在提示词，也无法从执行入口调用。</p>
+        <h3>Goal：轻量事件溯源的会话目标</h3>
+        <p>Goal 状态为 active、paused、blocked、complete；每次变更携带 <code>id + revision</code> 并使用 CAS，耐久事件保存完整快照或 clear tombstone。它提供同会话的连续目标和轮次上限，但并不是独立、对抗式结果验证器。</p>
+        <h3>Code Runtime / Code Mode</h3>
+        <p>模型可以提交异步程序并调用宿主明确提供的 binding，以减少多次工具往返。运行时把 exception、timeout、abort、worker-exit、invalid-output、output-limit 分开；“worker 隔离”只是实现描述，不被包装成安全承诺。嵌套工具调用仍携带 parent token 和确定性 sub-call id，继续进入日志与策略管线。</p>
+      </section>
+
+      <section id="security">
+        <div class="section-head"><span class="section-no">10</span><h2>权限与安全边界：显式、分层、Fail Closed</h2></div>
+        <h3>Approval：没有隐式“默认放行”</h3>
+        <p>结果为 <code>allowed-once | rejected | cancelled | unavailable</code>。策略只有 <code>ask</code> 与 <code>never</code>；<code>never</code> 会在 answerer 之前拒绝，prepend 插件无法绕过。没有回答器、回答器异常或回答器不拥有请求均变成 unavailable，而非继续执行。</p>
+        <h3>Sandbox：文件效果策略按调用解析</h3>
+        <div class="matrix-wrap"><table>
+          <thead><tr><th>模式</th><th>边界</th><th>关键语义</th></tr></thead>
+          <tbody>
+            <tr><td><code>read-only</code></td><td>拒绝写入，仅允许运行所需 sink</td><td>具体 backend 报告 full/partial enforcement</td></tr>
+            <tr><td><code>workspace-write</code></td><td>允许 workspace root 与后端承诺的 temp</td><td>root 来自 session immutable cwd，并做文件系统语义 canonicalize</td></tr>
+            <tr><td><code>danger-full-access</code></td><td>绕过 confinement</td><td>消费者直接执行原 argv，不把危险模式假装成 sandbox provider</td></tr>
+          </tbody>
+        </table></div>
+        <p>受限策略如果没有可用后端，抛出 <code>SANDBOX_UNAVAILABLE</code>；静默无沙箱透传非法。执行结果区分“命令被正常沙箱拒绝”与“沙箱 runner 在命令开始前失败”，避免把基础设施故障误报为业务命令错误。</p>
+        <h3>Permission Preset 只是两个旋钮的视图</h3>
+        <p>Preset 把 sandbox mode 与 approval policy 打包成客户端选项，但自身不执行安全策略。切换时先写 <code>permission/preset</code> 用户意图，再经各自 canonical setter 写旋钮事件；如果当前组合不匹配预设则派生为只读的 <code>custom</code>。</p>
+        <div class="callout"><strong>边界声明：</strong>Sandbox 的 mode 只描述文件效果，不承诺网络和进程可见性。Windows ACL 与旧 Landlock 可能是 partial enforcement；要求绝对边界的调用方必须拒绝 partial，而不能把“有沙箱”当作二元布尔。</div>
+        <h3>Web 与 GUI 暴露面</h3>
+        <ul><li>HTTP host 只允许 <code>127.0.0.1</code> 或 <code>0.0.0.0</code>；后者没有 TLS、认证或 origin policy，属于明确网络暴露。</li><li>本地 web fetch 会限制协议、redirect、大小、字符和超时，但当前不阻止私网目标；敏感环境不应随意启用。</li><li>Client bundle 通过 manifest content hash 与 graph rev 建立一致性；未知插件脚本返回 404，不让 SPA fallback 的 HTML 冒充 JavaScript。</li></ul>
+      </section>
+
+      <section id="business">
+        <div class="section-head"><span class="section-no">11</span><h2>业务处理：从用户请求到可恢复结果</h2></div>
+        <p class="lead">以下以“用户要求修改代码并验证”为例，串联宿主、Agent、模型、工具、权限和持久化。DeepSeek Harness 的业务处理不是一个长函数，而是一组在事件边界协作的插件。</p>
+        <div class="spine">
+          <div class="spine-item"><strong>1. 宿主接入与会话选择</strong><p>CLI/Web/ACP 将用户消息映射为 Agent inbox 操作；创建新 Agent 或从持久化 descriptor 恢复。Web 与 Electron 使用不同 carrier，但调用相同 host/client RPC 能力。</p></div>
+          <div class="spine-item"><strong>2. 回合打开与请求固化</strong><p>Agent 打开 turn、认领消息、组装 system prompt、工具 schema 与 surface 历史；最终 request/header 和 route context 先进入日志，使“模型看到了什么”可复查。</p></div>
+          <div class="spine-item"><strong>3. 模型规划与流式反馈</strong><p>LLM adapter 将供应商流转成统一 block stream；chunk 立即供 UI 观察并写日志，assembled message 成为下一步模型历史。</p></div>
+          <div class="spine-item"><strong>4. 工具门控与执行</strong><p>读取、搜索、shell、编辑等调用经 schema、restriction、approval、sandbox policy、guard 和 wrapper；独立工具可并发，exclusive 工具建立屏障。</p></div>
+          <div class="spine-item"><strong>5. 结果推进</strong><p>tool result 按模型顺序提交；模型继续解释结果、修正错误或发起下一组调用。Steer 可在最近 step 插入新方向，followup 保留为下一回合。</p></div>
+          <div class="spine-item"><strong>6. 验证与结束</strong><p>测试输出和差异同样成为工具结果；无后续工具时进入 stopping seam，最终写 turn/end。错误、blocked、aborted、max-tokens 都有显式 reason。</p></div>
+          <div class="spine-item"><strong>7. Flush、恢复与继续</strong><p>持久化排空到静止。崩溃后冷恢复闭合开放 turn；长会话通过 surface compaction 继续；需要并行拆分时由 subagent seam 创建受限子任务。</p></div>
+        </div>
+        <h3>多客户端与 Web 业务</h3>
+        <p>Web Server 只是 HTTP carrier，不理解 Agent；每条 API、插件 bundle、HMR SSE 都由独立插件注册。路由优先级固定为 exact → 最长 prefix → 唯一 fallback；重复路由在装配期报错。Client Modules 扫描声明 <code>dsh.client</code> 的包，生成注入 <code>window.__DSH_BOOT__</code> 的插件图；浏览器端按依赖边等待并懒加载。</p>
+        <p>相关 post-mortem 进一步强化了运行上下文：Agent 必须知道当前 GUI URL 与 production/dev 模式；“构建成功、HTTP 200、boot manifest 存在、用户正在使用的页面已更新”是四个不同验收事实，替代服务器不能证明原页面生效。</p>
+      </section>
+
+      <section id="review">
+        <div class="section-head"><span class="section-no">12</span><h2>突出设计、局限与可复用原则</h2></div>
+        <h3>值得突出的设计点</h3>
+        <div class="grid-3">
+          <div class="card" data-index="01"><h3>请求级可重建性</h3><p>不仅保存聊天消息，还保存最终 system prompt、tool schemas、adapter 默认值和路由上下文。线上问题可以从日志回答“那一次模型到底收到了什么”。</p></div>
+          <div class="card" data-index="02"><h3>生命周期即资源所有权</h3><p>服务、监听器、工具和路由都归 fiber/effect 所有，scope disposal 到静止。热更新不是额外清理脚本，而是核心资源模型的自然结果。</p></div>
+          <div class="card" data-index="03"><h3>并发不污染历史</h3><p>工具 body 并发、模型顺序提交、取消后成对补齐，使吞吐、UI 实时性与重放确定性兼得。</p></div>
+          <div class="card" data-index="04"><h3>扩展点自带失败语义</h3><p>waterfall/serial/parallel、unknown required event、sandbox unavailable、approval unavailable 都定义了不能继续时怎样失败，而非让每个插件猜测。</p></div>
+          <div class="card" data-index="05"><h3>子代理不继承隐式权力</h3><p>新 scope、能力检查、tool filter、depth 与 descriptor snapshot，把委派从“创建另一个 Agent”提升为有边界的授权协议。</p></div>
+          <div class="card" data-index="06"><h3>Post-mortem 反哺架构</h3><p>真实 Loader、服务 shadow、GUI 验收等故障被沉淀为入口测试、文档规则和模型可见运行事实，体现较强的工程学习闭环。</p></div>
+        </div>
+        <h3>局限与风险</h3>
+        <ol class="risk-list">
+          <li><div><strong>开发者预览与迁移成本</strong><p>版本和事件格式尚可能破坏兼容；当前格式拒绝策略安全但会把迁移责任推给部署与工具链。</p></div></li>
+          <li><div><strong>抽象密度高</strong><p>大量 package、service seam、Cordis fiber 与事件契约提高了正确扩展的学习成本；局部改动可能触发跨包不变量。</p></div></li>
+          <li><div><strong>安全能力不是统一绝对边界</strong><p>Sandbox 只覆盖文件效果，且有 partial 后端；Web Fetch 可达私网；Web 非 loopback 没有内建认证。</p></div></li>
+          <li><div><strong>可观测事实数量巨大</strong><p>chunk、request header、工具、插件事件都进入日志，长期会话需要持续关注存储体积、索引与隐私策略。</p></div></li>
+          <li><div><strong>组合灵活性带来组合爆炸</strong><p>Profile、HMR、可选 provider 与 scope overlay 的交叉必须依赖 invariants 和真实入口测试，否则单包覆盖率不足以证明整机可用。</p></div></li>
+        </ol>
+        <h3>可复用的 Core Design 原则</h3>
+        <div class="matrix-wrap"><table>
+          <thead><tr><th>原则</th><th>适用问题</th><th>落地方式</th></tr></thead>
+          <tbody>
+            <tr><td>模型可见即记录</td><td>线上请求难复现</td><td>最终 prompt/schema/route 与历史来源全部耐久化</td></tr>
+            <tr><td>事实与投影分离</td><td>压缩、隐藏、重放相互冲突</td><td>append-only log + replaceable surface</td></tr>
+            <tr><td>执行并发、提交有序</td><td>工具吞吐与历史确定性冲突</td><td>滚动池/屏障 + source-order commit</td></tr>
+            <tr><td>策略后置只能收紧</td><td>插件绕过前置授权</td><td>restriction 取交、deny-only guard、signal 融合</td></tr>
+            <tr><td>能力协商先于副作用</td><td>子任务启动后才发现不支持</td><td>capability check + descriptor snapshot</td></tr>
+            <tr><td>真实入口是测试对象</td><td>单测绿但产品不可用</td><td>真实 Loader/stdio/browser/origin 的无密钥 E2E</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section id="evidence">
+        <div class="section-head"><span class="section-no">13</span><h2>源码证据索引</h2></div>
+        <p class="lead">以下是报告主要结论的定位入口。路径均相对于 <code>D:\Server_agent_core_design\deepseek_harness</code>。</p>
+        <div class="matrix-wrap"><table>
+          <thead><tr><th>主题</th><th>主要源码 / 文档</th><th>核验内容</th></tr></thead>
+          <tbody>
+            <tr><td>Agent loop</td><td><code>packages/core/agent-loop/src/agent.ts</code><br><code>packages/core/agent-loop/src/tool-calls.ts</code></td><td>phase、turn/step、inbox、取消、工具并发与提交顺序</td></tr>
+            <tr><td>Session / Surface</td><td><code>packages/core/session/</code><br><code>docs/subsystems/session.md</code></td><td>事件序号、lossless JSON、surfaceOp、fork 边界</td></tr>
+            <tr><td>Tool registry</td><td><code>packages/core/tools/</code></td><td>schema 白名单、作用域限制、execute pipeline、guard</td></tr>
+            <tr><td>LLM runtime</td><td><code>packages/llm/</code><br><code>docs/subsystems/llm.md</code></td><td>adapter、PreparedLlmCall、route、stream assembler、retry</td></tr>
+            <tr><td>Persistence</td><td><code>packages/persistence/</code><br><code>docs/subsystems/persistence.md</code></td><td>批写、flush、inspect、repair、JSONL/SQLite</td></tr>
+            <tr><td>Compaction</td><td><code>packages/compaction/</code><br><code>docs/subsystems/compaction.md</code></td><td>日志括号、surface replace、pruner、overflow recovery</td></tr>
+            <tr><td>Subagent / Goal</td><td><code>packages/subagent/</code><br><code>packages/goal/</code></td><td>provider seam、continuation、lineage/depth、CAS goal</td></tr>
+            <tr><td>Approval / Sandbox</td><td><code>packages/interaction/user-approval/</code><br><code>packages/sandbox/</code><br><code>docs/subsystems/sandbox.md</code></td><td>闭集审批结果、fail-closed、per-call policy、enforcement</td></tr>
+            <tr><td>Web host / client</td><td><code>packages/host/webserver/</code><br><code>packages/client/modules/</code><br><code>docs/subsystems/web-server.md</code></td><td>路由所有权、SPA fallback、manifest、bundle rev</td></tr>
+            <tr><td>真实事故反馈</td><td><code>docs/postmortem/0001-*.md</code><br><code>docs/postmortem/0003-*.md</code></td><td>Loader/inject/shadow 与 GUI 验收闭环</td></tr>
+          </tbody>
+        </table></div>
+        <p class="footnote">分析说明：本文没有执行仓库文档中出现的安装、启动、网络或系统配置命令；所有结论来自只读审阅、本地结构统计及源码/文档交叉验证。带“分析推断”的判断不代表项目维护者的官方表述。</p>
+      </section>
+    </main>
+  </div>
+
+  <button class="backtop" type="button" aria-label="返回顶部">↑</button>
+  <footer><div class="footer-inner"><span>DeepSeek Harness · Agent Server Core Design Analysis</span><span>Local source review · 2026-08-19 · Asia/Shanghai</span></div></footer>
+  <script>
+    (() => {
+      const progress = document.querySelector('.read-progress');
+      const topButton = document.querySelector('.backtop');
+      const links = [...document.querySelectorAll('.nav a')];
+      const sections = links.map(link => document.querySelector(link.getAttribute('href'))).filter(Boolean);
+      const update = () => {
+        const max = document.documentElement.scrollHeight - innerHeight;
+        progress.style.width = `${max > 0 ? (scrollY / max) * 100 : 0}%`;
+        topButton.classList.toggle('show', scrollY > 700);
+        let current = sections[0]?.id;
+        for (const section of sections) if (section.getBoundingClientRect().top <= 120) current = section.id;
+        links.forEach(link => link.classList.toggle('active', link.getAttribute('href') === `#${current}`));
+      };
+      addEventListener('scroll', update, { passive: true });
+      addEventListener('resize', update);
+      topButton.addEventListener('click', () => scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }));
+      update();
+    })();
+  </script>
+</body>
+</html>

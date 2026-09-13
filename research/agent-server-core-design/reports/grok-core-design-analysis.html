@@ -1,0 +1,1284 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Grok Build Agent Server Core Design 源码级架构分析报告">
+  <title>Grok Build · Agent Server Core Design 分析报告</title>
+  <style>
+    :root {
+      --ink: #14212b;
+      --blue: #2b5f8a;
+      --cyan: #2f8f83;
+      --amber: #b87920;
+      --mist: #eef3f5;
+      --paper: #fbfcfd;
+      --line: #c9d5da;
+      --muted: #5e6f78;
+      --danger: #9c413e;
+      --ok: #276f63;
+      --shadow: 0 14px 40px rgba(20, 33, 43, .08);
+      --display: "STZhongsong", "Songti SC", "Noto Serif CJK SC", serif;
+      --body: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+      --mono: "Cascadia Code", "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: var(--body);
+      font-size: 16px;
+      line-height: 1.75;
+      text-rendering: optimizeLegibility;
+    }
+    a { color: var(--blue); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+    a:hover { color: var(--cyan); }
+    a:focus-visible, button:focus-visible, summary:focus-visible {
+      outline: 3px solid rgba(184, 121, 32, .42);
+      outline-offset: 3px;
+    }
+    code {
+      font-family: var(--mono);
+      font-size: .9em;
+      color: #173c57;
+      background: #e8f0f3;
+      padding: .12em .35em;
+      border: 1px solid #d8e2e6;
+      border-radius: 3px;
+      overflow-wrap: anywhere;
+    }
+    .skip-link {
+      position: fixed;
+      left: 16px;
+      top: -80px;
+      z-index: 100;
+      padding: 10px 16px;
+      background: var(--ink);
+      color: white;
+    }
+    .skip-link:focus { top: 16px; }
+    .progress {
+      position: fixed;
+      inset: 0 auto auto 0;
+      z-index: 90;
+      width: 0;
+      height: 4px;
+      background: var(--amber);
+    }
+
+    .hero {
+      position: relative;
+      min-height: 620px;
+      border-bottom: 1px solid var(--line);
+      background: var(--mist);
+      overflow: hidden;
+    }
+    .hero::before, .hero::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+    }
+    .hero::before {
+      left: 0;
+      right: 0;
+      top: 94px;
+      border-top: 1px solid rgba(43, 95, 138, .18);
+    }
+    .hero::after {
+      top: 0;
+      bottom: 0;
+      right: 9vw;
+      border-left: 1px solid rgba(43, 95, 138, .18);
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 52px 48px 58px;
+    }
+    .masthead {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--line);
+    }
+    .eyebrow {
+      margin: 0;
+      color: var(--blue);
+      font: 700 .78rem/1.2 var(--mono);
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .report-no {
+      color: var(--muted);
+      font: 600 .74rem/1 var(--mono);
+      letter-spacing: .08em;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(340px, .65fr);
+      gap: 72px;
+      align-items: end;
+      padding-top: 76px;
+    }
+    h1 {
+      max-width: 880px;
+      margin: 0;
+      font-family: var(--display);
+      font-size: clamp(3rem, 6.6vw, 6.4rem);
+      font-weight: 700;
+      line-height: .98;
+      letter-spacing: -.04em;
+    }
+    h1 span {
+      display: block;
+      margin-top: 18px;
+      color: var(--blue);
+      font: 650 clamp(1.25rem, 2.2vw, 2.05rem)/1.25 var(--body);
+      letter-spacing: -.02em;
+    }
+    .dek {
+      max-width: 760px;
+      margin: 34px 0 0;
+      color: #40535e;
+      font-size: 1.12rem;
+      line-height: 1.8;
+    }
+    .hero-meta {
+      position: relative;
+      padding: 26px 28px 28px 34px;
+      border: 1px solid var(--blue);
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+    .hero-meta::before {
+      content: "01";
+      position: absolute;
+      left: -22px;
+      top: -22px;
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      color: white;
+      background: var(--blue);
+      font: 700 .82rem/1 var(--mono);
+    }
+    .meta-row {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 12px;
+      padding: 9px 0;
+      border-bottom: 1px solid #e1e8eb;
+      font-size: .88rem;
+    }
+    .meta-row:last-child { border-bottom: 0; }
+    .meta-row dt { color: var(--muted); }
+    .meta-row dd { margin: 0; font-weight: 650; }
+
+    .page-shell {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1000px);
+      gap: 74px;
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 62px 48px 120px;
+    }
+    .side-nav {
+      align-self: start;
+      position: sticky;
+      top: 28px;
+      max-height: calc(100vh - 56px);
+      overflow: auto;
+      padding: 0 16px 22px 0;
+      border-right: 1px solid var(--line);
+    }
+    .side-nav .nav-title {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font: 700 .7rem/1.2 var(--mono);
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .side-nav ol { margin: 0; padding: 0; list-style: none; counter-reset: report; }
+    .side-nav li { counter-increment: report; }
+    .side-nav a {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 7px;
+      padding: 8px 6px;
+      color: var(--muted);
+      text-decoration: none;
+      border-left: 2px solid transparent;
+      font-size: .82rem;
+      line-height: 1.45;
+    }
+    .side-nav a::before {
+      content: counter(report, decimal-leading-zero);
+      color: #819099;
+      font: 600 .68rem/1.75 var(--mono);
+    }
+    .side-nav a:hover, .side-nav a.active {
+      color: var(--ink);
+      border-left-color: var(--cyan);
+      background: #f0f5f6;
+    }
+    .print-btn {
+      width: 100%;
+      margin-top: 22px;
+      padding: 10px 12px;
+      border: 1px solid var(--ink);
+      color: var(--ink);
+      background: transparent;
+      font: 650 .78rem/1.2 var(--body);
+      cursor: pointer;
+    }
+    .print-btn:hover { color: white; background: var(--ink); }
+
+    main { min-width: 0; }
+    .report-section {
+      padding: 78px 0 18px;
+      scroll-margin-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+    .report-section:first-child { padding-top: 0; border-top: 0; }
+    .section-kicker {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0 0 12px;
+      color: var(--blue);
+      font: 700 .74rem/1.2 var(--mono);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .section-kicker::before { content: ""; width: 30px; border-top: 2px solid var(--amber); }
+    h2 {
+      margin: 0 0 26px;
+      font-family: var(--display);
+      font-size: clamp(2.1rem, 4vw, 3.8rem);
+      line-height: 1.13;
+      letter-spacing: -.035em;
+    }
+    h3 {
+      margin: 42px 0 16px;
+      font-family: var(--display);
+      font-size: 1.65rem;
+      line-height: 1.35;
+    }
+    h4 { margin: 0 0 8px; font-size: 1rem; }
+    .lead {
+      max-width: 820px;
+      margin: 0 0 34px;
+      color: #415560;
+      font-size: 1.1rem;
+    }
+    .thesis {
+      position: relative;
+      margin: 36px 0;
+      padding: 30px 34px 30px 40px;
+      border-left: 5px solid var(--cyan);
+      background: var(--mist);
+      font-family: var(--display);
+      font-size: clamp(1.35rem, 2.4vw, 2rem);
+      line-height: 1.55;
+    }
+    .thesis small {
+      display: block;
+      margin-top: 14px;
+      color: var(--muted);
+      font: 500 .8rem/1.5 var(--body);
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      margin: 34px 0 48px;
+      border: 1px solid var(--line);
+    }
+    .metric { min-height: 136px; padding: 24px; border-right: 1px solid var(--line); }
+    .metric:last-child { border-right: 0; }
+    .metric strong {
+      display: block;
+      color: var(--blue);
+      font: 700 clamp(1.8rem, 3.4vw, 3rem)/1 var(--mono);
+      letter-spacing: -.05em;
+    }
+    .metric span { display: block; margin-top: 15px; color: var(--muted); font-size: .82rem; }
+
+    .insight-grid, .two-col, .three-col {
+      display: grid;
+      gap: 22px;
+    }
+    .insight-grid, .three-col { grid-template-columns: repeat(3, 1fr); }
+    .two-col { grid-template-columns: repeat(2, 1fr); }
+    .insight {
+      padding: 25px 24px 26px;
+      border-top: 4px solid var(--blue);
+      background: #f3f7f8;
+    }
+    .insight:nth-child(2) { border-top-color: var(--cyan); }
+    .insight:nth-child(3) { border-top-color: var(--amber); }
+    .index-label {
+      display: block;
+      margin-bottom: 19px;
+      color: var(--muted);
+      font: 700 .72rem/1 var(--mono);
+      letter-spacing: .08em;
+    }
+    .insight p, .plain-card p { margin: 8px 0 0; color: #50616a; font-size: .9rem; }
+
+    .note {
+      margin: 28px 0;
+      padding: 20px 22px;
+      border: 1px solid #d3dde1;
+      background: #f7f9fa;
+      color: #435760;
+      font-size: .9rem;
+    }
+    .note strong { color: var(--ink); }
+    .note.warning { border-left: 4px solid var(--amber); }
+    .note.fact { border-left: 4px solid var(--blue); }
+    .tag {
+      display: inline-block;
+      margin-right: 6px;
+      padding: 3px 7px;
+      border: 1px solid currentColor;
+      color: var(--blue);
+      font: 700 .66rem/1.3 var(--mono);
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .tag.inference { color: var(--amber); }
+
+    .table-wrap { overflow-x: auto; margin: 26px 0 38px; border: 1px solid var(--line); }
+    table { width: 100%; border-collapse: collapse; min-width: 720px; background: white; }
+    th, td { padding: 15px 16px; text-align: left; vertical-align: top; border-bottom: 1px solid #dce4e7; }
+    th {
+      color: white;
+      background: var(--ink);
+      font-size: .76rem;
+      letter-spacing: .03em;
+    }
+    td { font-size: .85rem; color: #40535d; }
+    tr:last-child td { border-bottom: 0; }
+    tbody tr:hover td { background: #f4f8f9; }
+
+    .blueprint {
+      position: relative;
+      margin: 36px 0 48px;
+      padding: 34px;
+      border: 1px solid var(--blue);
+      background: #f7fafb;
+      box-shadow: var(--shadow);
+    }
+    .blueprint-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: baseline;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+    .blueprint-head strong { font-family: var(--display); font-size: 1.35rem; }
+    .blueprint-head span { color: var(--muted); font: .7rem/1.2 var(--mono); }
+    .plane {
+      display: grid;
+      grid-template-columns: 132px repeat(4, minmax(120px, 1fr));
+      gap: 10px;
+      align-items: stretch;
+      padding: 16px 0;
+      border-bottom: 1px solid #dce5e8;
+    }
+    .plane:last-child { border-bottom: 0; }
+    .plane-name {
+      display: flex;
+      align-items: center;
+      color: var(--blue);
+      font: 700 .72rem/1.4 var(--mono);
+      letter-spacing: .05em;
+    }
+    .node {
+      position: relative;
+      min-height: 74px;
+      padding: 13px 12px;
+      border: 1px solid #bdcbd1;
+      background: white;
+      font-size: .78rem;
+      line-height: 1.45;
+    }
+    .node strong { display: block; margin-bottom: 5px; color: var(--ink); font-size: .82rem; }
+    .node.active { border-color: var(--cyan); box-shadow: inset 4px 0 0 var(--cyan); }
+    .node.recover { border-color: #d6b276; box-shadow: inset 4px 0 0 var(--amber); }
+    .node.wide { grid-column: span 2; }
+    .node.muted { color: var(--muted); border-style: dashed; background: transparent; }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: .74rem;
+    }
+    .legend i { display: inline-block; width: 14px; height: 8px; margin-right: 7px; border-left: 4px solid var(--blue); }
+    .legend .l-active { border-color: var(--cyan); }
+    .legend .l-recover { border-color: var(--amber); }
+
+    .rail-map { margin: 40px 0; border-left: 5px solid var(--ink); }
+    .rail {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      min-height: 112px;
+      border-top: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      background: white;
+    }
+    .rail:last-child { border-bottom: 1px solid var(--line); }
+    .rail-label {
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      color: white;
+      background: var(--blue);
+      font: 700 .75rem/1.4 var(--mono);
+      text-align: center;
+    }
+    .rail:nth-child(2) .rail-label { background: var(--cyan); }
+    .rail:nth-child(3) .rail-label { background: var(--amber); }
+    .rail-content {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 22px;
+    }
+    .rail-step {
+      padding: 8px 11px;
+      border: 1px solid var(--line);
+      background: #f7f9fa;
+      font-size: .78rem;
+    }
+    .rail-arrow { color: #84939a; font-family: var(--mono); }
+
+    .sequence {
+      margin: 34px 0 44px;
+      counter-reset: seq;
+      border-top: 1px solid var(--line);
+    }
+    .seq-row {
+      display: grid;
+      grid-template-columns: 58px 180px 1fr;
+      gap: 20px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--line);
+      counter-increment: seq;
+    }
+    .seq-row::before {
+      content: counter(seq, decimal-leading-zero);
+      color: var(--blue);
+      font: 700 .8rem/1.5 var(--mono);
+    }
+    .seq-actor { font-weight: 700; font-size: .9rem; }
+    .seq-action { color: #4b5f69; font-size: .9rem; }
+    .seq-action strong { color: var(--ink); }
+
+    .flow-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin: 30px 0; }
+    .flow-card {
+      position: relative;
+      min-height: 250px;
+      padding: 24px 24px 22px 62px;
+      border: 1px solid var(--line);
+      background: white;
+    }
+    .flow-card::before {
+      content: attr(data-no);
+      position: absolute;
+      left: 20px;
+      top: 27px;
+      color: var(--blue);
+      font: 700 .8rem/1 var(--mono);
+    }
+    .flow-card h4 { font-size: 1.03rem; }
+    .flow-card ol { margin: 15px 0 0; padding-left: 19px; }
+    .flow-card li { margin: 7px 0; color: #51626b; font-size: .84rem; }
+    .invariant {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px dashed #cbd6da;
+      color: var(--ok);
+      font: 650 .74rem/1.55 var(--mono);
+    }
+
+    .mechanism {
+      display: grid;
+      grid-template-columns: 170px 1fr;
+      gap: 32px;
+      padding: 32px 0;
+      border-top: 1px solid var(--line);
+    }
+    .mechanism-id { color: var(--blue); font: 700 .72rem/1.5 var(--mono); letter-spacing: .08em; }
+    .mechanism h3 { margin-top: 0; }
+    .mechanism ul { padding-left: 20px; }
+    .mechanism li { margin: 8px 0; color: #475b65; }
+    .source-ref {
+      display: block;
+      margin-top: 14px;
+      color: #6d7d85;
+      font: .7rem/1.65 var(--mono);
+      overflow-wrap: anywhere;
+    }
+
+    .decision-matrix td:first-child { color: var(--ink); font-weight: 700; }
+    .status {
+      display: inline-block;
+      padding: 2px 7px;
+      border: 1px solid currentColor;
+      font: 700 .66rem/1.45 var(--mono);
+      white-space: nowrap;
+    }
+    .status.safe { color: var(--ok); }
+    .status.guard { color: var(--amber); }
+    .status.stop { color: var(--danger); }
+
+    .fault-stack { margin: 34px 0; }
+    .fault-layer {
+      display: grid;
+      grid-template-columns: 86px 210px 1fr 180px;
+      gap: 18px;
+      align-items: center;
+      padding: 21px 22px;
+      border: 1px solid var(--line);
+      border-bottom: 0;
+      background: white;
+    }
+    .fault-layer:last-child { border-bottom: 1px solid var(--line); }
+    .fault-layer .level { color: var(--blue); font: 700 .76rem/1.2 var(--mono); }
+    .fault-layer h4 { margin: 0; }
+    .fault-layer p { margin: 0; color: #53656e; font-size: .82rem; }
+    .fault-layer .outcome { color: var(--ok); font: 650 .72rem/1.45 var(--mono); }
+
+    .principle-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      border-top: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+      margin: 28px 0;
+    }
+    .principle {
+      min-height: 145px;
+      padding: 22px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .principle strong { display: block; margin-bottom: 8px; }
+    .principle p { margin: 0; color: #53656e; font-size: .86rem; }
+
+    .highlight-list { counter-reset: highlight; margin: 34px 0; }
+    .highlight-item {
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr) minmax(220px, .44fr);
+      gap: 26px;
+      padding: 27px 0;
+      border-top: 1px solid var(--line);
+      counter-increment: highlight;
+    }
+    .highlight-item:last-child { border-bottom: 1px solid var(--line); }
+    .highlight-item::before {
+      content: counter(highlight, decimal-leading-zero);
+      color: var(--blue);
+      font: 700 1.15rem/1 var(--mono);
+    }
+    .highlight-item h3 { margin: 0 0 9px; font-size: 1.25rem; }
+    .highlight-item p { margin: 0; color: #53656e; font-size: .88rem; }
+    .highlight-value {
+      align-self: center;
+      padding-left: 18px;
+      border-left: 3px solid var(--cyan);
+      color: var(--ok);
+      font-size: .78rem;
+      font-weight: 700;
+    }
+
+    .risk-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin: 30px 0; }
+    .risk-card { padding: 23px; border: 1px solid #d8c49d; background: #fffaf1; }
+    .risk-card h4 { color: #754d12; }
+    .risk-card p { margin: 8px 0 0; color: #665a48; font-size: .86rem; }
+    .risk-card .risk-response { margin-top: 15px; padding-top: 12px; border-top: 1px solid #e4d4b7; color: var(--ink); }
+
+    .takeaway {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      margin: 34px 0;
+      border: 1px solid var(--ink);
+    }
+    .takeaway > div { padding: 30px; }
+    .takeaway > div:first-child { color: white; background: var(--ink); }
+    .takeaway h3 { margin-top: 0; }
+    .takeaway ul { margin: 0; padding-left: 20px; }
+    .takeaway li { margin: 9px 0; }
+
+    details {
+      margin: 12px 0;
+      border: 1px solid var(--line);
+      background: white;
+    }
+    summary {
+      padding: 15px 18px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+    details[open] summary { border-bottom: 1px solid var(--line); background: #f2f6f7; }
+    .details-body { padding: 18px; color: #4a5e67; font-size: .86rem; }
+    .details-body ul { margin: 0; padding-left: 20px; }
+    .details-body li { margin: 7px 0; }
+
+    .closing {
+      margin-top: 48px;
+      padding: 44px;
+      color: white;
+      background: var(--blue);
+    }
+    .closing h3 { margin: 0 0 16px; font-size: 2rem; }
+    .closing p { margin: 0; max-width: 760px; color: #edf6fa; }
+    footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 30px;
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 34px 48px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: .76rem;
+    }
+
+    @media (max-width: 1120px) {
+      .hero-grid { grid-template-columns: 1fr; gap: 52px; }
+      .hero-meta { max-width: 620px; }
+      .page-shell { grid-template-columns: 1fr; gap: 28px; }
+      .side-nav {
+        position: sticky;
+        z-index: 20;
+        top: 0;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        max-height: none;
+        padding: 10px 0;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+        background: rgba(251, 252, 253, .96);
+        overflow-x: auto;
+      }
+      .side-nav .nav-title, .side-nav .print-btn { display: none; }
+      .side-nav ol { display: flex; }
+      .side-nav a { white-space: nowrap; border-left: 0; border-bottom: 2px solid transparent; }
+      .side-nav a.active { border-left: 0; border-bottom-color: var(--cyan); }
+      .plane { grid-template-columns: 110px repeat(2, minmax(150px, 1fr)); }
+      .node.wide { grid-column: span 1; }
+    }
+    @media (max-width: 760px) {
+      .hero { min-height: auto; }
+      .hero-inner, .page-shell { padding-left: 22px; padding-right: 22px; }
+      .page-shell, main { min-width: 0; max-width: 100%; overflow-x: clip; }
+      .table-wrap { max-width: 100%; }
+      .masthead { align-items: flex-start; }
+      .hero-grid { padding-top: 48px; }
+      h1 { font-size: clamp(2.8rem, 15vw, 4.8rem); }
+      .metric-grid { grid-template-columns: repeat(2, 1fr); }
+      .metric:nth-child(2) { border-right: 0; }
+      .metric:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .insight-grid, .three-col, .two-col, .flow-grid, .risk-grid, .takeaway { grid-template-columns: 1fr; }
+      .blueprint { padding: 20px 14px; }
+      .blueprint-head { align-items: flex-start; flex-direction: column; }
+      .plane { grid-template-columns: 1fr; }
+      .plane-name { padding: 8px 0 2px; }
+      .rail { grid-template-columns: 86px 1fr; }
+      .seq-row { grid-template-columns: 38px 1fr; gap: 12px; }
+      .seq-action { grid-column: 2; }
+      .mechanism { grid-template-columns: 1fr; gap: 8px; }
+      .fault-layer { grid-template-columns: 58px 1fr; }
+      .fault-layer p, .fault-layer .outcome { grid-column: 2; }
+      .principle-list { grid-template-columns: 1fr; }
+      .highlight-item { grid-template-columns: 48px 1fr; }
+      .highlight-value { grid-column: 2; }
+      footer { padding-left: 22px; padding-right: 22px; flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+    @media print {
+      @page { size: A4; margin: 16mm; }
+      body { color: #111; background: white; font-size: 10pt; }
+      .progress, .side-nav, .print-btn, .skip-link { display: none !important; }
+      .hero { min-height: auto; background: white; border: 0; }
+      .hero-inner, .page-shell { max-width: none; padding: 0; }
+      .hero-grid { grid-template-columns: 1.2fr .8fr; gap: 22mm; padding-top: 22mm; }
+      .hero-meta, .blueprint { box-shadow: none; }
+      .page-shell { display: block; }
+      .report-section { break-before: page; }
+      .report-section:first-child { break-before: auto; }
+      h2, h3 { break-after: avoid; }
+      .metric-grid, .insight-grid, .flow-card, .mechanism, .risk-card, table, details { break-inside: avoid; }
+      details .details-body { display: block; }
+      .closing { color: #111; background: white; border: 2px solid #111; }
+      .closing p { color: #222; }
+      a { color: inherit; text-decoration: none; }
+      footer { max-width: none; padding: 12mm 0 0; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#report">跳至报告正文</a>
+  <div class="progress" id="progress" aria-hidden="true"></div>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="masthead">
+        <p class="eyebrow">Architecture Field Report · Agent Server Series</p>
+        <span class="report-no">REPORT 01 / GROK BUILD / 2026-08-19</span>
+      </div>
+      <div class="hero-grid">
+        <div>
+          <h1>Grok Build<span>Agent Server Core Design 源码级分析报告</span></h1>
+          <p class="dek">从连接连续性、会话 Actor、流式采样、工具事务、MCP 动态发现、权限边界与自主 Goal 验证出发，解释这套终端编码 Agent 如何把一次模型调用组织成可恢复、可审计、可长期运行的业务系统。</p>
+        </div>
+        <dl class="hero-meta">
+          <div class="meta-row"><dt>分析对象</dt><dd>Grok Build Rust 源码树</dd></div>
+          <div class="meta-row"><dt>源码版本</dt><dd><code>2ec0f0c84888…</code></dd></div>
+          <div class="meta-row"><dt>重点范围</dt><dd>Agent Runtime / Session / Sampler / Tools / MCP / Workspace</dd></div>
+          <div class="meta-row"><dt>报告性质</dt><dd>实现事实 + 架构推断 + 设计评估</dd></div>
+        </dl>
+      </div>
+    </div>
+  </header>
+
+  <div class="page-shell">
+    <nav class="side-nav" aria-label="报告目录">
+      <p class="nav-title">Contents</p>
+      <ol>
+        <li><a href="#executive">执行摘要</a></li>
+        <li><a href="#scope">范围与方法</a></li>
+        <li><a href="#architecture">总体架构</a></li>
+        <li><a href="#flows">核心流程</a></li>
+        <li><a href="#mechanisms">核心机制</a></li>
+        <li><a href="#business">业务处理</a></li>
+        <li><a href="#resilience">容错体系</a></li>
+        <li><a href="#security">权限与安全</a></li>
+        <li><a href="#highlights">突出设计</a></li>
+        <li><a href="#risks">权衡与风险</a></li>
+        <li><a href="#takeaways">可复用原则</a></li>
+        <li><a href="#evidence">源码证据</a></li>
+      </ol>
+      <button class="print-btn" type="button" onclick="window.print()">打印 / 导出 PDF</button>
+    </nav>
+
+    <main id="report">
+      <section class="report-section" id="executive">
+        <p class="section-kicker">01 · Executive summary</p>
+        <h2>它的核心产品不是聊天界面，<br>而是“可连续运行的执行会话”。</h2>
+        <p class="lead">Grok Build 表面是终端编码 Agent，内部却更接近一个单进程、多 Actor 的任务执行平台：连接可以更换，会话持续存在；模型可以失败，回合仍可恢复；工具可以动态出现，但模型看到的接口尽量保持稳定。</p>
+
+        <blockquote class="thesis">
+          核心设计判断：以 Actor 明确状态所有权，以工具调用—结果配对维护对话协议完整性，再用重试、回放、压缩和持久化构成恢复轨。三者共同把概率性模型嵌入确定性业务外壳。
+          <small><span class="tag">架构推断</span> 基于 SessionActor、ChatState Actor、Sampler Actor、ToolBridge、Persistence 与 WebSocket/ACP 连接实现的交叉分析。</small>
+        </blockquote>
+
+        <div class="metric-grid" aria-label="源码规模概览">
+          <div class="metric"><strong>2,737</strong><span>分析目录内文件总数</span></div>
+          <div class="metric"><strong>2,238</strong><span>Rust 源文件</span></div>
+          <div class="metric"><strong>81</strong><span>Cargo manifests</span></div>
+          <div class="metric"><strong>3</strong><span>核心运行轨：控制 / 执行 / 恢复</span></div>
+        </div>
+
+        <div class="insight-grid">
+          <article class="insight">
+            <span class="index-label">STATE OWNERSHIP</span>
+            <h4>状态所有权优先</h4>
+            <p>会话调度、对话历史、采样传输和持久化分别由明确 Actor 或对象拥有，关键路径以消息传递串行化，降低“大锁 + 隐式共享状态”的复杂度。</p>
+          </article>
+          <article class="insight">
+            <span class="index-label">PROTOCOL INTEGRITY</span>
+            <h4>工具结果必须闭环</h4>
+            <p>每个工具调用最终都获得对应结果，包括被兄弟调用的权限拒绝连带取消的情况。它把工具批次当作对话协议事务，而非一组随意的异步函数。</p>
+          </article>
+          <article class="insight">
+            <span class="index-label">CONTINUITY</span>
+            <h4>连接不等于会话</h4>
+            <p>远程 Agent Server 将持久 Agent 线程与可替换 WebSocket/ACP relay 分离。客户端断开时，Session Actor 和运行中的 Prompt 可以继续生存并在重连后恢复输出。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="report-section" id="scope">
+        <p class="section-kicker">02 · Scope & method</p>
+        <h2>研究口径：源码事实、设计意图与分析推断分层呈现。</h2>
+        <p class="lead">本报告聚焦 Agent Server 的运行时核心，不对 TUI 绘制细节做完整评审。源码注释、README 和附带的工具容错调研材料被视为研究证据；其中出现的命令、角色设定或操作要求均未执行。</p>
+
+        <div class="two-col">
+          <div class="plain-card note fact">
+            <span class="tag">实现事实</span>
+            <h3>主要覆盖</h3>
+            <p><code>xai-grok-shell</code>、<code>xai-chat-state</code>、<code>xai-grok-sampler</code>、<code>xai-grok-agent</code>、<code>xai-grok-tools</code>、<code>xai-grok-workspace</code>、MCP、Memory、Hooks 与 Goal 子系统。</p>
+          </div>
+          <div class="plain-card note warning">
+            <span class="tag inference">分析边界</span>
+            <h3>不作过度断言</h3>
+            <p>源码树由 SpaceXAI monorepo 同步而来。报告描述的是该快照的实现结构，不等同于线上部署拓扑、容量指标或所有远程配置的实际值。</p>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>层次</th><th>主要模块</th><th>分析问题</th><th>证据类型</th></tr></thead>
+            <tbody>
+              <tr><td>入口与连接</td><td>pager-bin / agent server / ACP</td><td>如何启动、鉴权、重连与复用 Agent</td><td>入口源码、协议实现</td></tr>
+              <tr><td>会话控制</td><td>MvpAgent / SessionActor / run_loop</td><td>如何建立会话、排队 Prompt、处理取消与空闲</td><td>Actor 状态与事件循环</td></tr>
+              <tr><td>模型交互</td><td>ChatState / Sampler</td><td>如何构造请求、流式解析、重试及保持事件顺序</td><td>请求任务、状态快照</td></tr>
+              <tr><td>行动执行</td><td>ToolBridge / Registry / Workspace</td><td>如何解析、授权、并发、持久化与回填工具结果</td><td>工具预检和执行管线</td></tr>
+              <tr><td>长期运行</td><td>Persistence / Memory / Compaction / Goal</td><td>如何恢复、控制上下文、验证目标与退出</td><td>持久化消息与状态机</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="report-section" id="architecture">
+        <p class="section-kicker">03 · System architecture</p>
+        <h2>四层运行结构，三条贯穿轨道。</h2>
+        <p class="lead">从部署外观上，它支持 TUI、headless/CI 和 ACP/远程服务等入口；从内部运行结构看，核心是 Agent—Session—ChatState 的控制层、Sampler—ToolBridge—Workspace 的执行层，以及横切全链路的恢复层。</p>
+
+        <div class="blueprint" role="img" aria-label="Grok Build Agent Server 分层架构图">
+          <div class="blueprint-head"><strong>Runtime Blueprint</strong><span>CONNECTION ≠ SESSION ≠ TURN</span></div>
+          <div class="plane">
+            <div class="plane-name">接入层<br>ACCESS</div>
+            <div class="node"><strong>TUI</strong>全屏交互、滚动区与提示输入</div>
+            <div class="node"><strong>Headless / CI</strong>非交互式脚本运行</div>
+            <div class="node active"><strong>ACP / Editor</strong>编辑器嵌入与反向请求</div>
+            <div class="node recover"><strong>WebSocket /ws</strong>鉴权、keepalive、重连 relay</div>
+          </div>
+          <div class="plane">
+            <div class="plane-name">控制层<br>CONTROL</div>
+            <div class="node active"><strong>MvpAgent</strong>初始化、会话目录、模型与能力</div>
+            <div class="node active"><strong>SessionActor</strong>单会话调度、队列、通知与生命周期</div>
+            <div class="node"><strong>ChatState Actor</strong>对话历史、请求构造、快照与 token</div>
+            <div class="node"><strong>Hooks / Goal</strong>策略闸门、计划、自主任务状态机</div>
+          </div>
+          <div class="plane">
+            <div class="plane-name">执行层<br>EXECUTION</div>
+            <div class="node active"><strong>Sampler Actor</strong>多后端流式采样、重试与取消</div>
+            <div class="node active"><strong>ToolBridge</strong>类型化注册、解析、调用与输出</div>
+            <div class="node"><strong>WorkspaceOps</strong>文件、Shell、VCS、checkpoint、代理模式</div>
+            <div class="node"><strong>MCP Clients</strong>动态发现、渐进初始化、鉴权恢复</div>
+          </div>
+          <div class="plane">
+            <div class="plane-name">连续性层<br>CONTINUITY</div>
+            <div class="node recover"><strong>Persistence</strong>会话目录、消息、摘要与远程同步</div>
+            <div class="node recover"><strong>Replay Buffer</strong>连接恢复后的流事件补发</div>
+            <div class="node recover"><strong>Compaction</strong>上下文压缩、工具结果与图片治理</div>
+            <div class="node recover"><strong>Memory</strong>空闲刷新、索引、摘要与再次注入</div>
+          </div>
+          <div class="legend"><span><i></i>普通组件</span><span><i class="l-active"></i>主调用链</span><span><i class="l-recover"></i>恢复与连续性</span></div>
+        </div>
+
+        <h3>三条运行轨不是三个独立服务，而是三种职责。</h3>
+        <div class="rail-map">
+          <div class="rail">
+            <div class="rail-label">CONTROL<br>控制轨</div>
+            <div class="rail-content"><span class="rail-step">连接请求</span><span class="rail-arrow">→</span><span class="rail-step">MvpAgent</span><span class="rail-arrow">→</span><span class="rail-step">SessionActor</span><span class="rail-arrow">→</span><span class="rail-step">ChatState</span><span class="rail-arrow">→</span><span class="rail-step">回合状态</span></div>
+          </div>
+          <div class="rail">
+            <div class="rail-label">EXECUTION<br>执行轨</div>
+            <div class="rail-content"><span class="rail-step">ConversationRequest</span><span class="rail-arrow">→</span><span class="rail-step">Sampler</span><span class="rail-arrow">→</span><span class="rail-step">Tool Preflight</span><span class="rail-arrow">→</span><span class="rail-step">Workspace / MCP</span></div>
+          </div>
+          <div class="rail">
+            <div class="rail-label">RECOVERY<br>恢复轨</div>
+            <div class="rail-content"><span class="rail-step">Retry</span><span class="rail-arrow">↔</span><span class="rail-step">Replay</span><span class="rail-arrow">↔</span><span class="rail-step">Compaction</span><span class="rail-arrow">↔</span><span class="rail-step">Persistence</span><span class="rail-arrow">↔</span><span class="rail-step">Rehydrate</span></div>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>组件</th><th>状态所有权</th><th>并发模型</th><th>核心边界</th></tr></thead>
+            <tbody>
+              <tr><td>MvpAgent</td><td>会话注册表、初始化能力、客户端类型</td><td>单线程 LocalSet 中的共享 Agent 实例</td><td>协议级会话生命周期，不直接执行每个工具</td></tr>
+              <tr><td>SessionActor</td><td>运行任务、输入 FIFO、通知、模式、工具上下文</td><td>Actor 事件循环；单会话仅一个主运行回合</td><td>调度与业务编排中心</td></tr>
+              <tr><td>ChatState</td><td>Conversation、token、prompt index、快照、持久化句柄</td><td>Actor 串行变更，查询通过 oneshot</td><td>对话真相源与请求组装</td></tr>
+              <tr><td>Sampler</td><td>单次请求传输状态、重试预算、取消</td><td>每请求任务 + 流式事件</td><td>隔离模型传输的不稳定性</td></tr>
+              <tr><td>ToolBridge</td><td>Registry、工具资源、动态 MCP 工具集合</td><td>读多写少；锁不跨 await</td><td>模型协议与类型化工具实现的转换层</td></tr>
+              <tr><td>WorkspaceOps</td><td>文件/VCS/Shell/checkpoint 能力</td><td>Local 或 Proxy 双模式；按文件写锁</td><td>所有主机副作用的执行边界</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="report-section" id="flows">
+        <p class="section-kicker">04 · End-to-end flows</p>
+        <h2>一次 Prompt 如何穿过整个系统。</h2>
+        <p class="lead">主流程具有两个明显特征：其一，所有对话变更最终回到 ChatState；其二，任何外部副作用都必须经过工具预检与权限边界。模型流和工具流在 SessionActor 中循环，直到产生无工具调用的最终回答或触发停止条件。</p>
+
+        <div class="sequence" aria-label="Prompt 主时序">
+          <div class="seq-row"><div class="seq-actor">Client → MvpAgent</div><div class="seq-action"><strong>接收 Prompt。</strong> 获取会话 intake lock，确定 prompt mode、prompt id、turn number 和排队策略。</div></div>
+          <div class="seq-row"><div class="seq-actor">MvpAgent → SessionActor</div><div class="seq-action"><strong>注入输入。</strong> 若已有运行任务则进入 FIFO；否则创建本轮任务。取消、send-now 与 verbatim 等模式在此区分。</div></div>
+          <div class="seq-row"><div class="seq-actor">SessionActor → ChatState</div><div class="seq-action"><strong>更新对话真相源。</strong> 合并用户内容、提醒、记忆与 MCP 变化，检查对话完整性并评估压缩。</div></div>
+          <div class="seq-row"><div class="seq-actor">ChatState → Sampler</div><div class="seq-action"><strong>构造精确请求。</strong> 依据实际序列化体积治理图片和历史工具结果，再交给对应模型后端的流式采样器。</div></div>
+          <div class="seq-row"><div class="seq-actor">Sampler → SessionActor</div><div class="seq-action"><strong>流式回传。</strong> 文本、思考、用量和工具调用逐段解析；drain barrier 保证文本事件编号先于工具事件。</div></div>
+          <div class="seq-row"><div class="seq-actor">SessionActor → ToolBridge</div><div class="seq-action"><strong>工具预检。</strong> 规范化参数、查找工具、执行 hooks、计划模式检查、权限判断；批准后并发调度。</div></div>
+          <div class="seq-row"><div class="seq-actor">ToolBridge → Workspace</div><div class="seq-action"><strong>产生副作用。</strong> 文件、Shell、搜索、MCP 等返回类型化 ToolOutput；必要时使用路径锁、鉴权刷新或取消令牌。</div></div>
+          <div class="seq-row"><div class="seq-actor">Result → ChatState</div><div class="seq-action"><strong>闭合协议。</strong> 每个 tool_call 写入配对 tool_result，持久化并再次采样，直到最终答复、预算耗尽、用户取消或 Goal 状态变化。</div></div>
+        </div>
+
+        <h3>七类核心业务流程</h3>
+        <div class="flow-grid">
+          <article class="flow-card" data-no="01">
+            <h4>服务启动与连接恢复</h4>
+            <ol><li>WebSocket <code>/ws</code> 校验 Bearer 或 server-key。</li><li>首次连接惰性创建持久 Agent OS 线程与 Tokio LocalSet。</li><li>当前 ACP 连接替换 relay 目的地；Agent 和 Session 不随 socket 销毁。</li><li>重连后补发缓冲通知并继续在途 Prompt。</li></ol>
+            <div class="invariant">INVARIANT · Connection lifetime is shorter than session lifetime.</div>
+          </article>
+          <article class="flow-card" data-no="02">
+            <h4>新建、加载与恢复会话</h4>
+            <ol><li><code>initialize</code> 建立能力、模型、权限与子 Agent 协调器。</li><li><code>new_session</code> 合并 managed/client MCP，建立持久化目录。</li><li><code>load_session</code> 等待旧线程排空并重新水化对话与模型。</li><li>若原模型不可用则执行模型恢复与元数据修正。</li></ol>
+            <div class="invariant">INVARIANT · Persisted session is the recovery contract, not the socket.</div>
+          </article>
+          <article class="flow-card" data-no="03">
+            <h4>Prompt 排队与回合调度</h4>
+            <ol><li>一个主运行任务对应当前回合。</li><li>普通输入进入 <code>pending_inputs</code> FIFO。</li><li>用户 interjection 可在安全点被吸收；等待型工具可被打断。</li><li>turn complete 后排空通知、启动下一输入并发布 idle。</li></ol>
+            <div class="invariant">INVARIANT · Synthetic turns cannot sweep away a queued user prompt.</div>
+          </article>
+          <article class="flow-card" data-no="04">
+            <h4>工具批次处理</h4>
+            <ol><li>先解析和审批全部调用，再开始执行批准项。</li><li>无关工具并发；同一路径读写受文件锁约束。</li><li>任何拒绝或取消都会为后续兄弟调用生成因果结果。</li><li>结果按调用身份回填，不以完成顺序破坏协议。</li></ol>
+            <div class="invariant">INVARIANT · Every tool call must have exactly one model-visible result.</div>
+          </article>
+          <article class="flow-card" data-no="05">
+            <h4>MCP 动态工具发现</h4>
+            <ol><li>Blocking 模式等待初始化；Progressive 模式不阻塞首轮。</li><li>隐藏的大工具集通过 <code>search_tool</code> 做 BM25 检索。</li><li><code>use_tool</code> 作为稳定 meta-tool 分派完整限定名。</li><li>工具变化以指纹和 delta reminder 告知模型。</li></ol>
+            <div class="invariant">INVARIANT · Dynamic capability should not churn the prompt prefix every turn.</div>
+          </article>
+          <article class="flow-card" data-no="06">
+            <h4>上下文、图片与记忆治理</h4>
+            <ol><li>按真实序列化请求体而非粗略 token 估算硬限制。</li><li>图片接近 50 MB 才批量降到 25 MB，形成滞回。</li><li>上下文过半时分层裁剪旧工具结果。</li><li>空闲和会话结束时刷新长期记忆并在后续回合再注入。</li></ol>
+            <div class="invariant">INVARIANT · Preserve cache-friendly prefixes until a real threshold is crossed.</div>
+          </article>
+          <article class="flow-card" data-no="07">
+            <h4>Goal 自主执行与验证</h4>
+            <ol><li>Goal 在 Planning / Executing 阶段间流转，并可因用户、基础设施或停滞暂停。</li><li>验证阶段并行启动默认 3 个 adversarial skeptics。</li><li>高置信反驳可成为决定性闸门；其余按独立冷评审多数规则聚合。</li><li>可修复缺口回到执行；矛盾或不可验证阻塞则暂停等待用户。</li></ol>
+            <div class="invariant">INVARIANT · The model that did the work is not the sole judge of completion.</div>
+          </article>
+        </div>
+      </section>
+
+      <section class="report-section" id="mechanisms">
+        <p class="section-kicker">05 · Core mechanisms</p>
+        <h2>核心机制拆解</h2>
+        <p class="lead">以下机制共同决定系统为什么能够长时间运行，而不只是完成一次调用。</p>
+
+        <article class="mechanism">
+          <div class="mechanism-id">M-01<br>ACTOR SCHEDULER</div>
+          <div>
+            <h3>SessionActor 是业务编排中心</h3>
+            <p>它持有运行任务、待处理输入、通知抑制、回退状态、计划/目标、工具上下文和 MCP 状态等。<code>run_session</code> 使用带优先级的 <code>tokio::select!</code> 同时监听命令、回合完成、ChatState 事件、MCP 重启、内存刷新和模型切换。</p>
+            <ul><li>“是否空闲”由共享判定函数统一定义，避免多个子系统出现不同口径。</li><li>单线程 LocalSet 让 Session 内的 Agent 可通过 <code>RefCell</code> 安全访问。</li><li>回合结束是业务收敛点：刷新流缓冲、处理 Goal、排空通知、启动下一输入、触发 laziness 检查。</li></ul>
+            <span class="source-ref">SOURCE · xai-grok-shell/src/session/acp_session.rs · acp_session_impl/run_loop.rs</span>
+          </div>
+        </article>
+
+        <article class="mechanism">
+          <div class="mechanism-id">M-02<br>CHAT STATE</div>
+          <div>
+            <h3>对话历史不是共享 Vec，而是独立 Actor</h3>
+            <p>ChatState 独占 Conversation、采样配置、token、prompt index、时间信息、编辑路径和持久化接口。写操作以消息串行化，查询使用 oneshot；持久化对象只在 Actor 内以 <code>&amp;mut self</code> 使用。</p>
+            <ul><li>请求前执行 conversation integrity 修复，处理悬空工具调用和重复记录。</li><li>支持 snapshot、fork 和 rewind，为会话分支与文件回退提供一致起点。</li><li>图片淘汰只发生在请求副本，原对话仍保留事实；模型看到诚实占位符，明确要求用户重新分享。</li></ul>
+            <span class="source-ref">SOURCE · xai-chat-state/src/actor.rs · xai-chat-state/src/persistence.rs</span>
+          </div>
+        </article>
+
+        <article class="mechanism">
+          <div class="mechanism-id">M-03<br>SAMPLER</div>
+          <div>
+            <h3>把模型传输失败隔离在请求任务里</h3>
+            <p>Sampler Actor 为每次请求创建独立任务，适配 Chat Completions、Responses 与 Messages 等后端流，并把普通网络重试、空响应重试和 doom-loop 重试分成不同预算。</p>
+            <ul><li>连接重置疑似 413 时可移除图片后重试。</li><li>content-filtered empty 被视为合法，而普通空响应会进入重试。</li><li>取消使用 cooperative token；单个 chunk 默认有 300 秒 idle timeout。</li><li>5 秒 stream-drain barrier 确保此前文本/思考 chunk 获得事件 ID 后再发布工具调用。</li></ul>
+            <span class="source-ref">SOURCE · xai-grok-sampler/src/actor/request_task.rs · session/acp_session_impl/turn.rs</span>
+          </div>
+        </article>
+
+        <article class="mechanism">
+          <div class="mechanism-id">M-04<br>TOOL BRIDGE</div>
+          <div>
+            <h3>类型化工具内核 + 模型友好协议外壳</h3>
+            <p>AgentBuilder 生成 AgentDefinition、系统提示、工具策略和 ToolBridge。Registry 在注册阶段校验 schema、依赖与行为版本，执行时将 JSON 参数解析为类型化调用，再把 ToolOutput 转成模型可读结果和 ACP 更新。</p>
+            <ul><li>动态工具集合用读写锁保护，但 read guard 不跨 <code>await</code>。</li><li>终端取消能力与普通 Registry 分离，避免 kill 命令被正在执行的锁阻塞。</li><li><code>call_raw</code> 供 <code>use_tool</code> 内部分派，避免 post-processing 和持久化执行两次。</li></ul>
+            <span class="source-ref">SOURCE · xai-grok-agent/src/agent.rs · xai-grok-tools/src/bridge.rs · registry.rs</span>
+          </div>
+        </article>
+
+        <article class="mechanism">
+          <div class="mechanism-id">M-05<br>MCP DISCOVERY</div>
+          <div>
+            <h3>用稳定 meta-tool 承载不断变化的能力</h3>
+            <p>Progressive MCP 不强迫首轮等待所有外部 server。真正的大型动态工具集保持隐藏，模型先用 <code>search_tool</code> 搜索，再以 <code>use_tool(server__tool)</code> 分派。</p>
+            <ul><li>模型可见工具列表更稳定，有利于前缀/KV cache。</li><li>服务器工具使用稳定 FNV-1a 指纹检测变化，只发送 delta reminder。</li><li>具备 liveness watcher、可选自动重启、managed token refresh、reauth cooldown 和工具注销。</li><li>子 Agent 可以共享父级 MCP client，避免重复握手。</li></ul>
+            <span class="source-ref">SOURCE · xai-grok-shell/src/session/acp_session_impl/mcp.rs · xai-grok-tools search_tool/use_tool</span>
+          </div>
+        </article>
+
+        <article class="mechanism">
+          <div class="mechanism-id">M-06<br>GOAL HARNESS</div>
+          <div>
+            <h3>让“完成”成为独立验证结论</h3>
+            <p>GoalTracker 保存阶段、暂停原因、预算、历史和 verifier scratch。Planner 负责形成计划，Strategist 在重复未达成时提供结构性调整，Verifier 则以多个只读 skeptic 子 Agent 审核证据。</p>
+            <ul><li>默认 3 个 skeptic，数量可配置为 1–5；skeptic 0 是可恢复的 reject gatekeeper。</li><li>多评审时 skeptic 0 的“通过票”不用于凑通过多数，但其高置信反驳可以决定性阻断。</li><li>所有反驳均属 contradiction/unverifiable 时进入 Blocked；存在模型可修复项则继续 NotAchieved。</li><li>单个 skeptic 的异常通常保守退化为 refute；更外围的特定 harness 基础设施失败保留 FailOpenAchieved 通道，避免平台故障永久扣住用户。</li></ul>
+            <span class="source-ref">SOURCE · session/goal_tracker.rs · goal_classifier.rs · goal_planner.rs · goal_strategist.rs</span>
+          </div>
+        </article>
+      </section>
+
+      <section class="report-section" id="business">
+        <p class="section-kicker">06 · Business processing</p>
+        <h2>从业务诉求看，架构在解决什么。</h2>
+        <p class="lead">这些实现不是纯技术优化，它们分别对应交互连续性、成本、授权责任、外部能力扩展和自主任务可信度。</p>
+
+        <div class="table-wrap">
+          <table class="decision-matrix">
+            <thead><tr><th>业务诉求</th><th>处理机制</th><th>业务结果</th><th>关键约束</th></tr></thead>
+            <tbody>
+              <tr><td>断线不丢任务</td><td>持久 Agent 线程、可替换 relay、replay buffer、会话重水化</td><td><span class="status safe">CONTINUE</span> 在途 Prompt 可跨客户端连接继续</td><td>客户端事件消费需支持重放和去重语义</td></tr>
+              <tr><td>用户随时插话</td><td>pending FIFO、interjection 安全点、等待工具可中断</td><td><span class="status safe">RESPONSIVE</span> 长任务仍保持交互控制权</td><td>不能破坏当前工具批次与对话配对</td></tr>
+              <tr><td>降低模型自愈成本</td><td>可行动错误文案、原始参数回填、针对性 use_tool 纠错</td><td><span class="status safe">RECOVER</span> 模型可在下一轮自行修正</td><td>错误必须完整但不能泄漏敏感数据</td></tr>
+              <tr><td>安全执行主机操作</td><td>Ask / Auto / Yolo、策略钉住、命令分段解析、hooks</td><td><span class="status guard">GATED</span> 副作用经过显式决策</td><td>复杂 Shell 语法和未知命令默认 fail-closed</td></tr>
+              <tr><td>连接大量外部工具</td><td>Progressive MCP、search_tool、use_tool、动态注册</td><td><span class="status safe">EXTENSIBLE</span> 首轮延迟与工具规模解耦</td><td>工具命名、鉴权状态和 server 生命周期更复杂</td></tr>
+              <tr><td>控制长对话成本</td><td>图片滞回淘汰、旧 tool_result 分层裁剪、compaction、memory</td><td><span class="status safe">SUSTAIN</span> 延长会话而不过早破坏缓存</td><td>压缩摘要必须保留任务约束和未完成状态</td></tr>
+              <tr><td>自主判断任务完成</td><td>Goal 状态机、独立 skeptic panel、停滞指纹、预算</td><td><span class="status guard">VERIFY</span> 降低执行模型自我宣布完成的偏差</td><td>验证成本、错误拒绝和 fail policy 需要持续校准</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>连接连续性的关键切分</h3>
+        <div class="two-col">
+          <div class="note fact">
+            <h4>短生命周期：Connection</h4>
+            <p>WebSocket 和每次 AgentSideConnection 可以断开、重建。15 秒 keepalive 负责发现连接状态，relay 目的地随最新连接替换。</p>
+          </div>
+          <div class="note fact">
+            <h4>长生命周期：Agent + Session</h4>
+            <p>MvpAgent 在专用 OS 线程中只创建一次；SessionActor、ChatState 和运行任务继续存在。断连只是“没有当前通知接收者”，不是会话结束。</p>
+          </div>
+        </div>
+        <p class="note warning"><strong>架构意义：</strong>这是 Server 形态最突出的差异化处理。很多 Agent 把连接、会话和回合绑定在同一 async task 上，一旦 transport 结束就级联取消；Grok Build 明确拆开三者，但相应地必须承担事件重放、陈旧连接替换和会话清理复杂度。</p>
+      </section>
+
+      <section class="report-section" id="resilience">
+        <p class="section-kicker">07 · Resilience system</p>
+        <h2>容错不是一个 retry，<br>而是四层语义恢复。</h2>
+        <p class="lead">系统将“协议不可解析”“能力不存在”“执行失败”和“模型行为异常”分别处理。重要设计原则是：可恢复错误进入对话，平台内部错误进入重试或降级，二者不混成单一错误计数器。</p>
+
+        <div class="fault-stack">
+          <div class="fault-layer"><span class="level">L1</span><h4>参数 / 协议异常</h4><p>空参数标准化、拼接 JSON 恢复、保留原始参数、wire sanitization。</p><span class="outcome">→ 给模型可修复上下文</span></div>
+          <div class="fault-layer"><span class="level">L2</span><h4>工具发现异常</h4><p>not_found、Progressive MCP 尚未 ready、未限定工具名、native tool 被误用。</p><span class="outcome">→ 指向正确调用路径</span></div>
+          <div class="fault-layer"><span class="level">L3</span><h4>执行 / 鉴权异常</h4><p>类型化逻辑失败、Rust Err、401 刷新、managed MCP reauth、兄弟调用取消。</p><span class="outcome">→ 始终闭合 tool_result</span></div>
+          <div class="fault-layer"><span class="level">L4</span><h4>模型行为异常</h4><p>doom-loop、空响应、懒惰声明、最大回合、结构化输出失败。</p><span class="outcome">→ 专项检测与独立预算</span></div>
+        </div>
+
+        <h3>关键恢复案例</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>异常</th><th>处理</th><th>为什么有效</th></tr></thead>
+            <tbody>
+              <tr><td>工具参数为空</td><td>归一化为可解析空对象，再进入类型化解析</td><td>吸收供应商或模型的轻微 wire 差异</td></tr>
+              <tr><td>多个 JSON 对象被拼接</td><td>选择首个最佳匹配且可解析对象，执行一次，并提醒其余对象应拆成独立调用</td><td>恢复最有价值动作，同时避免静默双执行</td></tr>
+              <tr><td>参数无法解析</td><td>生成带原始参数的 tool_result，不让 stream parser 崩溃</td><td>模型拥有纠错证据，协议仍完整</td></tr>
+              <tr><td>原生工具被塞进 use_tool</td><td>明确提示直接调用原生工具，阻断重复错误路径</td><td>针对性错误文案比通用 not_found 更容易恢复</td></tr>
+              <tr><td>工具批次中途拒绝</td><td>后续每个 sibling call 获得“因前序拒绝未执行”的结果</td><td>避免 dangling tool calls 污染下一次模型请求</td></tr>
+              <tr><td>并发调用同时 401</td><td>共享 OnceCell 合并 token refresh；managed MCP reauth 后只重试一次</td><td>避免刷新风暴与重复副作用</td></tr>
+              <tr><td>模型思考尾部重复</td><td>仅对高置信 tail repetition 丢弃该次 poisoned attempt，使用独立预算和短 jitter 重试</td><td>不把普通工具错误误判为模型循环</td></tr>
+              <tr><td>模型声称完成但缺少行动</td><td>空闲后独立 laziness classifier 对比声明和工具证据，再按类别注入提醒</td><td>判定与主模型解耦，证据来自不可伪造的运行态</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="principle-list">
+          <div class="principle"><strong>错误必须进入正确语义层</strong><p>工具执行错误不参与 doom-loop 计数；模型行为异常由专门信号判断，避免“错误多 = 模型坏”的粗糙策略。</p></div>
+          <div class="principle"><strong>Wire 表示与模型表示分离</strong><p>向供应商发送可接受的安全参数，同时在 tool_result 中保留足够原始上下文，让模型知道自己哪里错了。</p></div>
+          <div class="principle"><strong>恢复不能制造重复副作用</strong><p>401 重试受限、拼接 JSON 只执行一个、use_tool 使用 raw dispatch，均围绕“最多一次业务后处理”设计。</p></div>
+          <div class="principle"><strong>超出预算时可接受而非崩溃</strong><p>Doom-loop 重试耗尽后接受当前输出；某些检测器解析失败时宽松退出，确保辅助机制不会成为主流程单点。</p></div>
+        </div>
+      </section>
+
+      <section class="report-section" id="security">
+        <p class="section-kicker">08 · Permission & security</p>
+        <h2>模型提出动作，系统决定动作能否发生。</h2>
+        <p class="lead">安全边界主要位于 WorkspaceOps、权限管理器、工具 preflight 和 hooks。模型的“意图”不能绕过这些确定性或受控决策点。</p>
+
+        <div class="three-col">
+          <article class="insight"><span class="index-label">ASK</span><h4>显式询问</h4><p>高风险或无法静态证明安全的操作进入用户授权交互；pending-interaction guard 防止状态失配。</p></article>
+          <article class="insight"><span class="index-label">AUTO</span><h4>自动评估</h4><p>快速规则、危险模式、项目指令、历史决策与可选 LLM side-query 共同判断；解析失败回到保守 heuristic。</p></article>
+          <article class="insight"><span class="index-label">YOLO</span><h4>总是批准</h4><p>可由用户启用，但 managed policy 能钉住关闭并移除 catch-all allow，组织策略优先于会话偏好。</p></article>
+        </div>
+
+        <h3>权限判断管线</h3>
+        <div class="rail-map">
+          <div class="rail"><div class="rail-label">INPUT</div><div class="rail-content"><span class="rail-step">Tool JSON</span><span class="rail-arrow">→</span><span class="rail-step">Typed Parse</span><span class="rail-arrow">→</span><span class="rail-step">Requirements</span></div></div>
+          <div class="rail"><div class="rail-label">POLICY</div><div class="rail-content"><span class="rail-step">Plan-mode Gate</span><span class="rail-arrow">→</span><span class="rail-step">PreToolUse Hooks</span><span class="rail-arrow">→</span><span class="rail-step">Ask / Auto / Yolo</span></div></div>
+          <div class="rail"><div class="rail-label">HOST</div><div class="rail-content"><span class="rail-step">Command Segments</span><span class="rail-arrow">→</span><span class="rail-step">Sandbox / Path Checks</span><span class="rail-arrow">→</span><span class="rail-step">Workspace Execution</span></div></div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>安全设计</th><th>具体做法</th><th>防护对象</th></tr></thead>
+            <tbody>
+              <tr><td>Shell 分段判定</td><td>解析管道和命令段，每段必须安全；危险子命令强制询问</td><td>安全前缀后拼接危险动作</td></tr>
+              <tr><td>边界感知前缀</td><td>使用词边界匹配，而非简单字符串 starts-with</td><td>命令名伪装和前缀碰撞</td></tr>
+              <tr><td>复杂语法保守处理</td><td>替换、heredoc、未知重定向、危险环境变量默认 fail-closed</td><td>静态分析盲点</td></tr>
+              <tr><td>会话凭证隔离</td><td>区分 session token 与 BYOK；仅第一方 endpoint 使用 session token</td><td>凭证泄漏到第三方模型服务</td></tr>
+              <tr><td>Goal scratch 防护</td><td>owner-only 目录、路径验证、原子写入与 symlink 防御</td><td>可预测文件名导致的本地重定向攻击</td></tr>
+              <tr><td>副作用跟踪</td><td>FileStateTracker 保存 Prompt 前后状态，checkpoint 支持恢复</td><td>模型误编辑和用户回退需求</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="report-section" id="highlights">
+        <p class="section-kicker">09 · Design highlights</p>
+        <h2>最值得关注的十个设计点</h2>
+
+        <div class="highlight-list">
+          <article class="highlight-item"><div><h3>连接—会话—回合三层解耦</h3><p>WebSocket 可以消失，ACP relay 可以替换，Session 和在途 Prompt 仍继续；它把远程 Agent 从“请求处理器”提升为“持续执行实体”。</p></div><div class="highlight-value">业务价值：断线恢复与长任务连续性</div></article>
+          <article class="highlight-item"><div><h3>Actor 化状态所有权</h3><p>Session、ChatState、Sampler 分别拥有不同层次状态，持久化也由 ChatState 独占接口访问，减少共享锁和跨层写入。</p></div><div class="highlight-value">工程价值：可推理的并发边界</div></article>
+          <article class="highlight-item"><div><h3>工具调用配对不变量</h3><p>批准、拒绝、取消和执行失败都必须形成 model-visible tool_result；批次中止也显式补齐因果结果。</p></div><div class="highlight-value">协议价值：下一轮请求始终完整</div></article>
+          <article class="highlight-item"><div><h3>先预检全批次，再并发执行</h3><p>权限交互和计划模式在副作用之前完成；批准项进入 FuturesUnordered，涉及相同文件时再使用细粒度锁。</p></div><div class="highlight-value">性能价值：安全约束下的最大并行度</div></article>
+          <article class="highlight-item"><div><h3>动态 MCP 的稳定接口策略</h3><p>search_tool + use_tool 避免把所有动态工具 schema 每轮塞入提示词，既控制上下文，也保护 KV cache 前缀。</p></div><div class="highlight-value">成本价值：能力规模与提示规模解耦</div></article>
+          <article class="highlight-item"><div><h3>缓存感知的上下文滞回</h3><p>图片不到高水位不动，一旦触发则批量降到低水位；避免每轮小幅清理导致系统提示前缀频繁改变。</p></div><div class="highlight-value">成本价值：稳定缓存与请求体安全</div></article>
+          <article class="highlight-item"><div><h3>专用异常信号替代统一错误计数</h3><p>Doom-loop、空响应、工具失败、401 和懒惰声明拥有不同判定器与预算，避免恢复策略互相污染。</p></div><div class="highlight-value">可靠性价值：更少误重试与重试风暴</div></article>
+          <article class="highlight-item"><div><h3>错误文案本身经过恢复设计</h3><p>未限定 MCP 名、原生工具误走 use_tool、Progressive MCP 未 ready 等都有直接告诉模型下一步的消息。</p></div><div class="highlight-value">模型价值：降低“doom loop”概率</div></article>
+          <article class="highlight-item"><div><h3>独立评审者验证 Goal</h3><p>执行模型不能单方面判定成功；多 skeptic、决定性高置信反驳、停滞指纹和阻塞分类形成外部约束。</p></div><div class="highlight-value">产品价值：提高自主任务可信度</div></article>
+          <article class="highlight-item"><div><h3>Local / Proxy Workspace 双模式</h3><p>文件、VCS、代码导航和执行通过共享 typed RPC 定义既可本地运行，也可转给远程 workspace server。</p></div><div class="highlight-value">部署价值：同一 Agent 支持不同宿主边界</div></article>
+        </div>
+      </section>
+
+      <section class="report-section" id="risks">
+        <p class="section-kicker">10 · Trade-offs & risks</p>
+        <h2>强韧性来自显著的状态与策略复杂度。</h2>
+        <p class="lead">这套设计的风险不是缺少机制，而是机制很多。多个恢复层、动态工具、权限、会话持久化和自主 Goal 会形成组合状态空间，需要非常强的事件、测试和可观测性纪律。</p>
+
+        <div class="risk-grid">
+          <article class="risk-card"><h4>SessionActor 可能成为“业务上帝对象”</h4><p>它同时管理调度、通知、MCP、权限、记忆、Goal、hooks 与工具上下文，虽然状态集中便于一致性，但文件和认知规模很大。</p><p class="risk-response"><strong>现有缓解：</strong>把 ChatState、Sampler、ToolBridge、Persistence 分拆为独立边界，并以子模块组织 turn/tool/mcp 逻辑。</p></article>
+          <article class="risk-card"><h4>回放与重连要求严格事件语义</h4><p>当 relay 可替换且通知可缓冲，客户端必须正确处理事件 ID、重复、遗漏和断点；否则“连续性”会转化为 UI 状态错乱。</p><p class="risk-response"><strong>现有缓解：</strong>stream-drain barrier、replay buffer 与 Session 侧通知顺序控制。</p></article>
+          <article class="risk-card"><h4>动态 MCP 增加运行态不确定性</h4><p>工具可能未 ready、掉线、重启、改 schema 或鉴权失效。模型的工具认知也可能落后于真实 registry。</p><p class="risk-response"><strong>现有缓解：</strong>变化指纹、delta reminder、search_tool 状态、自动重启与失效工具注销。</p></article>
+          <article class="risk-card"><h4>恢复策略可能制造隐藏成本</h4><p>多类重试、laziness 分类器、Goal skeptic panel 与 strategist 都会追加调用和延迟，且配置组合复杂。</p><p class="risk-response"><strong>现有缓解：</strong>独立预算、idle 条件、会话上限、短路判定、最大回合与最大 verifier runs。</p></article>
+          <article class="risk-card"><h4>Goal 的 fail-open / fail-closed 边界难以解释</h4><p>单评审异常倾向保守反驳，而更外围的基础设施失败又可能放行，正确但不直观；用户可能难以理解为何某次被阻塞、另一次被接受。</p><p class="risk-response"><strong>建议关注：</strong>在用户层展示判定来源、失败类别、details path 和最终聚合理由。</p></article>
+          <article class="risk-card"><h4>错误反馈也可能污染模型行为</h4><p>过长 tool_result、频繁 reminder 或不精确的恢复文案会消耗上下文并诱导新的错误模式。</p><p class="risk-response"><strong>现有缓解：</strong>结果截断、变化 delta、提醒持久化去重、原始错误与模型表示分离。</p></article>
+        </div>
+
+        <h3>总体评估</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>维度</th><th>评估</th><th>理由</th></tr></thead>
+            <tbody>
+              <tr><td>会话连续性</td><td><span class="status safe">突出</span></td><td>连接与执行实体明确解耦，并配套 replay/persistence。</td></tr>
+              <tr><td>工具协议完整性</td><td><span class="status safe">突出</span></td><td>全批次预检、调用结果配对、类型化输出和因果取消。</td></tr>
+              <tr><td>扩展性</td><td><span class="status safe">较强</span></td><td>Tool Registry、MCP、Hooks、Skills、Plugins 与 Workspace Proxy。</td></tr>
+              <tr><td>安全边界</td><td><span class="status safe">较强</span></td><td>多层权限、命令解析、managed policy 与凭证隔离。</td></tr>
+              <tr><td>实现复杂度</td><td><span class="status guard">很高</span></td><td>Session 编排、恢复机制与动态能力存在大量组合状态。</td></tr>
+              <tr><td>可验证性</td><td><span class="status guard">依赖测试</span></td><td>架构提供 trait、mock 与事件，但正确性高度依赖状态机和回归用例。</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="report-section" id="takeaways">
+        <p class="section-kicker">11 · Reusable principles</p>
+        <h2>可复用的 Agent Server 架构原则</h2>
+
+        <div class="takeaway">
+          <div>
+            <h3>值得直接借鉴</h3>
+            <ul><li>将 connection、session、turn 建模为不同生命周期。</li><li>让对话状态和持久化拥有唯一写入者。</li><li>把 tool_call / tool_result 配对设为硬不变量。</li><li>先完成整批 preflight，再并发执行批准项。</li><li>为不同失败建立不同预算与恢复策略。</li><li>动态能力通过稳定 meta-interface 暴露。</li></ul>
+          </div>
+          <div>
+            <h3>需要结合场景取舍</h3>
+            <ul><li>Actor 模型是否适合团队的调试和观测能力。</li><li>是否真的需要断线后继续运行在途 Prompt。</li><li>MCP 工具规模是否足以抵消两阶段发现成本。</li><li>自主 Goal 是否值得多模型验证的成本与延迟。</li><li>fail-open 与 fail-closed 应按故障层级明确，而非全局统一。</li><li>权限 LLM classifier 只能作为受控补充，不能替代确定性边界。</li></ul>
+          </div>
+        </div>
+
+        <div class="closing">
+          <h3>结论</h3>
+          <p>Grok Build 的优秀之处，不在于某个孤立算法，而在于它把概率性模型包裹进一套具有状态所有权、协议完整性、主机权限与恢复预算的确定性运行时。它最像“Agent 操作系统”的地方，是能够持续接收输入、保存过程、执行副作用、面对断线和错误，再把系统重新带回一个可继续对话的合法状态。</p>
+        </div>
+      </section>
+
+      <section class="report-section" id="evidence">
+        <p class="section-kicker">12 · Source evidence</p>
+        <h2>源码证据索引</h2>
+        <p class="lead">以下路径均相对于 <code>grok_build/crates/codegen/</code>。报告优先引用实现文件和内联设计注释；README 用于确认产品边界与仓库布局。</p>
+
+        <details open>
+          <summary>连接、协议与会话生命周期</summary>
+          <div class="details-body"><ul><li><code>xai-grok-shell/src/agent/server.rs</code> — WebSocket、鉴权、持久 Agent 线程、relay 替换。</li><li><code>xai-grok-shell/src/mvp_agent/acp_agent.rs</code> — initialize/new_session/load_session/prompt/cancel。</li><li><code>xai-grok-shell/src/session/acp_session.rs</code> — SessionActor 状态所有权。</li><li><code>xai-grok-shell/src/session/acp_session_impl/run_loop.rs</code> — 主事件循环与回合收敛。</li></ul></div>
+        </details>
+        <details>
+          <summary>回合、对话与采样</summary>
+          <div class="details-body"><ul><li><code>xai-grok-shell/src/session/acp_session_impl/turn.rs</code> — conversation turn 主循环、压缩、重试、结构化输出。</li><li><code>xai-chat-state/src/actor.rs</code> — Conversation 状态、请求组装、图片与工具结果治理。</li><li><code>xai-chat-state/src/persistence.rs</code> — ChatPersistence 所有权边界。</li><li><code>xai-grok-sampler/src/actor/request_task.rs</code> — 流式传输、错误分类、重试和取消。</li></ul></div>
+        </details>
+        <details>
+          <summary>工具、MCP 与 Workspace</summary>
+          <div class="details-body"><ul><li><code>xai-grok-agent/src/agent.rs</code> — AgentDefinition、ToolBridge 与策略组合。</li><li><code>xai-grok-tools/src/bridge.rs</code> / <code>registry.rs</code> — 类型化注册与调用。</li><li><code>xai-grok-shell/src/session/acp_session_impl/tool_calls.rs</code> — 预检、权限、并发、错误回填。</li><li><code>xai-grok-shell/src/session/acp_session_impl/mcp.rs</code> — Progressive MCP、重启、reauth、动态注册。</li><li><code>xai-grok-workspace</code> — Local/Proxy workspace、权限、文件跟踪和 checkpoint。</li></ul></div>
+        </details>
+        <details>
+          <summary>长期运行、Goal 与行为容错</summary>
+          <div class="details-body"><ul><li><code>xai-grok-shell/src/session/persistence.rs</code> — 会话目录、摘要、复制、清理与远程同步。</li><li><code>xai-grok-shell/src/session/goal_tracker.rs</code> — Goal 阶段、暂停原因、预算和停滞。</li><li><code>xai-grok-shell/src/session/goal_classifier.rs</code> — skeptic panel、聚合、阻塞与验证文件。</li><li>附带材料 <code>调研报告-grok工具调用容错机制.md</code> — 工具与模型行为恢复机制的专题梳理。</li></ul></div>
+        </details>
+
+        <div class="note fact">
+          <strong>版本与复核信息：</strong>源码快照 <code>2ec0f0c8488842da03a71eeee3c61154957ca919</code>；目录盘点为 2,737 个文件、2,238 个 Rust 文件、81 个 Cargo.toml。报告生成日期：2026-08-19。所有数量均为本地源码树静态统计，不代表线上服务规模。
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    <span>GROK BUILD · AGENT SERVER CORE DESIGN · REPORT 01</span>
+    <span>Prepared from source snapshot · No external runtime dependencies</span>
+  </footer>
+
+  <script>
+    (() => {
+      const progress = document.getElementById('progress');
+      const links = [...document.querySelectorAll('.side-nav a')];
+      const sections = links.map(link => document.querySelector(link.getAttribute('href'))).filter(Boolean);
+
+      const updateProgress = () => {
+        const doc = document.documentElement;
+        const max = doc.scrollHeight - doc.clientHeight;
+        const pct = max > 0 ? (doc.scrollTop / max) * 100 : 0;
+        progress.style.width = `${Math.min(100, Math.max(0, pct))}%`;
+      };
+      updateProgress();
+      document.addEventListener('scroll', updateProgress, { passive: true });
+
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(entries => {
+          const visible = entries
+            .filter(entry => entry.isIntersecting)
+            .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+          if (!visible) return;
+          links.forEach(link => {
+            const active = link.getAttribute('href') === `#${visible.target.id}`;
+            link.classList.toggle('active', active);
+            if (active) link.setAttribute('aria-current', 'true');
+            else link.removeAttribute('aria-current');
+          });
+        }, { rootMargin: '-18% 0px -68% 0px', threshold: [0, .15, .4] });
+        sections.forEach(section => observer.observe(section));
+      }
+    })();
+  </script>
+</body>
+</html>
