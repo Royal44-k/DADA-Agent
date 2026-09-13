@@ -1,0 +1,7 @@
+.qa/
+tools/
+tools/node_modules/
+node_modules/
+*.inspect.ndjson
+*.tmp
+~$*
