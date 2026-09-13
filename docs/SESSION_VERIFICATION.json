@@ -1,0 +1,41 @@
+{
+  "date": "2026-09-13",
+  "repository": "Royal44-k/Technique",
+  "status": "PASS",
+  "source_assets": 132,
+  "local_originals_byte_compared": true,
+  "jsonl_files": 13,
+  "dataset_rows": 1300,
+  "label_counts": {
+    "a": 113,
+    "b": 111,
+    "c": 98,
+    "d": 101,
+    "e": 89,
+    "f": 110,
+    "g": 101,
+    "h": 102,
+    "i": 101,
+    "j": 84,
+    "k": 101,
+    "l": 87,
+    "m": 102
+  },
+  "v3_fields_and_order_match": true,
+  "credential_pattern_findings": 0,
+  "zip_crc_and_members_verified": true,
+  "extracted_offline_verifier": "PASS",
+  "model_retest_performed": false,
+  "archives": {
+    "Technique-DADA-assets-2026-09-13.zip": {
+      "bytes": 3820777,
+      "sha256": "2dc45c8bc0d19f73da88d0e66e50679788b3ffa84101012e20591ddfe059fdc4",
+      "members": 148
+    },
+    "测试集-1300.zip": {
+      "bytes": 83843,
+      "sha256": "374b2049543881dfc180a1e76f80c40f96e34561167d78cd1af348820d1986d3",
+      "members": 13
+    }
+  }
+}

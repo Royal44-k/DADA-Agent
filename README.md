@@ -16,6 +16,9 @@
 
 ## 下载与导航
 
+- [本轮会话资产总览：主题、版本与最终语料](docs/SESSION_ASSETS.md)
+- [本轮完整资产包（含最新整理说明）](downloads/Technique-DADA-assets-2026-09-13.zip)
+- [最终测试集-1300.zip](downloads/测试集-1300.zip) · [格式与分支条数说明](docs/TESTSET_1300.md)
 - [完整 ZIP 资产包](downloads/DADA-Agent-assets-2026-09-13.zip)
 - [全部文件目录](CATALOG.md)
 - [文件来源、字节数及 SHA-256](ASSET_MANIFEST.json)
