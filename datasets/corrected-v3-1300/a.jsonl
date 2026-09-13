@@ -1,0 +1,113 @@
+{"label": "a", "rounds": 4, "ctx": "coref", "hard_pair": null, "history": [["user", "我想让你提醒我几件事情。"], ["assistant", "没问题，您说。"], ["user", "第一件是体检，出差前要记住空腹。"], ["assistant", "好的，那关于体检您想说哪天几点？"], ["user", "出差的日期还没定，就先说个大至时间吧。"], ["assistant", "好的，您大概想让什么时间点提醒您？"]], "text": "后天早上七点吧，达哒帮我记上。", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "unrelated", "hard_pair": null, "history": [["user", "花盆里的土干了"], ["assistant", "该浇水了"]], "text": "月初一号去银行提醒我带存折", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "unrelated", "hard_pair": null, "history": [["user", "今天咋样"], ["assistant", "挺好呀。"]], "text": "下周一早上七点提醒我生日聚会", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 3, "ctx": "switch", "hard_pair": null, "history": [["user", "今天天气怎么样"], ["assistant", "今天晴，气温25到30度。"], ["user", "给我定个闹钟"], ["assistant", "好的，你说时间。"]], "text": "那大后天早上七点叫我哈", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 3, "ctx": "unrelated", "hard_pair": null, "history": [["user", "这手机都能干吗"], ["assistant", "可以玩游戏、看视频……"], ["user", "那有了你我才不用手机呢"], ["assistant", "嘿嘿，我很荣幸"]], "text": "那个帮我提醒下，三点一刻到牙科医院", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 1, "ctx": null, "hard_pair": "a/b", "history": [], "text": "设个明天下午三点的开会提醒", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "我想设置一个一小时后的闹钟"], ["assistant", "好的，设置好之后提醒您什么呢？"]], "text": "提醒我把要做的事情记录在小本本上。", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 3, "ctx": "unrelated", "hard_pair": null, "history": [["user", "唱首歌吧"], ["assistant", "我唱不了歌，不过可以为您播放歌曲"], ["user", "那算了，我想记个事"], ["assistant", "请说"]], "text": "差十分四点给我闹个钟", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "帮我调下调下音量"], ["assistant", "调整音量您可以自行操作，现在有什么提醒需要设置吗？"]], "text": "那帮我设个半小时后量血压", "asr_noise": true, "src": "gen"}
+{"label": "a", "rounds": 1, "ctx": null, "hard_pair": "a/b", "history": [], "text": "下周一的家长会提醒一下，晚上八点", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "提醒我大后天吃药"], ["assistant", "好的，大后天是几号呢？我帮你设个提醒。"]], "text": "大后天提醒我背单词啊", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "帮我来个提醒呗"], ["assistant", "什么时间？什么内容？"]], "text": "那个明天中午十二点浇花", "asr_noise": true, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "coref", "hard_pair": null, "history": [["user", "给我定个闹铃"], ["assistant", "设在哪一天？"]], "text": "差十分四点去火车站", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "帮我提个醒"], ["assistant", "提醒什么内容呢？"]], "text": "提星我明天吃药", "asr_noise": true, "src": "gen"}
+{"label": "a", "rounds": 3, "ctx": "unrelated", "hard_pair": null, "history": [["user", "花浇水没"], ["assistant", "浇了浇了"], ["user", "行呀"], ["assistant", "我办事你放心"]], "text": "七月十五号早上十点半叫我面试别迟到", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "那个，帮我定个时"], ["assistant", "好的，定多久，或者几点？"]], "text": "倒垃圾，每周二晚上八点", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 3, "ctx": null, "hard_pair": "a/b", "history": [["user", "今天晚上有点事"], ["assistant", "什么事"], ["user", "要开个会"], ["assistant", "重要吗"]], "text": "今晚睡前提醒我交报告", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "unrelated", "hard_pair": null, "history": [["user", "帮我查快递"], ["assistant", "查过了，明天到"]], "text": "今晚九点洗车行不？赶紧设个提醒", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 1, "ctx": null, "hard_pair": "a/d", "history": [], "text": "每天凌晨一点提醒我吃褪黑素", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "unrelated", "hard_pair": null, "history": [["user", "你都会唱什么歌？"], ["assistant", "我会唱好多老歌呢，您要听吗？"]], "text": "下个月五号提醒我量血压行不？", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 4, "ctx": null, "hard_pair": "a/b", "history": [["user", "有个新项目要谈"], ["assistant", "不错啊"], ["user", "约了客户"], ["assistant", "什么时候"], ["user", "后天上午"], ["assistant", "记下来"]], "text": "后天上午提醒我见客户", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "水费还得么设一下，十五号就要缴的"], ["assistant", "需要我提醒你说的那项吗？现在来定。"]], "text": "交水费的事十五号九点醒我", "asr_noise": true, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "帮我提醒交点电费"], ["assistant", "好的，那要什么时间提醒呢？"]], "text": "后天中午吧", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "那帮我记一下交房租的事"], ["assistant", "请问什么时候交房租？"]], "text": "就这个月最后一天吧", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "你帮我设个提醒呗"], ["assistant", "什么内容呢？是几点啊？"]], "text": "嗯...傍晚六点见客户那儿", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 3, "ctx": "unrelated", "hard_pair": null, "history": [["user", "我手机没电了"], ["assistant", "没事，用我–小哒哒来帮忙！"], ["user", "你能设提醒不？"], ["assistant", "当然可以，您直接告诉我时间和事情就成"]], "text": "作天！我是说，周日早上九点提醒练琴", "asr_noise": true, "src": "gen"}
+{"label": "a", "rounds": 3, "ctx": "unrelated", "hard_pair": null, "history": [["user", "帮我查下明天天气"], ["assistant", "明天多云转阴，13到20度"], ["user", "好嘞，再弄个闹钟呗"], ["assistant", "你说时间"]], "text": "今晚睡前提醒我吃维生素", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "unrelated", "hard_pair": null, "history": [["user", "这手机越来越慢了"], ["assistant", "换新的吧"]], "text": "接种流感疫苗下周五提醒我", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "提醒我取快递呗"], ["assistant", "你定什么时间？"]], "text": "嗯，两小时以后", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "coref", "hard_pair": null, "history": [["user", "想想明天要干嘛"], ["assistant", "您有什么安排要我记么？"]], "text": "诶，下午四点半收衣服，麻烦你", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "switch", "hard_pair": null, "history": [["user", "明天天气怎么样"], ["assistant", "明天多云，气温适中。"]], "text": "那设个任无，周末上午十点提醒我去剪头发", "asr_noise": true, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "coref", "hard_pair": null, "history": [["user", "下班想去剪个头发。"], ["assistant", "可以啊，需要我记个时吗？"]], "text": "十分钟后提醒我出门顺便倒垃圾", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "给弄个提醒"], ["assistant", "好嘞，您说说什么时间和事儿？"]], "text": "下周三下午两点出发去开会", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 1, "ctx": null, "hard_pair": null, "history": [], "text": "那个明晚睡觉前别忘了提醒我吃药", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 4, "ctx": "coref", "hard_pair": null, "history": [["user", "今天有什么安排吗？"], ["assistant", "今天我们有一个下午四点半的面试和晚上的体检。"], ["user", "哦对，想起来了，面试别忘啦"], ["assistant", "放心，我都记着呢。还有别的要加吗？"], ["user", "那我想做饭的,菜还没买呢"], ["assistant", "厨房还有两天的菜呢，今天要不出去吃？如果没菜了我们可以记个买菜提醒。"]], "text": "行呢，那明早八点，记个买菜啊", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "coref", "hard_pair": null, "history": [["user", "我要定个提醒"], ["assistant", "您说，什么提醒呀？"]], "text": "记得腊八那天去买菜", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "coref", "hard_pair": null, "history": [["user", "帮我想着点事情呗"], ["assistant", "您尽管吩咐，什么时间提醒？"]], "text": "每天早上七点，别忘了吃健康东西", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "unrelated", "hard_pair": null, "history": [["user", "放首老歌听听吧"], ["assistant", "好的，想听谁的歌？"]], "text": "嗯那个，帮我设个闹钟提醒我接孩子", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "unrelated", "hard_pair": null, "history": [["user", "最近有啥新闻没"], ["assistant", "有的，我给您读读"]], "text": "后天傍晚霞提交材料，别忘了闹钟", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": null, "hard_pair": "a/d", "history": [["user", "最近老忘事"], ["assistant", "我帮你"]], "text": "明天一早提醒我量血压", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "来个提醒"], ["assistant", "好的，时间你定。"]], "text": "个半小时后该去吃干洗衣服", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 3, "ctx": "coref", "hard_pair": null, "history": [["user", "信用卡马上要还"], ["assistant", "贴花什么时候到期？"], ["user", "每月5号"], ["assistant", "那设成哪天提醒您？"]], "text": "每月1号提星我还信用卡", "asr_noise": true, "src": "gen"}
+{"label": "a", "rounds": 1, "ctx": null, "hard_pair": null, "history": [], "text": "体检后天中午提醒我去医院", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "switch", "hard_pair": null, "history": [["user", "播放一首邓丽君的歌"], ["assistant", "好的，为您播放《甜蜜蜜》。"]], "text": "明天早上八点提醒我复诊", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 1, "ctx": null, "hard_pair": null, "history": [], "text": "给花换水今晚九点半喊我", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "好哒，帮我弄个那个，周末的提醒"], ["assistant", "好，具体哪天几点啥事情？"]], "text": "周末上午十点提醒我别睡过了，等下还要去家长会", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "coref", "hard_pair": null, "history": [["user", "那个，我下周三好像有件事？"], ["assistant", "什么事你讲，我记着。"]], "text": "帮俺设个提醒后天傍晚去医院拔牙", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "设个一小时后提醒我买菜"], ["assistant", "好的，一小时后提醒你买菜。"]], "text": "诶，对的。", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "想想想提醒我给妈预约复诊"], ["assistant", "好的，预约哪天的呢？"]], "text": "中秋节前两天，你看行不", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "提醒我中午十二点打疫苗"], ["assistant", "您想打哪种疫苗呢？"]], "text": "疫苗种类就按我之前说的，直接帮我设好提醒吧。", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 1, "ctx": null, "hard_pair": null, "history": [], "text": "明天饭点提醒我生日聚会的事儿", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "帮我预约挂号"], ["assistant", "请问什么时间呢？"]], "text": "后天下午三点一刻", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 1, "ctx": null, "hard_pair": null, "history": [], "text": "是不是该提醒我月底前去洗车", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "诶，记个剪头发"], ["assistant", "啥时间去剪呀？"]], "text": "后天上午就行", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "switch", "hard_pair": null, "history": [["user", "讲个笑话"], ["assistant", "听说… 故事太长了，总之结果是个搞笑的反转。"]], "text": "帮我定个凌晨一点的闹钟", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 1, "ctx": null, "hard_pair": null, "history": [], "text": "凌晨一点提醒我烧水", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 1, "ctx": null, "hard_pair": "a/b", "history": [], "text": "每周三晚上提醒我上瑜伽课", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 1, "ctx": null, "hard_pair": null, "history": [], "text": "下周三上午提醒我去收衣服复诊", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "我要设个提醒"], ["assistant", "请告诉我提醒时间和内容。"]], "text": "大后天下午接孩子", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "unrelated", "hard_pair": null, "history": [["user", "收音机能用吗"], ["assistant", "可以啊，想听什么台？"]], "text": "哎，帮我设个提醒：明天取干洗的衣服。", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "提醒我吃药"], ["assistant", "好的，什么时间提醒呢？"]], "text": "那个，每天上午八点吃药", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "设个闹钟"], ["assistant", "几点呢？"]], "text": "一小时后吧，提醒我吃药", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 4, "ctx": "unrelated", "hard_pair": null, "history": [["user", "给我放首歌吧"], ["assistant", "好的，播放一首轻音乐"], ["user", "好听"], ["assistant", "喜欢就好"], ["user", "我下周要面试"], ["assistant", "那您需要准备一下吗？"]], "text": "提醒我明天晚上八点有面试", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "除夕晚上提醒我点那个什么外卖"], ["assistant", "好的，除夕晚上提醒您点外卖。还需要别的吗？"]], "text": "对了，再提醒俺一下后天交房租嘿", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "帮我设个提醒呗"], ["assistant", "好呀，几点提醒你呢？"]], "text": "八点上班的时候", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "帮我想着见客户的事"], ["assistant", "好的，什么时间提醒您？"]], "text": "明早起七点吧", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 1, "ctx": null, "hard_pair": "a/b", "history": [], "text": "五分钟后提醒我看锅", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 4, "ctx": "switch", "hard_pair": null, "history": [["user", "明天几点日出？"], ["assistant", "早上六点十九分。"], ["user", "凌晨一时间提醒吃奥"], ["assistant", "好的，放养？说清楚点"], ["user", "里要设闹钟子天天早上跑部"], ["assistant", "六点十九分跑步对吧？"]], "text": "不是，是早慢点三分给您下底温提醒", "asr_noise": true, "src": "gen"}
+{"label": "a", "rounds": 3, "ctx": "switch", "hard_pair": null, "history": [["user", "通知收一下快递"], ["assistant", "有几个未取件，要让我叫快递员上门吗？"], ["user", "不用，我下去拿"], ["assistant", "好的，注意门禁卡。"]], "text": "几点倒垃圾来着？帮我设个提醒", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 4, "ctx": "switch", "hard_pair": null, "history": [["user", "帮我定个明早八点的闹钟呗"], ["assistant", "好的，明早八点起床提醒安排好了"], ["user", "哦对了，再提醒我复诊，明早那会儿"], ["assistant", "嗯，您是说明早八点提醒复诊对吧？"], ["user", "嗯嗯"], ["assistant", "好嘞，我记下了"]], "text": "明早八点提醒复诊", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 4, "ctx": "unrelated", "hard_pair": null, "history": [["user", "今天看电视新闻没？"], ["assistant", "还没顾上看，您有什么特别的消息吗？"], ["user", "听说台风要来了"], ["assistant", "那可要注意安全。您需要我帮点什么吗？"], ["user", "对了，你帮我记个事呗"], ["assistant", "可以呀，请告诉我。"]], "text": "四十分钟后量血压", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 1, "ctx": null, "hard_pair": null, "history": [], "text": "那个那个明天这个点提醒我泡脚脚", "asr_noise": true, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "coref", "hard_pair": null, "history": [["user", "明天有什么安排？"], ["assistant", "下午三点有个会。"]], "text": "那再帮我设个明天下午三点交房租提醒", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 3, "ctx": "coref", "hard_pair": null, "history": [["user", "我下周末要聚会。"], ["assistant", "是生日聚会吗？在哪办？"], ["user", "对，在家。"], ["assistant", "好的，需要我提醒您准备什么吗？"]], "text": "切薄丝，在傍远六店的生日开", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "提星弄个提醒呗"], ["assistant", "好的，您要提醒啥？比如几点干啥？"]], "text": "提星我明天早上去交房租", "asr_noise": true, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "帮我定个提醒"], ["assistant", "好的，什么时间什么事情呢？"]], "text": "明天下午三点给智慧老师体检报告", "asr_noise": true, "src": "gen"}
+{"label": "a", "rounds": 3, "ctx": "unrelated", "hard_pair": null, "history": [["user", "这部电视剧挺好看的"], ["assistant", "是的，评分很高"], ["user", "你也推荐吗"], ["assistant", "我觉得挺适合您的"]], "text": "能帮我记一下后天傍晚接孩子吗", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "给我设个明天早上的闹钟呗"], ["assistant", "好的，具体几点呢？"]], "text": "六点半吧", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "coref", "hard_pair": null, "history": [["user", "提醒我今天去银行"], ["assistant", "好的，但现在还没有确定时间。"]], "text": "哦，那就明天这个点提醒我去呗", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "设个提醒"], ["assistant", "提醒什么内容呢？"]], "text": "还信用卡，这月十五号", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 1, "ctx": null, "hard_pair": null, "history": [], "text": "洗车周末上午十点整提醒我", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 1, "ctx": null, "hard_pair": "a/b", "history": [], "text": "十分钟后提醒我吃药", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 4, "ctx": "coref", "hard_pair": null, "history": [["user", "诶，这个提醒怎修改来着"], ["assistant", "我现在不会改，只能新设。你要设新的吗？"], ["user", "对，帮我记一下时间"], ["assistant", "好的，什么时间？"], ["user", "那个半小时后"], ["assistant", "半小时后做什么？"]], "text": "提醒我我炖汤看火", "asr_noise": true, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "coref", "hard_pair": null, "history": [["user", "今天帮我看看明天的天气"], ["assistant", "好的！明天天气不错哦。不过还有其他事吗？"]], "text": "帮我设个闹钟明天一早叫醒我", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "coref", "hard_pair": null, "history": [["user", "那个，快递你取了没有？"], ["assistant", "还没呢，这两天忙。"]], "text": "那今今晚上个提醒，大约六点响，提醒取快递", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "coref", "hard_pair": null, "history": [["user", "厨房那边你有盯过吗？"], ["assistant", "没有呢，怎么啦？"]], "text": "诶，给我记个闹钟，三点一克关煤气", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "coref", "hard_pair": null, "history": [["user", "孩子放学时间快到了。"], ["assistant", "要设置去接孩子的提醒吗？"]], "text": "诶，帮我设个每天工作日下午四点半的提醒吧", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "coref", "hard_pair": null, "history": [["user", "老伴，咱们明天早上吃什么？"], ["assistant", "您说，我记下来。"]], "text": "提醒我明早八点煮粥", "asr_noise": true, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "coref", "hard_pair": null, "history": [["user", "给我记个事"], ["assistant", "您说"]], "text": "每月月初一号交话费", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "coref", "hard_pair": null, "history": [["user", "得浇水了"], ["assistant", "记得隔一天浇一次"]], "text": "第天早上八点给我说一声啊", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 1, "ctx": null, "hard_pair": "a/b", "history": [], "text": "一小时后提醒我收被褥", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 1, "ctx": null, "hard_pair": null, "history": [], "text": "生日聚会周五晚上六点喊我", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "我想设个提醒提醒我提词"], ["assistant", "具体提什么呢？"]], "text": "提星我明天早上量血压", "asr_noise": true, "src": "gen"}
+{"label": "a", "rounds": 3, "ctx": "supplement", "hard_pair": null, "history": [["user", "哎，帮我设个提醒呗"], ["assistant", "好的，什么时候提醒您呢？"], ["user", "嗯……下周一早上吧"], ["assistant", "下周一早上，没问题！具体几点呢？"]], "text": "七点吧", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "coref", "hard_pair": null, "history": [["user", "你知道吗，后天中午有个约会"], ["assistant", "噢？那可得记牢了，要设提醒吗？"]], "text": "帮我定个中午十二点的管钟", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "那个，提醒我买药"], ["assistant", "您想在什么时候提醒？"]], "text": "后天吧，下午三点", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 4, "ctx": "switch", "hard_pair": null, "history": [["user", "肚子有点饿，有啥好吃的推荐？"], ["assistant", "可以试试煮个面条，简单又管饱。"], ["user", "嗯提醒我下午四点半去拿体检报告"], ["assistant", "好，下午四点半体检报告，记下了。"], ["user", "你再看看充电器放哪了？"], ["assistant", "好像在茶几上。"]], "text": "诶帮我记个事，四点半拿体检报告", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "设个提醒充话费"], ["assistant", "具体什么时间呢？"]], "text": "七号吧", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "帮我设个半小时后提醒吃药"], ["assistant", "半小时后是几点呢？15:00吗？"]], "text": "对对，三点钟，喏就是那个时间", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 1, "ctx": null, "hard_pair": null, "history": [], "text": "提醒我明天早上八点吃药。", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "我想定个提醒"], ["assistant", "好呀，提醒啥事呢？"]], "text": "提醒我明天吃药。", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "怎么搞才能让你记事儿？"], ["assistant", "您可以直接告诉我‘记住我明天8点吃药’，到时间我就会叮咚一声提醒啦。"]], "text": "提醒我明天吃药。", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "怎么设置提醒"], ["assistant", "跟我说“提醒我xxxx”就行，比如“提醒我明天买药”。您要设什么提醒？"]], "text": "提醒我后天上午出门带伞", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 1, "ctx": null, "hard_pair": null, "history": [], "text": "设置个提醒哈。", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "coref", "hard_pair": null, "history": [["user", "那个提醒怎么弄"], ["assistant", "你直接说提醒我加上事情和时间就行。"]], "text": "提醒我明天吃药。", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "设个提醒。"], ["assistant", "提醒做什么，什么时间？"]], "text": "下午五点钟叫我去接孙孙儿。", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "coref", "hard_pair": null, "history": [["user", "你都能干啥？"], ["assistant", "我可以帮你设提醒、查信息、放音乐啥的。你想用啥功能？"]], "text": "那帮我设个明天早上的提醒呗", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 1, "ctx": null, "hard_pair": null, "history": [], "text": "提醒我明天早上八点吃药。", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 4, "ctx": "supplement", "hard_pair": null, "history": [["user", "提醒我明天吃药"], ["assistant", "好的，要设置几点提醒呢？"], ["user", "早上八点"], ["assistant", "好的，明天八点提醒您吃药。还有别的提醒吗？"], ["user", "没别的了"], ["assistant", "记好了，明天见。"]], "text": "再加一个明天中午十二点的吃药提醒。", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "定个20分钟后提醒"], ["assistant", "好的，20分钟后提醒您煮饭吗？"]], "text": "对的", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 3, "ctx": "supplement", "hard_pair": null, "history": [["user", "提醒我明天吃药"], ["assistant", "已设置明早8点提醒吃药"], ["user", "谢啦"], ["assistant", "不客气"]], "text": "再设一个明天晚上八点的吃药提醒。", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "supplement", "hard_pair": null, "history": [["user", "提星我明天吃药"], ["assistant", "好的，提醒几点？"]], "text": "明早八点提醒我吃药。", "asr_noise": false, "src": "gen"}
+{"label": "a", "rounds": 2, "ctx": "unrelated", "hard_pair": null, "history": [["user", "帮我调下调下音量"], ["assistant", "好的，音量已调小。"]], "text": "提醒我明天吃药，别忘了。", "asr_noise": false, "src": "gen"}

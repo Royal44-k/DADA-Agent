@@ -1,0 +1,27 @@
+{'production_root': '/home/number/dada-runtime/asr-api-test-env/xiaozhi-server', 'eval_user_id': 2026082001, 'state_mode': 'real_database'}
+{"done": 50, "total": 1300, "final_correct": 48, "m3_used": 4, "m3_corrected": 1, "m3_worsened": 1, "failures": 1}
+{"done": 100, "total": 1300, "final_correct": 97, "m3_used": 16, "m3_corrected": 2, "m3_worsened": 2, "failures": 1}
+{"done": 150, "total": 1300, "final_correct": 146, "m3_used": 23, "m3_corrected": 2, "m3_worsened": 3, "failures": 1}
+{"done": 200, "total": 1300, "final_correct": 196, "m3_used": 34, "m3_corrected": 2, "m3_worsened": 3, "failures": 1}
+{"done": 250, "total": 1300, "final_correct": 246, "m3_used": 37, "m3_corrected": 3, "m3_worsened": 3, "failures": 1}
+{"done": 300, "total": 1300, "final_correct": 296, "m3_used": 42, "m3_corrected": 5, "m3_worsened": 3, "failures": 1}
+{"done": 350, "total": 1300, "final_correct": 345, "m3_used": 50, "m3_corrected": 6, "m3_worsened": 4, "failures": 1}
+{"done": 400, "total": 1300, "final_correct": 393, "m3_used": 58, "m3_corrected": 6, "m3_worsened": 6, "failures": 1}
+{"done": 450, "total": 1300, "final_correct": 442, "m3_used": 74, "m3_corrected": 11, "m3_worsened": 7, "failures": 1}
+{"done": 500, "total": 1300, "final_correct": 490, "m3_used": 90, "m3_corrected": 12, "m3_worsened": 8, "failures": 2}
+{"done": 550, "total": 1300, "final_correct": 540, "m3_used": 94, "m3_corrected": 12, "m3_worsened": 8, "failures": 2}
+{"done": 600, "total": 1300, "final_correct": 590, "m3_used": 100, "m3_corrected": 13, "m3_worsened": 8, "failures": 2}
+{"done": 650, "total": 1300, "final_correct": 640, "m3_used": 100, "m3_corrected": 13, "m3_worsened": 8, "failures": 2}
+{"done": 700, "total": 1300, "final_correct": 690, "m3_used": 101, "m3_corrected": 13, "m3_worsened": 8, "failures": 2}
+{"done": 750, "total": 1300, "final_correct": 740, "m3_used": 102, "m3_corrected": 13, "m3_worsened": 8, "failures": 2}
+{"done": 800, "total": 1300, "final_correct": 790, "m3_used": 103, "m3_corrected": 13, "m3_worsened": 8, "failures": 2}
+{"done": 850, "total": 1300, "final_correct": 840, "m3_used": 112, "m3_corrected": 14, "m3_worsened": 8, "failures": 2}
+{"done": 900, "total": 1300, "final_correct": 890, "m3_used": 116, "m3_corrected": 14, "m3_worsened": 8, "failures": 2}
+{"done": 950, "total": 1300, "final_correct": 935, "m3_used": 134, "m3_corrected": 19, "m3_worsened": 10, "failures": 2}
+{"done": 1000, "total": 1300, "final_correct": 984, "m3_used": 154, "m3_corrected": 24, "m3_worsened": 11, "failures": 2}
+{"done": 1050, "total": 1300, "final_correct": 1034, "m3_used": 191, "m3_corrected": 24, "m3_worsened": 11, "failures": 2}
+{"done": 1100, "total": 1300, "final_correct": 1084, "m3_used": 226, "m3_corrected": 27, "m3_worsened": 11, "failures": 2}
+{"done": 1150, "total": 1300, "final_correct": 1132, "m3_used": 236, "m3_corrected": 28, "m3_worsened": 12, "failures": 2}
+{"done": 1200, "total": 1300, "final_correct": 1179, "m3_used": 246, "m3_corrected": 31, "m3_worsened": 14, "failures": 2}
+{"done": 1250, "total": 1300, "final_correct": 1228, "m3_used": 249, "m3_corrected": 31, "m3_worsened": 14, "failures": 2}
+{"done": 1300, "total": 1300, "final_correct": 1278, "m3_used": 252, "m3_corrected": 33, "m3_worsened": 14, "failures": 2}

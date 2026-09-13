@@ -1,0 +1,40 @@
+diff --git a/app.py b/app.py
+index 5555555..6666666 100644
+--- a/app.py
++++ b/app.py
+@@ -1,4 +1,5 @@
+ import sys
++import os
+ import uuid
+ import signal
+ import asyncio
+@@ -66,8 +67,9 @@ async def main():
+ 
+     # dada 后台调度线程：M8 提醒扫描（每分钟）+ M6 夜间任务判定（每小时）
+-    from dada.agent.scheduler import start_scheduler
+-    start_scheduler()
++    if os.environ.get("DADA_DISABLE_SCHEDULER") != "1":
++        from dada.agent.scheduler import start_scheduler
++        start_scheduler()
+     # 启动 Simple http 服务器
+     ota_server = SimpleHttpServer(config)
+     ota_task = asyncio.create_task(ota_server.start())
+diff --git a/data/.config.yaml b/data/.config.yaml
+index 7777777..8888888 100644
+--- a/data/.config.yaml
++++ b/data/.config.yaml
+@@ -25,10 +25,10 @@ plugins:
+     api_host: pp5n8nvvrq.re.qweatherapi.com
+ server:
+   ip: 0.0.0.0
+-  port: 8010
+-  http_port: 8013
+-  websocket: ws://192.168.5.19:8010/xiaozhi/v1/
+-  vision_explain: http://192.168.5.19:8013/mcp/vision/explain
++  port: 8110
++  http_port: 8113
++  websocket: ws://192.168.5.19:8110/xiaozhi/v1/
++  vision_explain: http://192.168.5.19:8113/mcp/vision/explain
+   auth:
+     enabled: false
+ selected_module:

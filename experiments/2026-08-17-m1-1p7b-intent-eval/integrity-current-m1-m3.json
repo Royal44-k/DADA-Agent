@@ -1,0 +1,15 @@
+{
+  "python": "3.10.12",
+  "agent_pid": "2490379",
+  "agent_started": "2026-08-17 15:51:37 +0800",
+  "isolation_dir": "/home/number/dada-runtime/asr-api-test-env/xiaozhi-server-m1-intent-eval-20260817",
+  "hashes": {
+    "dada/mechanisms/m1_gate.py": "fccb34c386c86a75e56191ceb6139deb37a355f56520bea0e0c292ff2bce8b8c",
+    "dada/mechanisms/m3_tool_panel.py": "30c96c49a7bf31add4498049a5cc63356d94621b502fb90026303c583d4f29f1",
+    "dada/mechanisms/m7_history.py": "c9e11b1c53f325d1b2f7f2480155521b58a16975d95c2ad5a8e50d522880889f",
+    "dada/infra/llm.py": "2a200cda22697e259489279d26c57e23550a2d099374f9deabfb4d15b79e8d5c",
+    "dada/infra/prompts/branch_prompts.py": "989377d85becf746789c5903d6020289ef3ada5c030b90ac0fbcdcd2d93a97c4",
+    "dada/agent/flow.py": "fc06ddca50a7b753c14a4f5f819013cc10be7b76148c0c16226a132929a8c355",
+    "data/.config.yaml": "21d75bfe378ce848ee9ceec324304995c94e62c7fa56274f580f2c2bb4fc2252"
+  }
+}

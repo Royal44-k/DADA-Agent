@@ -1,0 +1,8 @@
+{
+  "scope": "更新前提示词隔离快照，同一1300条样本",
+  "m1_accuracy": 0.9661538461538461,
+  "final_accuracy": 0.9030769230769231,
+  "corrected": 8,
+  "worsened": 90,
+  "route_failures": 0
+}

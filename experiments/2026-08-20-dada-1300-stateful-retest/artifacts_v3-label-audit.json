@@ -1,0 +1,98 @@
+{
+  "requested_decisions": 5,
+  "actual_label_changes": 3,
+  "already_matching_confirmations": 2,
+  "text_changes": 0,
+  "input_rows": 1300,
+  "output_rows": 1300,
+  "input_sha256": "612139ebbca4c4b9a2195ca9a2e5a62041dde959adc6f5673f9cb0ee6086ec11",
+  "output_sha256": "b083e97e0829955bcaa588773f28feaf62350e481285d5d24e6d278e76abf75c",
+  "label_distribution_before": {
+    "a": 113,
+    "b": 112,
+    "c": 98,
+    "d": 102,
+    "e": 89,
+    "f": 110,
+    "g": 101,
+    "h": 102,
+    "i": 101,
+    "j": 84,
+    "k": 101,
+    "l": 88,
+    "m": 99
+  },
+  "label_distribution_after": {
+    "a": 113,
+    "b": 111,
+    "c": 98,
+    "d": 101,
+    "e": 89,
+    "f": 110,
+    "g": 101,
+    "h": 102,
+    "i": 101,
+    "j": 84,
+    "k": 101,
+    "l": 87,
+    "m": 102
+  },
+  "changes": [
+    {
+      "sample_id": "b-02115-0da3b1f6b6c8",
+      "before_label": "b",
+      "after_label": "m",
+      "changed": true,
+      "text": "我吃过了，药已经吃了。",
+      "previous_prediction": "m"
+    },
+    {
+      "sample_id": "d-00495-19fb7f0c478d",
+      "before_label": "d",
+      "after_label": "m",
+      "changed": true,
+      "text": "明信片是放在书桌第二层吗？不对，是第三层。",
+      "previous_prediction": "m"
+    },
+    {
+      "sample_id": "j-02646-702c3d39553b",
+      "before_label": "a",
+      "after_label": "a",
+      "changed": false,
+      "text": "提醒我明天吃药。",
+      "previous_prediction": "j"
+    },
+    {
+      "sample_id": "l-01230-623efe9e456c",
+      "before_label": "l",
+      "after_label": "m",
+      "changed": true,
+      "text": "我知道了，先把这个应用关掉吧。",
+      "previous_prediction": "m"
+    },
+    {
+      "sample_id": "m-01365-0db281149dbf",
+      "before_label": "l",
+      "after_label": "l",
+      "changed": false,
+      "text": "算了我去遛弯了，回头再聊",
+      "previous_prediction": "m"
+    }
+  ],
+  "fixed_output_counterfactual": {
+    "assumption": "reuse v2 model outputs; change ground-truth labels only",
+    "total": 1300,
+    "before_correct": 1280,
+    "before_accuracy": 0.9846153846153847,
+    "after_correct": 1283,
+    "after_accuracy": 0.9869230769230769,
+    "newly_correct": 3,
+    "newly_wrong": 0,
+    "newly_correct_ids": [
+      "b-02115-0da3b1f6b6c8",
+      "d-00495-19fb7f0c478d",
+      "l-01230-623efe9e456c"
+    ],
+    "newly_wrong_ids": []
+  }
+}

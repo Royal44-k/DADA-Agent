@@ -1,0 +1,61 @@
+<!doctype html><html lang='zh-CN'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>哒哒Agent 1300条v2语料生产复测报告</title><style>
+    :root{--paper:#eef5f7;--sheet:#f9fcfd;--ink:#12212b;--muted:#607581;--rule:#b8cbd2;
+      --blue:#2457d6;--teal:#087f8c;--red:#d1495b;--amber:#b76b00;--white:#fff}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);
+      font:15px/1.65 "Microsoft YaHei UI","PingFang SC",sans-serif}main{max-width:1180px;margin:auto;padding:42px 28px 76px}
+    a{color:var(--blue);text-underline-offset:3px}.folio{font:700 11px/1.3 Consolas,monospace;color:var(--teal);letter-spacing:.15em}
+    h1{font-size:42px;line-height:1.12;letter-spacing:-.04em;margin:12px 0 10px;max-width:900px}h2{font-size:22px;margin:40px 0 14px}
+    h3{font-size:16px;margin:0}.lede{color:var(--muted);max-width:850px}.verdict{display:grid;grid-template-columns:1.5fr 1fr;
+      border-top:4px solid var(--teal);border-bottom:1px solid var(--rule);margin:28px 0;background:var(--sheet)}
+    .verdict>div{padding:20px}.verdict>div+div{border-left:1px solid var(--rule)}.big{font:800 48px/1 Consolas,monospace;color:var(--teal)}
+    .delta{font:700 19px Consolas,monospace;color:var(--blue)}.fail{color:var(--red)}.muted{color:var(--muted)}
+    .ledger{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--rule);background:var(--sheet)}
+    .ledger>div{padding:16px;border-right:1px solid var(--rule)}.ledger>div:last-child{border:0}.ledger b{display:block;font:800 25px Consolas,monospace}
+    .flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:12px;align-items:center}.node{border:1px solid var(--rule);background:var(--sheet);padding:16px}
+    .arrow{font:800 24px Consolas;color:var(--blue)}.tape{display:grid;grid-template-columns:repeat(13,1fr);gap:3px;background:var(--ink);padding:7px}
+    .punch{min-width:0;text-align:center;background:var(--sheet);padding:10px 3px;border-bottom:5px solid var(--teal)}.punch.warn{border-color:var(--amber)}
+    .punch.bad{border-color:var(--red)}.punch b,.punch em{display:block;font:800 13px Consolas,monospace;font-style:normal}.punch small{font-size:9px;color:var(--muted)}
+    table{width:100%;border-collapse:collapse;background:var(--sheet)}th,td{padding:10px 12px;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
+    th{font-size:11px;letter-spacing:.05em;color:var(--muted)}td.num{font-family:Consolas,monospace}.wide{overflow:auto}
+    .proof{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--rule);margin:10px 0;background:var(--sheet)}
+    .proof>div{padding:14px}.proof>div+div{border-left:1px solid var(--rule)}.before{color:#812d39;text-decoration:line-through;text-decoration-thickness:1px}
+    .after{color:#174bb9}.chip{display:inline-block;padding:1px 6px;border:1px solid currentColor;font:700 10px Consolas,monospace;margin-right:5px}
+    .evidence{border:1px solid var(--rule);background:var(--sheet);padding:18px}.evidence dl{display:grid;grid-template-columns:210px 1fr;gap:5px 14px;margin:0}
+    .evidence dt{color:var(--muted)}.evidence dd{margin:0;font-family:Consolas,monospace;overflow-wrap:anywhere}.foot{color:var(--muted);font-size:12px;margin-top:34px}
+    @media(max-width:820px){h1{font-size:32px}.verdict,.proof{grid-template-columns:1fr}.verdict>div+div,.proof>div+div{border-left:0;border-top:1px solid var(--rule)}
+      .ledger{grid-template-columns:1fr 1fr}.ledger>div{border-bottom:1px solid var(--rule)}.flow{grid-template-columns:1fr}.arrow{text-align:center;transform:rotate(90deg)}
+      .tape{grid-template-columns:repeat(4,1fr)}.evidence dl{grid-template-columns:1fr}}
+    </style></head><body><main>
+<div class='folio'>DADA / CORPUS PROOF 02 / 2026-08-20</div><h1>34 条失败语料重审后<br>1300 条生产完整路由复测</h1>
+<p class='lede'>这是一份“语料证据—模型判别—最终分支”的复核账本。只纠正标签错误和破损/歧义表达；仍然成立的模型难例原样保留。生产代码未因追求指标而调整。</p>
+<section class='verdict'><div><span class='folio'>FINAL ACCURACY</span><div class='big'>98.46%</div>
+<p><b>通过 ≥97% 验收</b> · 1280/1300 正确 · 20 错误 · 0 最终链路故障</p></div>
+<div><span class='folio'>VERSUS PREVIOUS RUN</span><p class='delta'>+1.08 个百分点</p>
+<p>上一轮 97.38%（1266/1300）；本轮净增加 14 条正确。</p></div></section>
+<section class='ledger'><div><b>34</b><span>失败语料逐条复核</span></div><div><b>2</b><span>2 条改标</span></div>
+<div><b>15</b><span>15 条改写</span></div><div><b>17</b><span>真实模型难例保留</span></div></section>
+
+<h2>34 条审校样本的复测去向</h2><section class='ledger'>
+<div><b>2/2</b><span>改标后正确</span></div>
+<div><b>14/15</b><span>改写后正确</span></div>
+<div><b>3/17</b><span>原样难例正确</span></div>
+<div><b>14</b><span>原样难例仍失败</span></div></section>
+<p class='muted'>标签和表达修订共 17 条，其中 16/17 复测正确；原样保留的 17 条中仍有 14 条失败，作为后续模型优化的核心失败集。</p>
+
+<h2>M1 → M3 完整机制</h2><div class='flow'><div class='node'><h3>1.7B 初判</h3><span class='muted'>正确 1261/1300</span></div><div class='arrow'>→</div>
+<div class='node'><h3>9B M3 复判</h3><span class='muted'>进入 254 · 纠正 33 · 恶化 14 · 净增益 19</span></div>
+<div class='arrow'>→</div><div class='node'><h3>最终分支</h3><span class='muted'>正确 1280 · 错误 20 · 基础设施重试 2</span></div></div>
+<p>最终错误归因：M1 高置信直进 3；M3 将正确初判改错 14；M3 未纠正初判 3；其他 0；链路故障 0。</p>
+
+<h2>13 分支检验带</h2><div class='tape'><div class='punch '><b>a</b><small>新建提醒</small><em>97.35%</em></div><div class='punch '><b>b</b><small>修改提醒</small><em>98.21%</em></div><div class='punch '><b>c</b><small>查询提醒</small><em>100.00%</em></div><div class='punch '><b>d</b><small>写入记忆</small><em>97.06%</em></div><div class='punch '><b>e</b><small>查询记忆</small><em>97.75%</em></div><div class='punch '><b>f</b><small>调节音量</small><em>100.00%</em></div><div class='punch '><b>g</b><small>调节亮度</small><em>100.00%</em></div><div class='punch '><b>h</b><small>查询天气</small><em>100.00%</em></div><div class='punch '><b>i</b><small>查询时间</small><em>100.00%</em></div><div class='punch warn'><b>j</b><small>产品知识</small><em>95.24%</em></div><div class='punch '><b>k</b><small>晚安</small><em>100.00%</em></div><div class='punch warn'><b>l</b><small>再见</small><em>94.32%</em></div><div class='punch '><b>m</b><small>闲聊</small><em>98.99%</em></div></div><div class='wide'><table><thead><tr><th>标签</th><th>分支</th><th>样本</th><th>正确</th><th>准确率</th><th>进入M3</th><th>错误</th></tr></thead><tbody><tr><td class='num'>a</td><td>新建提醒</td><td class='num'>113</td><td class='num'>110</td><td class='num'>97.35%</td><td class='num'>30</td><td class='num'>3</td></tr><tr><td class='num'>b</td><td>修改提醒</td><td class='num'>112</td><td class='num'>110</td><td class='num'>98.21%</td><td class='num'>27</td><td class='num'>2</td></tr><tr><td class='num'>c</td><td>查询提醒</td><td class='num'>98</td><td class='num'>98</td><td class='num'>100.00%</td><td class='num'>6</td><td class='num'>0</td></tr><tr><td class='num'>d</td><td>写入记忆</td><td class='num'>102</td><td class='num'>99</td><td class='num'>97.06%</td><td class='num'>16</td><td class='num'>3</td></tr><tr><td class='num'>e</td><td>查询记忆</td><td class='num'>89</td><td class='num'>87</td><td class='num'>97.75%</td><td class='num'>24</td><td class='num'>2</td></tr><tr><td class='num'>f</td><td>调节音量</td><td class='num'>110</td><td class='num'>110</td><td class='num'>100.00%</td><td class='num'>12</td><td class='num'>0</td></tr><tr><td class='num'>g</td><td>调节亮度</td><td class='num'>101</td><td class='num'>101</td><td class='num'>100.00%</td><td class='num'>2</td><td class='num'>0</td></tr><tr><td class='num'>h</td><td>查询天气</td><td class='num'>102</td><td class='num'>102</td><td class='num'>100.00%</td><td class='num'>3</td><td class='num'>0</td></tr><tr><td class='num'>i</td><td>查询时间</td><td class='num'>101</td><td class='num'>101</td><td class='num'>100.00%</td><td class='num'>14</td><td class='num'>0</td></tr><tr><td class='num'>j</td><td>产品知识</td><td class='num'>84</td><td class='num'>80</td><td class='num'>95.24%</td><td class='num'>29</td><td class='num'>4</td></tr><tr><td class='num'>k</td><td>晚安</td><td class='num'>101</td><td class='num'>101</td><td class='num'>100.00%</td><td class='num'>74</td><td class='num'>0</td></tr><tr><td class='num'>l</td><td>再见</td><td class='num'>88</td><td class='num'>83</td><td class='num'>94.32%</td><td class='num'>8</td><td class='num'>5</td></tr><tr><td class='num'>m</td><td>闲聊</td><td class='num'>99</td><td class='num'>98</td><td class='num'>98.99%</td><td class='num'>9</td><td class='num'>1</td></tr></tbody></table></div>
+<h2>主要混淆</h2><div class='wide'><table><thead><tr><th>标准标签</th><th>最终预测</th><th>次数</th></tr></thead><tbody><tr><td class='num'>j</td><td class='num'>m</td><td class='num'>4</td></tr><tr><td class='num'>l</td><td class='num'>m</td><td class='num'>4</td></tr><tr><td class='num'>d</td><td class='num'>m</td><td class='num'>3</td></tr><tr><td class='num'>e</td><td class='num'>m</td><td class='num'>2</td></tr><tr><td class='num'>a</td><td class='num'>d</td><td class='num'>1</td></tr><tr><td class='num'>a</td><td class='num'>m</td><td class='num'>1</td></tr><tr><td class='num'>b</td><td class='num'>m</td><td class='num'>1</td></tr><tr><td class='num'>a</td><td class='num'>j</td><td class='num'>1</td></tr><tr><td class='num'>b</td><td class='num'>j</td><td class='num'>1</td></tr><tr><td class='num'>m</td><td class='num'>a</td><td class='num'>1</td></tr><tr><td class='num'>l</td><td class='num'>k</td><td class='num'>1</td></tr></tbody></table></div>
+<p><a href='哒哒Agent-修订版1300条失败测试集-v2-2026-08-20.html'>打开本轮全部失败样本 →</a>　<a href='哒哒Agent-34条失败语料审校账本-2026-08-20.html'>打开 34 条语料审校账本 →</a></p>
+
+<h2>时延与可复核证据</h2><section class='ledger'><div><b>56.032</b><span>P50 ms</span></div><div><b>4210.628</b><span>P95 ms</span></div>
+<div><b>6807.884</b><span>最大 ms</span></div><div><b>0</b><span>最终链路故障</span></div></section>
+<div class='evidence'><dl><dt>专用测试用户</dt><dd>2026082001</dd><dt>task / memory</dt><dd>1 / 1</dd>
+<dt>被状态裁剪的工具</dt><dd>[]</dd><dt>v2 语料 SHA-256</dt><dd>612139ebbca4c4b9a2195ca9a2e5a62041dde959adc6f5673f9cb0ee6086ec11</dd>
+<dt>m1_gate.py</dt><dd>fccb34c386c86a75e56191ceb6139deb37a355f56520bea0e0c292ff2bce8b8c</dd><dt>m3_tool_panel.py</dt><dd>c2b0a2b7a4e80407d8c48259b659acd5f9ad7fa76887aeff3dbc472d33f83f68</dd><dt>branch_prompts.py</dt><dd>0291c54c9d54f7b343db4116cf3c5ccc9b6d3cc02740c3c8d5891815096c71fe</dd></dl></div>
+<p class='foot'>口径：使用修订后的全部 1300 条样本和真实数据库状态，完整调用生产 M1→M3；仅基础设施 route_ok=false 可按固定策略重试一次，普通分类错误不得重试。</p>
+</main></body></html>

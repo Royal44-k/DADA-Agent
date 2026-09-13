@@ -1,0 +1,192 @@
+{
+  "total": 1300,
+  "correct": 1266,
+  "errors": 34,
+  "accuracy": 0.9738461538461538,
+  "target": 0.97,
+  "target_met": true,
+  "m1_correct": 1265,
+  "m1_accuracy": 0.9730769230769231,
+  "m3_used": 265,
+  "m3_entry_rate": 0.20384615384615384,
+  "m3_corrected": 30,
+  "m3_worsened": 29,
+  "route_failures": 0,
+  "per_label": {
+    "a": {
+      "total": 113,
+      "correct": 110,
+      "accuracy": 0.9734513274336283,
+      "m3_used": 31,
+      "errors": 3
+    },
+    "b": {
+      "total": 112,
+      "correct": 110,
+      "accuracy": 0.9821428571428571,
+      "m3_used": 27,
+      "errors": 2
+    },
+    "c": {
+      "total": 97,
+      "correct": 97,
+      "accuracy": 1.0,
+      "m3_used": 6,
+      "errors": 0
+    },
+    "d": {
+      "total": 102,
+      "correct": 98,
+      "accuracy": 0.9607843137254902,
+      "m3_used": 18,
+      "errors": 4
+    },
+    "e": {
+      "total": 89,
+      "correct": 83,
+      "accuracy": 0.9325842696629213,
+      "m3_used": 27,
+      "errors": 6
+    },
+    "f": {
+      "total": 110,
+      "correct": 110,
+      "accuracy": 1.0,
+      "m3_used": 12,
+      "errors": 0
+    },
+    "g": {
+      "total": 101,
+      "correct": 101,
+      "accuracy": 1.0,
+      "m3_used": 2,
+      "errors": 0
+    },
+    "h": {
+      "total": 102,
+      "correct": 102,
+      "accuracy": 1.0,
+      "m3_used": 3,
+      "errors": 0
+    },
+    "i": {
+      "total": 101,
+      "correct": 100,
+      "accuracy": 0.9900990099009901,
+      "m3_used": 13,
+      "errors": 1
+    },
+    "j": {
+      "total": 84,
+      "correct": 78,
+      "accuracy": 0.9285714285714286,
+      "m3_used": 30,
+      "errors": 6
+    },
+    "k": {
+      "total": 102,
+      "correct": 98,
+      "accuracy": 0.9607843137254902,
+      "m3_used": 75,
+      "errors": 4
+    },
+    "l": {
+      "total": 88,
+      "correct": 80,
+      "accuracy": 0.9090909090909091,
+      "m3_used": 12,
+      "errors": 8
+    },
+    "m": {
+      "total": 99,
+      "correct": 99,
+      "accuracy": 1.0,
+      "m3_used": 9,
+      "errors": 0
+    }
+  },
+  "confusion": [
+    {
+      "truth": "e",
+      "prediction": "m",
+      "count": 6
+    },
+    {
+      "truth": "j",
+      "prediction": "m",
+      "count": 6
+    },
+    {
+      "truth": "l",
+      "prediction": "m",
+      "count": 6
+    },
+    {
+      "truth": "d",
+      "prediction": "m",
+      "count": 4
+    },
+    {
+      "truth": "k",
+      "prediction": "m",
+      "count": 2
+    },
+    {
+      "truth": "l",
+      "prediction": "k",
+      "count": 2
+    },
+    {
+      "truth": "a",
+      "prediction": "d",
+      "count": 1
+    },
+    {
+      "truth": "a",
+      "prediction": "b",
+      "count": 1
+    },
+    {
+      "truth": "b",
+      "prediction": "m",
+      "count": 1
+    },
+    {
+      "truth": "i",
+      "prediction": "c",
+      "count": 1
+    },
+    {
+      "truth": "a",
+      "prediction": "j",
+      "count": 1
+    },
+    {
+      "truth": "b",
+      "prediction": "j",
+      "count": 1
+    },
+    {
+      "truth": "k",
+      "prediction": "b",
+      "count": 1
+    },
+    {
+      "truth": "k",
+      "prediction": "i",
+      "count": 1
+    }
+  ],
+  "error_attribution": {
+    "m1_direct_error": 3,
+    "m1_non_m3_error": 0,
+    "m3_worsened": 29,
+    "m3_failed_to_correct": 2,
+    "route_failure": 0
+  },
+  "latency_ms": {
+    "p50": 44.386,
+    "p95": 1351.67,
+    "max": 3366.473
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "policy": "only infrastructure route failures are retried exactly once",
+  "initial_rows": 1300,
+  "retried": 2,
+  "recovered": 2,
+  "still_failed": 0,
+  "retry_sample_ids": [
+    "a-02573-5f39f5fe17d2",
+    "e-03530-311f7397bef9"
+  ],
+  "ordinary_classification_errors_retried": 0
+}
